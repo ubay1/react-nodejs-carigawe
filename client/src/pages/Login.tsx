@@ -5,8 +5,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import image_login from '../assets/image_login.png';
 import '../styles/font.css';
+import AnimationAuth from './AnimationAuth';
 
 const Login = () => {
+    const [isStopped, setisStopped] = React.useState(false);
+    const [isPaused, setisPaused] = React.useState(false);
+
+
     return(
         <div className="lg:flex">
             <div className="lg:w-1/2 xl:max-w-screen-sm">
@@ -57,15 +62,10 @@ const Login = () => {
                             Don't have an account ? <Link to="/register" className="cursor-pointer text-blue-600 hover:text-blue-800">Sign up</Link>
                         </div>
                     </div>
+                    <AnimationAuth />
                 </div>
             </div>
-            <div className="hidden 
-                lg:flex items-center fixed right-0 w-1/2 justify-center bg-gray-50 flex-1 h-screen"
-            >
-                <div className="max-w-md transform duration-500 hover:scale-110 cursor-pointer">
-                    <img style={{width: '100%', height: '100%'}} src={image_login} alt="image login" />
-                </div>
-            </div>
+            
         </div>
     )
 }

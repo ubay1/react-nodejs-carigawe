@@ -13,6 +13,7 @@ import {setLoading} from '../store/loading'
 import { setToast } from '../store/toast';
 import {HTTPRegisterUser} from '../utils/http';
 import { registerUser } from '../utils/interface';
+import AnimationAuth from './AnimationAuth';
 
 const Register = () => {
     const dispatch: AppDispatch = useDispatch()
@@ -211,13 +212,7 @@ const Register = () => {
                     </div>
                 </div>
             </div>
-            <div className="hidden 
-                lg:flex items-center fixed right-0 w-1/2 justify-center bg-gray-50 flex-1 h-screen"
-            >
-                <div className="max-w-md transform duration-500 hover:scale-110 cursor-pointer">
-                    <img style={{width: '100%', height: '100%'}} src={image_login} alt="image login" />
-                </div>
-            </div>
+            <AnimationAuth />
         </div>
     )
 }
