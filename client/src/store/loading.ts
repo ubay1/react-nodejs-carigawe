@@ -5,7 +5,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface LoadingState {
     show: boolean
-    text?: string
     timeout?: number
 }
 
