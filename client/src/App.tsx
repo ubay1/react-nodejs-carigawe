@@ -9,10 +9,12 @@ import {
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import Spinner from './components/Loading';
 
 const App = () => {
   return (
     <Router>
+      <Spinner></Spinner>
       <div>
           <Switch>
               <Route exact path='/' component={Home} />

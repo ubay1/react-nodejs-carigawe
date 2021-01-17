@@ -2,10 +2,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import image_login from '../assets/image_login.png';
+import { AppDispatch } from '../store';
+import {setLoading} from '../store/loading'
 
 const Register = () => {
+    const dispatch: AppDispatch = useDispatch()
     return(
         <div className="lg:flex">
             <div className="lg:w-1/2 xl:max-w-screen-sm">
@@ -23,7 +27,6 @@ const Register = () => {
                     xl:px-12 xl:max-w-2xl"
                 >
                     <div className="mt-8">
-                        <form>
                             <div>
                                 <div className="text-sm font-bold text-gray-700 tracking-wide">Full Name</div>
                                 <input className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" type="text" placeholder="jhon doe" />
@@ -62,13 +65,18 @@ const Register = () => {
                                 </div>
                             </div>
                             <div className="mt-10">
-                                <button className="bg-blue-500 text-gray-100 p-4 w-full rounded-full tracking-wide
-                                font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-blue-600
-                                shadow-lg">
-                                    Log In
+                                <button 
+                                    className="bg-blue-500 text-gray-100 p-4 w-full rounded-full tracking-wide font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg"
+                                    onClick={() => {
+                                        dispatch(setLoading({
+                                            show: true,
+                                            timeout: 300000,
+                                        }))
+                                    }}
+                                >
+                                    Register
                                 </button>
                             </div>
-                        </form>
                         <div className="my-6 text-sm font-display font-semibold text-gray-700 text-center">
                             Have an account ? <Link to="/login" className="cursor-pointer text-blue-600 hover:text-blue-800">Sign in</Link>
                         </div>
