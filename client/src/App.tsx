@@ -15,6 +15,7 @@ import Toast from './components/Toast';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from "react";
+import './styles/font.css';
 
 const App = () => {
   return (

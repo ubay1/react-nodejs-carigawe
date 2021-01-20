@@ -4,14 +4,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import image_login from '../assets/image_login.png';
-import '../styles/font.css';
 import AnimationAuth from './AnimationAuth';
 
 const Login = () => {
-    const [isStopped, setisStopped] = React.useState(false);
-    const [isPaused, setisPaused] = React.useState(false);
-
-
+    
     return(
         <div className="lg:flex">
             <div className="lg:w-1/2 xl:max-w-screen-sm">
@@ -29,12 +25,12 @@ const Login = () => {
                         <div className="py-6 flex justify-center">
                             <div className="cursor-pointer flex items-center">
                                 <div className="text-5xl text-blue-600 tracking-wide ml-2 font-semibold font_damion">
-                                    Cari Gawe
+                                    <Link to="/">Cari Gawe</Link>
                                 </div>
                             </div>
                         </div>
                         <div className="mt-6">
-                            <div className="text-sm font-bold text-gray-700 tracking-wide">Email Address</div>
+                            <div className="text-sm font-bold text-gray-700 tracking-wide">Email</div>
                             <input className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" type="" placeholder="jhon@mail.com" />
                         </div>
                         <div className="mt-8">
@@ -45,7 +41,7 @@ const Login = () => {
                                 <div>
                                     <a className="text-xs font-display font-semibold text-blue-600 hover:text-blue-800
                                     cursor-pointer">
-                                        Forgot Password?
+                                        Lupa Password?
                                     </a>
                                 </div>
                             </div>
@@ -55,11 +51,11 @@ const Login = () => {
                             <button className="bg-blue-500 text-gray-100 p-4 w-full rounded-full tracking-wide
                             font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-blue-600
                             shadow-lg">
-                                Log In
+                                Masuk
                             </button>
                         </div>
                         <div className="my-6 text-sm font-display font-semibold text-gray-700 text-center">
-                            Don't have an account ? <Link to="/register" className="cursor-pointer text-blue-600 hover:text-blue-800">Sign up</Link>
+                            Belum punya akun ? <Link to="/register" className="cursor-pointer text-blue-600 hover:text-blue-800">Daftar</Link>
                         </div>
                     </div>
                     <AnimationAuth />

@@ -112,12 +112,12 @@ const Register = () => {
                         <div className="py-6 flex justify-center">
                             <div className="cursor-pointer flex items-center">
                                 <div className="text-5xl text-blue-600 tracking-wide ml-2 font-semibold font_damion">
-                                    Cari Gawe
+                                <Link to="/">Cari Gawe</Link>
                                 </div>
                             </div>
                         </div>
                         <div className="mt-6">
-                            <div className="text-sm font-bold text-gray-700 tracking-wide">Full Name</div>
+                            <div className="text-sm font-bold text-gray-700 tracking-wide">Nama Lengkap</div>
                             <input 
                                 name="name"
                                 className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
@@ -128,7 +128,7 @@ const Register = () => {
                             />
                         </div>
                         <div className="mt-8">
-                            <div className="text-sm font-bold text-gray-700 tracking-wide">Phone</div>
+                            <div className="text-sm font-bold text-gray-700 tracking-wide">Nomor Telepon</div>
                             <input 
                                 name="phone"
                                 className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
@@ -138,7 +138,7 @@ const Register = () => {
                             />
                         </div>
                         <div className="mt-8">
-                            <div className="text-sm font-bold text-gray-700 tracking-wide">Email Address</div>
+                            <div className="text-sm font-bold text-gray-700 tracking-wide">Email</div>
                             <input 
                                 name="email"
                                 className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
@@ -164,7 +164,7 @@ const Register = () => {
                         <div className="mt-8">
                             <div className="flex justify-between items-center">
                                 <div className="text-sm font-bold text-gray-700 tracking-wide">
-                                    Register For
+                                    Daftar Untuk
                                 </div>
                             </div>
                             <div className="flex flex-row">
@@ -177,7 +177,8 @@ const Register = () => {
                                         value="recruiter"
                                         onChange={handleInputChange }
                                     />
-                                    <label htmlFor="recruiter" className="ml-2 text-gray-700">Recruiter</label>
+                                    <label htmlFor="recruiter" className="ml-2 text-gray-700">Perekrut
+                                    </label>
                                 </div>
                                 <div className="inline-flex items-center mt-3 w-1/2">
                                     <input 
@@ -188,7 +189,7 @@ const Register = () => {
                                         value="job_seeker"
                                         onChange={handleInputChange }
                                     />
-                                    <label htmlFor="job_seeker" className="ml-2 text-gray-700">Job Seeker</label>
+                                    <label htmlFor="job_seeker" className="ml-2 text-gray-700">Pencari Kerja</label>
                                 </div>
                             </div>
                         </div>
@@ -203,11 +204,11 @@ const Register = () => {
                                     httpRegisterUser(dataRegister)
                                 }}
                             >
-                                Register
+                                Daftar
                             </button>
                         </div>
                         <div className="my-6 text-sm font-display font-semibold text-gray-700 text-center">
-                            Have an account ? <Link to="/login" className="cursor-pointer text-blue-600 hover:text-blue-800">Sign in</Link>
+                            Sudah punya akun ? <Link to="/login" className="cursor-pointer text-blue-600 hover:text-blue-800">Masuk</Link>
                         </div>
                     </div>
                 </div>
