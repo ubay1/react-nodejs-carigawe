@@ -1,0 +1,5 @@
+/* suggestion pencarian domisili dihalaman home */
+ul.react-autosuggest__suggestions-list {
+    overflow-y: scroll;
+    height: 100px;
+}

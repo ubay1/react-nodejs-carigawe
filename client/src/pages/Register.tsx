@@ -14,44 +14,51 @@ import { setToast } from '../store/toast';
 import {HTTPRegisterUser} from '../utils/http';
 import { registerUser } from '../utils/interface';
 import AnimationAuth from './AnimationAuth';
+import { useFormik } from "formik";
+import * as Yup from 'yup';
 
 const Register = () => {
     const dispatch: AppDispatch = useDispatch()
-    const [dataRegister, setdataRegister] = useState<registerUser>({
-        name: '',
-        phone: '',
-        email: '',
-        password: '',
-        recruiter: false,
-        job_seeker: false,
-    })
+
+    const [successAction, setsuccessAction] = useState(false)
+    const [failedAction, setfailedAction] = useState(false)
+
     const history = useHistory();
+    
+    const formik = useFormik({
+        initialValues: {
+          name: '',
+          phone: '',
+          email: '',
+          password: '',
+          roles_jobs: ''
+        },
+        onSubmit: values => {
+            dispatch(setLoading({
+                show: true,
+                timeout: 300000,
+            }))
 
-    useEffect(() => {
-        // console.log(dataRegister)
-    }, [dataRegister])
+            httpRegisterUser(values)
 
-    const handleInputChange = (event: any) => {
-        const newValue = {...dataRegister} 
-        
-        if (event.target.name === 'name' ) {
-            newValue.name = event.target.value
-        } else if(event.target.name === 'phone') {
-            newValue.phone = event.target.value
-        } else if(event.target.name === 'email') {
-            newValue.email = event.target.value
-        } else if(event.target.name === 'password') {
-            newValue.password = event.target.value
-        } else if(event.target.name === 'roles_jobs' && event.target.value === 'recruiter') {
-            newValue.recruiter = true
-            newValue.job_seeker = false
-        } else {
-            newValue.recruiter = false
-            newValue.job_seeker = true
-        }
-
-        setdataRegister(newValue)
-    }
+            console.log(JSON.stringify(values, null, 2));
+          
+        },
+        validationSchema: Yup.object({
+            name: Yup.string()
+              .required("Wajib diisi"),
+            phone: Yup.number()
+            .required("Wajib diisi"),
+            email: Yup.string()
+              .email("Invalid email format")
+              .required("Wajib diisi"),
+            password: Yup.string()
+              .min(8, "Minimum 8 characters")
+              .required("Wajib diisi"),
+            roles_jobs: Yup.string()
+              .required("Wajib diisi"),
+        })
+    });
 
     const httpRegisterUser = async (params: any) => {
         try {
@@ -60,25 +67,27 @@ const Register = () => {
                 phone: params.phone,
                 email: params.email,
                 password: params.password,
-                recruiter: params.recruiter,
-                job_seeker: params.job_seeker,
+                roles_jobs: params.roles_jobs
             })
 
-            toast(responseRegisterUser.data.messages, {
-                position: "bottom-right",
-                autoClose: 5000,
-                type: 'success',
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                transition: Slide
-            })
-            dispatch(setLoading({
-                show: false,
-                timeout: 0,
-            }))
+            if (responseRegisterUser.status === 200) {
+                toast(responseRegisterUser.data.message, {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    type: 'success',
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    transition: Slide
+                })
+                dispatch(setLoading({
+                    show: false,
+                    timeout: 0,
+                }))
+    
+                history.push('/login')
+            }
 
-            history.push('/login')
 
         } catch (error) {
             toast(error.data.errors, {
@@ -101,7 +110,7 @@ const Register = () => {
         <div className="lg:flex">
             <div className="lg:w-1/2 xl:max-w-screen-sm">
                 <div className="
-                    mt-10 mb-10 px-10
+                    mb-10 px-10
                     sm:px-24 
                     md:px-48 
                     lg:px-12 lg:mt-0 lg:mb-0 lg:flex lg:flex-col lg:justify-start lg:shadow-lg lg:pb-4 lg:ml-3 mr-3 
@@ -116,97 +125,123 @@ const Register = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-6">
-                            <div className="text-sm font-bold text-gray-700 tracking-wide">Nama Lengkap</div>
-                            <input 
-                                name="name"
-                                className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
-                                type="text" 
-                                placeholder="jhon doe" 
-                                defaultValue={dataRegister.name}
-                                onChange={handleInputChange }
-                            />
-                        </div>
-                        <div className="mt-8">
-                            <div className="text-sm font-bold text-gray-700 tracking-wide">Nomor Telepon</div>
-                            <input 
-                                name="phone"
-                                className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
-                                type="number" placeholder="0812xxxxxxxx" 
-                                defaultValue={dataRegister.phone}    
-                                onChange={handleInputChange }
-                            />
-                        </div>
-                        <div className="mt-8">
-                            <div className="text-sm font-bold text-gray-700 tracking-wide">Email</div>
-                            <input 
-                                name="email"
-                                className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
-                                type="email" placeholder="jhon@mail.com" 
-                                defaultValue={dataRegister.email}    
-                                onChange={handleInputChange }
-                            />
-                        </div>
-                        <div className="mt-8">
-                            <div className="flex justify-between items-center">
-                                <div className="text-sm font-bold text-gray-700 tracking-wide">
-                                    Password
-                                </div>
+                        <form onSubmit={formik.handleSubmit}>
+                            <div className="mt-6">
+                                <div className="text-sm font-bold text-gray-700 tracking-wide">Nama Lengkap</div>
+                                <input 
+                                    name="name"
+                                    className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
+                                    type="text" 
+                                    placeholder="jhon doe" 
+                                    // defaultValue={dataRegister.name}
+                                    // onChange={handleInputChange }
+                                    onChange={formik.handleChange}
+                                    value={formik.values.name}
+                                />
+                                {formik.errors.name && formik.touched.name && (
+                                    <p className="text-red-400">{formik.errors.name}</p>
+                                )}
                             </div>
-                            <input 
-                                name="password"
-                                className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
-                                type="password" placeholder="Enter your password" 
-                                defaultValue={dataRegister.password}    
-                                onChange={handleInputChange }
-                            />
-                        </div>
-                        <div className="mt-8">
-                            <div className="flex justify-between items-center">
-                                <div className="text-sm font-bold text-gray-700 tracking-wide">
-                                    Daftar Untuk
-                                </div>
+                            <div className="mt-8">
+                                <div className="text-sm font-bold text-gray-700 tracking-wide">Nomor Telepon</div>
+                                <input 
+                                    name="phone"
+                                    className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
+                                    type="text" placeholder="0812xxxxxxxx" 
+                                    // defaultValue={dataRegister.phone}    
+                                    // onChange={handleInputChange }
+                                    onChange={formik.handleChange}
+                                    value={formik.values.phone}
+                                />
+                                {formik.errors.phone && formik.touched.phone && (
+                                    <p className="text-red-400">{formik.errors.phone}</p>
+                                )}
                             </div>
-                            <div className="flex flex-row">
-                                <div className="inline-flex items-center mt-3 w-1/2">
-                                    <input 
-                                        type="radio" 
-                                        id="recruiter" 
-                                        name="roles_jobs" 
-                                        className="h-5 w-5 text-gray-600" 
-                                        value="recruiter"
-                                        onChange={handleInputChange }
-                                    />
-                                    <label htmlFor="recruiter" className="ml-2 text-gray-700">Perekrut
-                                    </label>
-                                </div>
-                                <div className="inline-flex items-center mt-3 w-1/2">
-                                    <input 
-                                        type="radio" 
-                                        id="job_seeker" 
-                                        name="roles_jobs" 
-                                        className="h-5 w-5 text-gray-600" 
-                                        value="job_seeker"
-                                        onChange={handleInputChange }
-                                    />
-                                    <label htmlFor="job_seeker" className="ml-2 text-gray-700">Pencari Kerja</label>
-                                </div>
+                            <div className="mt-8">
+                                <div className="text-sm font-bold text-gray-700 tracking-wide">Email</div>
+                                <input 
+                                    name="email"
+                                    className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
+                                    type="email" placeholder="jhon@mail.com" 
+                                    // defaultValue={dataRegister.email}    
+                                    // onChange={handleInputChange }
+                                    onChange={formik.handleChange}
+                                    value={formik.values.email}
+                                />
+                                {formik.errors.email && formik.touched.email && (
+                                    <p className="text-red-400">{formik.errors.email}</p>
+                                )}
                             </div>
-                        </div>
-                        <div className="mt-10">
+                            <div className="mt-8">
+                                <div className="flex justify-between items-center">
+                                    <div className="text-sm font-bold text-gray-700 tracking-wide">
+                                        Password
+                                    </div>
+                                </div>
+                                <input 
+                                    name="password"
+                                    className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
+                                    type="password" placeholder="Enter your password" 
+                                    // defaultValue={dataRegister.password}    
+                                    // onChange={handleInputChange }
+                                    onChange={formik.handleChange}
+                                    value={formik.values.password}
+                                />
+                                {formik.errors.password && formik.touched.password && (
+                                    <p className="text-red-400">{formik.errors.password}</p>
+                                )}
+                            </div>
+                            <div className="mt-8">
+                                <div className="flex justify-between items-center">
+                                    <div className="text-sm font-bold text-gray-700 tracking-wide">
+                                        Daftar Untuk
+                                    </div>
+                                </div>
+                                <div className="flex flex-row">
+                                    <div className="inline-flex items-center mt-3 w-1/2">
+                                        <input 
+                                            type="radio" 
+                                            id="recruiter" 
+                                            name="roles_jobs" 
+                                            className="h-5 w-5 text-gray-600" 
+                                            value="recruiter"
+                                            onChange={formik.handleChange}
+                                        />
+                                        <label htmlFor="recruiter" className="ml-2 text-gray-700">Perekrut
+                                        </label>
+                                    </div>
+                                    <div className="inline-flex items-center mt-3 w-1/2">
+                                        <input 
+                                            type="radio" 
+                                            id="job_seeker" 
+                                            name="roles_jobs" 
+                                            className="h-5 w-5 text-gray-600" 
+                                            value="job_seeker"
+                                            onChange={formik.handleChange}
+                                        />
+                                        <label htmlFor="job_seeker" className="ml-2 text-gray-700">Pencari Kerja</label>
+                                    </div>
+                                </div>
+                                {formik.errors.roles_jobs && (
+                                    <p className="text-red-400">{formik.errors.roles_jobs}</p>
+                                )}
+                            </div>
+                            <div className="mt-10">
                             <button 
                                 className="bg-blue-500 text-gray-100 p-4 w-full rounded-full tracking-wide font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg"
+                                type="submit"
                                 onClick={() => {
-                                    dispatch(setLoading({
-                                        show: true,
-                                        timeout: 300000,
-                                    }))
-                                    httpRegisterUser(dataRegister)
+                                    // dispatch(setLoading({
+                                    //     show: true,
+                                    //     timeout: 300000,
+                                    // }))
+                                    // httpRegisterUser(dataRegister)
                                 }}
                             >
                                 Daftar
                             </button>
                         </div>
+                        </form>
                         <div className="my-6 text-sm font-display font-semibold text-gray-700 text-center">
                             Sudah punya akun ? <Link to="/login" className="cursor-pointer text-blue-600 hover:text-blue-800">Masuk</Link>
                         </div>

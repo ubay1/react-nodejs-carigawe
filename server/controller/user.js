@@ -76,7 +76,7 @@ const userController = {
                         );
                         
                         res.status(200).json({
-                            'messages': 'registered successfully.',
+                            'message': 'registered successfully.',
                             'data': user
                         });
                     }   

@@ -6,6 +6,8 @@ import Spinner from '../assets/loading.gif';
 import { AppDispatch } from '../store';
 import { RootState } from '../store/rootReducer';
 import { setLoadingShow } from '../store/loading';
+import Lottie from 'lottie-react';
+import LoadingAction from '../assets/loading.json';
 
 const Loading = () => {
     const loading = useSelector((state: RootState) => state.loading)
@@ -33,12 +35,13 @@ const Loading = () => {
                 ?
                 <div className="w-full h-full bg-black bg-opacity-80 fixed text-white z-50 flex justify-center">
                     <div className="loading-body flex items-center">
-                        <img
+                        {/* <img
                             className="m-auto"
                             alt="loading"
                             src={Spinner}
                             width="50%"
-                        />
+                        /> */}
+                        <Lottie  animationData={LoadingAction} style={{width: 500}} />
                     </div>
                 </div>
                 : <div></div>

@@ -5,6 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/pulse.css';
 import Moment from 'moment'
+import Autosuggest from 'react-autosuggest';
+import { dataKota } from '../utils/interface';
+import '../styles/global.css'
 
 interface IPostJob {
     nama_pt: string;
@@ -20,6 +23,45 @@ const Home = () => {
     const [postJobs, setpostJobs] = useState([1,1,2,2,2,2,2,2,2,2,2,2])
 
     const yearNow = Moment(new Date()).format('YYYY');
+
+    const [valueKota, setvalueKota] = useState('');
+    const [suggestion, setsuggestion] = useState<any[]>([]);
+
+    const getSuggestions = (value: any) => {
+        const inputValue = value.trim().toLowerCase();
+        const inputLength = inputValue.length;
+      
+        return inputLength === 0 ? [] : dataKota.filter(data =>
+          data.label.toLowerCase().slice(0, inputLength) === inputValue
+        );
+    };
+    const getSuggestionValue = (suggestion: any) => suggestion.label;
+
+    const renderSuggestion = (suggestion: any) => (
+        <div className="bg-white shadow">
+          {suggestion.label}
+        </div>
+      );
+      
+    const onChange = (event: any, { newValue }: any) => {
+        setvalueKota(newValue)
+      };
+    
+      
+    const onSuggestionsFetchRequested = ({ value }: any) => {
+        setsuggestion(getSuggestions(value))
+    };
+    
+    const onSuggestionsClearRequested = () => {
+        setsuggestion([])
+    };
+
+    const inputProps = {
+        placeholder: 'Domisili',
+        value: valueKota,
+        onChange: onChange,
+        className: 'w-full mb-2 text-sm py-2 px-2 shadow rounded-lg border-gray-300 focus:outline-none focus:border-blue-500'
+    };
 
 
     const Header = () => {
@@ -128,7 +170,15 @@ const Home = () => {
                         <input className="w-full mb-2 text-sm py-2 px-2 shadow rounded-lg border-gray-300 focus:outline-none focus:border-blue-500" type="" placeholder="frontend developer" />
 
                         <div className=" text-sm font-semibold text-gray-700 tracking-wide mb-1">Kota</div>
-                        <input className="w-full mb-2 text-sm py-2 px-2 shadow rounded-lg border-gray-300 focus:outline-none focus:border-blue-500" type="" placeholder="Bekasi" />
+
+                        <Autosuggest
+                            suggestions={suggestion}
+                            onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                            onSuggestionsClearRequested={onSuggestionsClearRequested}
+                            getSuggestionValue={getSuggestionValue}
+                            renderSuggestion={renderSuggestion}
+                            inputProps={inputProps}
+                        />
 
                         <button className="inline-block bg-blue-500 hover:bg-blue-600 text-sm rounded-lg text-white shadow mt-2 w-full py-2 px-4 no-underline">Cari</button>
                     </div>

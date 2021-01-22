@@ -5,7 +5,7 @@ import toast from './toast'
 
 const rootReducer = combineReducers({
   loading,
-  toast
+  toast,
 })
 
 export type RootState = ReturnType<typeof rootReducer>

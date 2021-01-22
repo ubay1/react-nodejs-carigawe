@@ -11,11 +11,26 @@ export async function HTTPRegisterUser(param: registerUser): Promise<any> {
                 phone: param.phone,
                 email: param.email,
                 password: param.password,
-                recruiter: param.recruiter,
-                job_seeker: param.job_seeker
+                recruiter: param.roles_jobs === 'recruiter' ? true : false,
+                job_seeker: param.roles_jobs === 'recruiter' ? false : true
             }
             const responseRegisterUser = await AxiosNormal(2000).post(`${DevApiUrl}/user/signup`, data)
             return resolve(responseRegisterUser)
+        } catch (error) {
+            return reject(error)
+        }
+    })
+}
+
+export async function HTTPLoginUser(param: {email: string, password: string}): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const data = {
+                email: param.email,
+                password: param.password,
+            }
+            const responseLoginUser = await AxiosNormal(2000).post(`${DevApiUrl}/user/signin`, data)
+            return resolve(responseLoginUser)
         } catch (error) {
             return reject(error)
         }
