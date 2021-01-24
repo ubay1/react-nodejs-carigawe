@@ -20,7 +20,7 @@ import { setLoadingScreenHome } from '../store/loadingScreenHome';
 import { initialStateUserAuthByAsync, UserState } from '../store/user';
 
 import { AiOutlineUser, AiOutlineSearch, AiOutlineMenu } from "react-icons/ai";
-import { RiSuitcaseLine, RiCloseLine, RiMenuLine } from "react-icons/ri";
+import { RiSuitcaseLine, RiCloseLine, RiMenuLine, RiSendPlaneFill, RiCheckLine } from "react-icons/ri";
 
 interface IPostJob {
     nama_pt: string;
@@ -105,7 +105,7 @@ const Header = (props: UserState) => {
                     md:flex md:justify-end
                 ">
                 <button 
-                    id="nav-toggle" className="flex items-center p-2 border rounded-full text-white bg-blue-500 shadow-md border-transparent hover:border-transparent focus:outline-none"
+                    id="nav-toggle" className="flex items-center p-2 border rounded-lg text-white bg-blue-500 shadow-md border-transparent hover:border-transparent focus:outline-none"
                     onClick={() => {
                         setmenuHide(!menuHide)
                     }}
@@ -154,11 +154,11 @@ const Header = (props: UserState) => {
                     </li>
                 </ul>
                 <ul 
-                className="
+                className={`
                     lg:list-reset lg:mb-0
-                    flex items-center justify-center
+                    flex ${props.token !== '' ? 'flex-col' : 'flex-row'} items-center justify-center
                     mb-4
-                ">
+                `}>
                 {
                     props.token !== '' 
                     ?  
@@ -166,14 +166,56 @@ const Header = (props: UserState) => {
                     <li className="mr-0">
                         {
                             props.profile.photo === '' 
-                            ? 
+                            ?
                                 <div 
-                                    className="bg-blue-500 text-white text-xl cursor-pointer p-2 rounded-full">
+                                    className="bg-blue-500 w-9 text-white text-xl cursor-pointer p-2 rounded-full">
                                     <AiOutlineUser />
                                 </div>
                             : 'ada foto'
                         }
-                    </li>    
+                    </li>
+                    <li
+                        className="
+                            lg:hidden
+                        "
+                    >
+                        {props.profile.name}
+                    </li>
+                    <li
+                        className="
+                            lg:hidden
+                            text-xs
+                        "
+                    >
+                        {props.profile.email}
+                    </li>
+                    <li
+                        className="
+                            lg:hidden
+                            text-xs
+                        "
+                    >
+                        <button
+                            className={`
+                                p-1 rounded-md shadow font-semibold text-white
+                                ${props.profile.email_verif === false 
+                                ? 'bg-red-400' :  'bg-green-400'}
+                            `}
+                        >
+                            {
+                                props.profile.email_verif === false 
+                                ? <>
+                                    <div className="flex items-center justify-center">
+                                        <RiSendPlaneFill  className="text-md mr-1"/> verifikasi
+                                    </div></>
+                                : <>
+                                    <div className="flex items-center justify-center">
+                                        <RiCheckLine className="text-md mr-1"/> terverifikasi
+                                    </div>
+                                </>
+                            }
+                        </button>
+                    </li>
                     </>
                     : 
                     <>
@@ -247,7 +289,7 @@ const Home = () => {
 
     if (loadingScreenHomeRedux.show === true) {
         return(
-            <div className="flex items-center justify-center flex-col bg-gray-100 h-screen">
+            <div className="flex items-center justify-center flex-col h-screen">
                 {/* <img src={LoadingGif} alt="laodinggif"/> */}
                 {/* <div>Loading ..</div> */}
                 <Lottie  animationData={LoadingScreen} style={{width: 200}} />

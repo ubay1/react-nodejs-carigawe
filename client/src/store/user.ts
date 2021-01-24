@@ -73,8 +73,7 @@ export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
 
         try {
             const tokens = Cookies.get('token') === '' ? '' : Cookies.get('token')
-            if (tokens === '') {
-                Cookies.remove('token')
+            if (typeof Cookies.get('token') === 'undefined') {
                 dispatch(setAuthStatus({
                     token: ''
                 }))
@@ -92,49 +91,70 @@ export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
                     show: false
                 }))
             } else {
-                const isexpired = await httpCheckToken(tokens)
-    
-                // jika ada data gotek
-                if (isexpired === false) {
-                    defaultValue.token = tokens
-    
-                    if (defaultValue.token !== '') {
-                        try {
-                            const responseGetUser = await HTTPGetUser({
-                                token: defaultValue.token
-                            })
-    
-                            if (responseGetUser.status === 200) {
-                                // console.log('get user');
-                                dispatch(setReduxUsersProfile({
-                                    name: responseGetUser.data.name,
-                                    phone: responseGetUser.data.phone,
-                                    phone_verif: responseGetUser.data.phone_verif,
-                                    email: responseGetUser.data.email,
-                                    email_verif: responseGetUser.data.email_verif,
-                                    photo: responseGetUser.data.photo,
-                                    recruiter: responseGetUser.data.recruiter,
-                                    job_seeker: responseGetUser.data.job_seeker,
+            
+                if (tokens === '') {
+                    Cookies.remove('token')
+                    dispatch(setAuthStatus({
+                        token: ''
+                    }))
+                    dispatch(setReduxUsersProfile({
+                        name: '',
+                        phone: '',
+                        phone_verif: false,
+                        email: '',
+                        email_verif: false,
+                        photo: '',
+                        recruiter: '',
+                        job_seeker: '',
+                    }))
+                    dispatch(setLoadingScreenHome({
+                        show: false
+                    }))
+                } else {
+                    const isexpired = await httpCheckToken(tokens)
+        
+                    // jika ada data gotek
+                    if (isexpired === false) {
+                        defaultValue.token = tokens
+        
+                        if (defaultValue.token !== '') {
+                            try {
+                                const responseGetUser = await HTTPGetUser({
+                                    token: defaultValue.token
+                                })
+        
+                                if (responseGetUser.status === 200) {
+                                    // console.log('get user');
+                                    dispatch(setReduxUsersProfile({
+                                        name: responseGetUser.data.name,
+                                        phone: responseGetUser.data.phone,
+                                        phone_verif: responseGetUser.data.phone_verif,
+                                        email: responseGetUser.data.email,
+                                        email_verif: responseGetUser.data.email_verif,
+                                        photo: responseGetUser.data.photo,
+                                        recruiter: responseGetUser.data.recruiter,
+                                        job_seeker: responseGetUser.data.job_seeker,
+                                    }))
+                                }
+                                
+                                dispatch(setAuthStatus({
+                                    token: defaultValue.token,
                                 }))
+        
+                                // dispatch(setLoadingAuth({ loadingAuth: false }))
+                                
+                            } catch (error) {
+                                console.log(error)
+                                // dispatch(setLoadingAuth({ loadingAuth: false }))
                             }
                             
-                            dispatch(setAuthStatus({
-                                token: defaultValue.token,
-                            }))
-    
-                            // dispatch(setLoadingAuth({ loadingAuth: false }))
-                            
-                        } catch (error) {
-                            console.log(error)
-                            // dispatch(setLoadingAuth({ loadingAuth: false }))
+                        } else {
+                            setTimeout(() => {
+                                // dispatch(setLoadingAuth({loadingAuth: false }))
+                            }, 1000)
                         }
-                        
-                    } else {
-                        setTimeout(() => {
-                            // dispatch(setLoadingAuth({loadingAuth: false }))
-                        }, 1000)
-                    }
-                } 
+                    } 
+                }
                 // else {
                 //     Cookies.remove('token')
                 //     dispatch(setAuthStatus({

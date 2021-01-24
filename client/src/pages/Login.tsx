@@ -35,7 +35,7 @@ const Login = () => {
                     show: false
                 }))
                 history.push('/')
-            }, 2000)
+            }, 2500)
         } else {
             initialStateUserAuthByAsync(dispatch)
         }
@@ -126,7 +126,7 @@ const Login = () => {
     
     if (loadingScreenHomeRedux.show === true) {
         return(
-            <div className="flex items-center justify-center flex-col bg-gray-100 h-screen">
+            <div className="flex items-center justify-center flex-col h-screen">
                 {/* <img src={LoadingGif} alt="laodinggif"/> */}
                 {/* <div>Loading ..</div> */}
                 <Lottie  animationData={LoadingScreen} style={{width: 200}} />
