@@ -11,8 +11,8 @@ const moment = require('moment')
 const Hashids = require('hashids/cjs')
 const hashids = new Hashids('', 5)
 
-function generateAccessToken(email) {
-    return jwt.sign(email, process.env.TOKEN_SECRET, { expiresIn: '24h' }); //24 jam
+function generateAccessToken(data) {
+    return jwt.sign(data, process.env.TOKEN_SECRET, { expiresIn: '24h' }); //24 jam
 }
 
 function filterDataUser(data) {
@@ -51,14 +51,14 @@ const userController = {
                     return res.status(404).json({
 						email: req.body.email,
 						message: "Error",
-						errors: "email has been used by another user."
+						errors: "email telah digunakan oleh user lain."
 					});
                 } else {
                     if (cekPhoneIsExist) {
                         return res.status(422).json({
                             phone: req.body.phone,
                             message: "Error",
-                            errors: "phone has been used by another user."
+                            errors: "nomor telepon telah digunakan oleh user lain."
                         });
                     } else {
                         const user = await models.user.create(
@@ -76,7 +76,7 @@ const userController = {
                         );
                         
                         res.status(200).json({
-                            'message': 'registered successfully.',
+                            'message': 'pendaftaran berhasil.',
                             'data': user
                         });
                     }   
@@ -107,7 +107,7 @@ const userController = {
 						email: req.body.email,
 						accessToken: null,
 						message: "Error",
-						errors: "User Not Found."
+						errors: "user tidak terdaftar."
 					});
                 }
 
@@ -118,11 +118,20 @@ const userController = {
 						password: req.body.password,
 						accessToken: null,
 						message: "Error",
-						errors: "Invalid Password!"
+						errors: "password tidak sesuai"
 					});
 				}
 
-                const token = generateAccessToken({email: user.email })
+                const token = generateAccessToken({
+                    name: user.name, 
+                    phone: user.phone,
+                    phone_verif: user.phone_verif,
+                    email: user.email,
+                    email_verif: user.email_verif,
+                    photo: user.photo,
+                    recruiter: user.recruiter,
+                    job_seeker: user.job_seeker,
+                })
 
                 const newDataUser = filterDataUser(user)
 
@@ -130,7 +139,7 @@ const userController = {
                     auth: true,
                     accessToken: token,
                     data: newDataUser,
-					message: "login success.",
+					message: "berhasil masuk.",
 					errors: null
                 });
             }
@@ -147,22 +156,48 @@ const userController = {
         }     
     },
 
+    async signout(req, res) {
+        try {
+            const destroy = jwt.destroy(req.body.token)
+            console.log(destroy)
+            res.status(200).json(destroy)
+        } catch (error) {
+            res.status(500).json({
+                error: error
+            })
+        }
+    },
+
     async checkToken(req, res) {
         try {
             jwt.verify(req.body.token, process.env.TOKEN_SECRET, function(err, decoded) {
                 if (err){
                     res.status(500).json({
+                        isExpired: true,
                         message: 'token expired',
                         expired: moment(err.expiredAt).format('DD-MM-YYYY H:m:s')
                     })
                 } else {
+                    console.log(res)
                     res.status(200).json({
+                        isExpired: false,
                         message: 'token not expired',
                         expired: ''
                     })
                 }
             })
         } catch(error) {
+            res.status(500).json({
+                error: error
+            })
+        }
+    },
+
+    async getUser(req, res) {
+        try {
+            const decoded = jwt.verify(req.body.token, process.env.TOKEN_SECRET);  
+            res.status(200).json(decoded)
+        } catch (error) {
             res.status(500).json({
                 error: error
             })

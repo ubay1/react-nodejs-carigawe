@@ -10,7 +10,7 @@ import image_login from '../assets/image_login.png';
 import image_loading from '../assets/loading.gif';
 import { AppDispatch } from '../store';
 import {setLoading} from '../store/loading'
-import { setToast } from '../store/toast';
+import { setLoadingScreenHome } from '../store/loadingScreenHome';
 import {HTTPRegisterUser} from '../utils/http';
 import { registerUser } from '../utils/interface';
 import AnimationAuth from './AnimationAuth';

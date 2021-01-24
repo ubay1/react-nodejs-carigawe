@@ -1,11 +1,13 @@
 
 import { combineReducers } from 'redux'
-import loading from './loading'
-import toast from './toast'
+import loadingReducer from './loading'
+import loadingScreenHomeReducer from './loadingScreenHome'
+import userReducer from './user'
 
 const rootReducer = combineReducers({
-  loading,
-  toast,
+  loading: loadingReducer,
+  loadingScreenHome: loadingScreenHomeReducer,
+  user: userReducer
 })
 
 export type RootState = ReturnType<typeof rootReducer>

@@ -16,7 +16,9 @@ function handleValidationErrors(req, res, next) {
 
 router.post('/user/signup', userValidation, handleValidationErrors,  userController.signup);
 router.post('/user/signin', userController.signin);
+router.post('/user/signout', userController.signout);
 router.post('/user/check_token', userController.checkToken);
+router.post('/user/get_user', userController.getUser);
 router.put('/user/:userId',userController.update);
 
 module.exports = router

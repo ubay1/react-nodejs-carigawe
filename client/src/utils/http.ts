@@ -36,3 +36,31 @@ export async function HTTPLoginUser(param: {email: string, password: string}): P
         }
     })
 }
+
+export async function HTTPCheckToken(param: {token: string}): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const data = {
+                token: param.token
+            }
+            const responseCheckToken = await AxiosNormal(2000).post(`${DevApiUrl}/user/check_token`, data)
+            return resolve(responseCheckToken)
+        } catch (error) {
+            return reject(error)
+        }
+    })
+}
+
+export async function HTTPGetUser(param: {token: string}): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const data = {
+                token: param.token
+            }
+            const responseGetUser = await AxiosNormal(2000).post(`${DevApiUrl}/user/get_user`, data)
+            return resolve(responseGetUser)
+        } catch (error) {
+            return reject(error)
+        }
+    })
+}

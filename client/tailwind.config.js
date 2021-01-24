@@ -6,6 +6,7 @@ module.exports = {
       gridTemplateColumns: {
         // Simple 16 column grid
         'lg-3rows-content': '20% 60% 20%',
+        'lg-2rows-content': '20% 80%',
       },
       zIndex: {
         '-10': '-10',

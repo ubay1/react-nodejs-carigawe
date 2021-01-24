@@ -4,23 +4,25 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  useHistory,
 } from "react-router-dom";
 
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
 import Loading from './components/Loading';
-import Toast from './components/Toast';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from "react";
 import './styles/font.css';
+import {store} from './store';
+import { Provider } from 'react-redux';
 
 const App = () => {
   return (
+    <Provider store={store}>
     <Router>
-      <Toast></Toast>
       <Loading></Loading>
       <div>
           <Switch>
@@ -30,6 +32,7 @@ const App = () => {
           </Switch>
       </div>
     </Router>
+    </Provider>
   );
 }
 

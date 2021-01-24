@@ -1,0 +1,20 @@
+const history = useHistory();
+
+  useEffect(() => {
+    const token = typeof Cookies.get('token') === 'undefined' ? '' : Cookies.get('token')
+    httpCheckToken(token)
+  }, [])
+
+  const httpCheckToken = async (token: any )=> {
+    try {
+      const responseCheckToken = await HTTPCheckToken({
+        token: token
+      })
+      console.log(responseCheckToken)
+      if (responseCheckToken.status === 200) {
+        history.push('/login')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
