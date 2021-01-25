@@ -32,6 +32,10 @@ const Register = () => {
     const history = useHistory();
 
     useEffect(() => {
+        document.title = 'Cari Gawe - Pendaftaran'
+    }, [])
+
+    useEffect(() => {
         if(userRedux.token !== '') {
             setTimeout(() => {
                 dispatch(setLoadingScreenHome({

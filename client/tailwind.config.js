@@ -4,9 +4,11 @@ module.exports = {
   theme: {
     extend: {
       gridTemplateColumns: {
-        // Simple 16 column grid
-        'lg-3rows-content': '20% 60% 20%',
         'lg-2rows-content': '20% 80%',
+        'lg-3rows-content': '20% 60% 20%',
+        'lg-4rows-content': '25% 25% 25% 25%',
+        'lg-5rows-content': '20% 20% 20% 20% 20%',
+        'md-3rows-content': '33.333333% 33.333333% 33.333333%',
       },
       zIndex: {
         '-10': '-10',

@@ -172,7 +172,7 @@ const userController = {
         try {
             jwt.verify(req.body.token, process.env.TOKEN_SECRET, function(err, decoded) {
                 if (err){
-                    res.status(500).json({
+                    res.status(200).json({
                         isExpired: true,
                         message: 'token expired',
                         expired: moment(err.expiredAt).format('DD-MM-YYYY H:m:s')

@@ -53,6 +53,26 @@ const httpCheckToken = async (token: any )=> {
     }
   }
 
+const expiredToken = (dispatch: AppDispatch) => {
+    Cookies.remove('token')
+    dispatch(setAuthStatus({
+        token: ''
+    }))
+    dispatch(setReduxUsersProfile({
+        name: '',
+        phone: '',
+        phone_verif: false,
+        email: '',
+        email_verif: false,
+        photo: '',
+        recruiter: '',
+        job_seeker: '',
+    }))
+    dispatch(setLoadingScreenHome({
+        show: false
+    }))
+}
+
 // untuk ambil data user
 export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
     return new Promise<UserState>(async (resolve, reject) => {
@@ -74,42 +94,10 @@ export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
         try {
             const tokens = Cookies.get('token') === '' ? '' : Cookies.get('token')
             if (typeof Cookies.get('token') === 'undefined') {
-                dispatch(setAuthStatus({
-                    token: ''
-                }))
-                dispatch(setReduxUsersProfile({
-                    name: '',
-                    phone: '',
-                    phone_verif: false,
-                    email: '',
-                    email_verif: false,
-                    photo: '',
-                    recruiter: '',
-                    job_seeker: '',
-                }))
-                dispatch(setLoadingScreenHome({
-                    show: false
-                }))
+                expiredToken(dispatch)
             } else {
-            
                 if (tokens === '') {
-                    Cookies.remove('token')
-                    dispatch(setAuthStatus({
-                        token: ''
-                    }))
-                    dispatch(setReduxUsersProfile({
-                        name: '',
-                        phone: '',
-                        phone_verif: false,
-                        email: '',
-                        email_verif: false,
-                        photo: '',
-                        recruiter: '',
-                        job_seeker: '',
-                    }))
-                    dispatch(setLoadingScreenHome({
-                        show: false
-                    }))
+                    expiredToken(dispatch)
                 } else {
                     const isexpired = await httpCheckToken(tokens)
         
@@ -153,27 +141,10 @@ export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
                                 // dispatch(setLoadingAuth({loadingAuth: false }))
                             }, 1000)
                         }
-                    } 
+                    } else {
+                        expiredToken(dispatch)
+                    }
                 }
-                // else {
-                //     Cookies.remove('token')
-                //     dispatch(setAuthStatus({
-                //         token: ''
-                //     }))
-                //     dispatch(setReduxUsersProfile({
-                //         name: '',
-                //         phone: '',
-                //         phone_verif: false,
-                //         email: '',
-                //         email_verif: false,
-                //         photo: '',
-                //         recruiter: '',
-                //         job_seeker: '',
-                //     }))
-                //     dispatch(setLoadingScreenHome({
-                //         show: false
-                //     }))
-                // }
             }
         } catch (e) {
             // error reading value

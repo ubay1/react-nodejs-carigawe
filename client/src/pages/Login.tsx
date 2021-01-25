@@ -29,6 +29,10 @@ const Login = () => {
     const history = useHistory();
 
     useEffect(() => {
+        document.title = 'Cari Gawe - Masuk'
+    }, [])
+
+    useEffect(() => {
         if(userRedux.token !== '') {
             setTimeout(() => {
                 dispatch(setLoadingScreenHome({
