@@ -53,7 +53,7 @@ const httpCheckToken = async (token: any )=> {
     }
   }
 
-const expiredToken = (dispatch: AppDispatch) => {
+export const expiredToken = (dispatch: AppDispatch) => {
     Cookies.remove('token')
     dispatch(setAuthStatus({
         token: ''

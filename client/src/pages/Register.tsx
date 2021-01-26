@@ -6,8 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import { toast, Slide } from 'react-toastify';
-import image_login from '../assets/image_login.png';
-import image_loading from '../assets/loading.gif';
 import { AppDispatch } from '../store';
 import {setLoading} from '../store/loading'
 import { setLoadingScreenHome } from '../store/loadingScreenHome';

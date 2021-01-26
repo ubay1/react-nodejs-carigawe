@@ -71,19 +71,10 @@ const Login = () => {
             })
 
             if (responseLoginUser.status === 200) {
-                toast(responseLoginUser.data.message, {
-                    position: "bottom-right",
-                    autoClose: 5000,
-                    type: 'success',
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    transition: Slide
-                })
 
                 dispatch(setLoading({
-                    show: false,
-                    timeout: 0,
+                    show: true,
+                    timeout: 300000
                 }))
 
                 const responseGetUser = await HTTPGetUser({
@@ -104,10 +95,23 @@ const Login = () => {
                     photo: responseGetUser.data.photo,
                 }))
 
-                // const datauser = JSON.stringify(responseLoginUser.data.data)
-                // localStorage.setItem('user', datauser)
+                setTimeout(() => {
+                    dispatch(setLoading({
+                        show: false,
+                        timeout: 0
+                    }))
+                    toast(responseLoginUser.data.message, {
+                        position: "bottom-right",
+                        autoClose: 5000,
+                        type: 'success',
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        transition: Slide
+                    })
+                    history.push('/')
+                }, 2000)
     
-                history.push('/')
             }
 
 

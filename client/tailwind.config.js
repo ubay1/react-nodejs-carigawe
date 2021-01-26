@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       gridTemplateColumns: {
         'lg-2rows-content': '20% 80%',
+        'lg-2rows-content-menu': '40% 60%',
         'lg-3rows-content': '20% 60% 20%',
         'lg-4rows-content': '25% 25% 25% 25%',
         'lg-5rows-content': '20% 20% 20% 20% 20%',
