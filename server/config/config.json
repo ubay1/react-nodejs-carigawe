@@ -2,21 +2,26 @@
   "development": {
     "username": "postgres",
     "password": "buaran123",
-    "database": "dilelang",
+    "database": "carigawe",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "dialectOptions": { 
+      "useUTC": false,
+      "timezone": "+7"
+    },
+    "timezone": "+7"
   },
   "test": {
     "username": "postgres",
     "password": "buaran123",
-    "database": "dilelang",
+    "database": "carigawe",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
     "username": "postgres",
     "password": "buaran123",
-    "database": "dilelang",
+    "database": "carigawe",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }

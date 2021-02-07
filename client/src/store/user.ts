@@ -10,6 +10,7 @@ import { HTTPCheckToken, HTTPGetUser } from '../utils/http';
 import { setLoadingScreenHome } from './loadingScreenHome';
 
 export interface IUserProfile {
+    id?: string,
     name?: string,
     phone?: string,
     phone_verif?: boolean,
@@ -30,6 +31,7 @@ const initialState: UserState = {
     token: '',
     // loginWith: '',
     profile: {
+        id: '',
         name: '',
         phone: '',
         phone_verif: false,
@@ -41,7 +43,7 @@ const initialState: UserState = {
     },
 }
 
-const httpCheckToken = async (token: any )=> {
+export const httpCheckToken = async (token: any )=> {
     try {
       const responseCheckToken = await HTTPCheckToken({
         token: token
@@ -59,6 +61,7 @@ export const expiredToken = (dispatch: AppDispatch) => {
         token: ''
     }))
     dispatch(setReduxUsersProfile({
+        id: '',
         name: '',
         phone: '',
         phone_verif: false,
@@ -80,6 +83,7 @@ export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
             token: '',
             // loginWith: '',
             profile: {
+                id: '',
                 name: '',
                 phone: '',
                 phone_verif: false,
@@ -101,7 +105,7 @@ export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
                 } else {
                     const isexpired = await httpCheckToken(tokens)
         
-                    // jika ada data gotek
+                    // jika ada data token
                     if (isexpired === false) {
                         defaultValue.token = tokens
         
@@ -159,6 +163,7 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setReduxUsersProfile(state, action: PayloadAction<IUserProfile>) {
+            state.profile.id = action.payload.id
             state.profile.name = action.payload.name
             state.profile.phone = action.payload.phone
             state.profile.phone_verif = action.payload.phone_verif

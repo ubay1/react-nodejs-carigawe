@@ -1,59 +1,56 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-const Job = require('../models').job;
-const User = require('../models').user;
+const models = require('../models');
+const { validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
+const salt = bcrypt.genSaltSync(10);
+const jwt = require('jsonwebtoken');
+const dotenv = require("dotenv");
+// get config vars
+dotenv.config();
+const moment = require('moment')
 
-module.exports = {
+const hashids = require('../utils/helper')
 
-    async getAllUsers(req,res) {
-        try {
-            const userCollection = await User.find({});
-            res.status(201).send(userCollection);
-        }
-        catch(e){
-            console.log(e);
-            res.status(500).send(e);
-        }
+const jobController = {
+  async postJob(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+      } else {
+        const decodeId = hashids.decode(req.body.author_job_id)
 
-    },
+        const cekIdIsExist = await models.user.findOne({
+          where: { id: decodeId }
+        })
 
-    async create(req,res) {
-        try {
-            const userCollection = await User
-            .create({
-                email : req.body.email,
-            });
-
-            res.status(201).send(userCollection);
-        }
-        catch(e){
-            console.log(e);
-            res.status(400).send(e);
-        }
-                    
-    },
-
-    async update(req,res) {
-        try{
-            const userCollection = await User.find({
-                id : req.params.userId
-            });
-
-            if(userCollection){
-                const updatedUser = await User.update({
-                    id : req.body.email
-                });
-
-                res.status(201).send(updatedUser)
-
+        if(cekIdIsExist) {
+          const jobs = await models.job.create(
+            {
+              author_job_id: decodeId,
+              content: req.body.content,
+              expiredAt: req.body.expiredAt,
             }
-            else{
-                res.status(404).send("User Not Found");
-            }
+          );
+  
+          res.status(200).json({
+            'message': 'Lowongan berhasil di publish',
+            'data': jobs
+          });
+        } else {
+          return res.status(404).send({
+            errors: "user tidak terdaftar."
+          });
+        }
 
-        }
-        catch(e){
-            console.log(e);
-            res.status(500).send(e);
-        }
-    } 
+      }
+
+
+    } catch(e) {
+      console.log(e)
+    }
+  }
 }
+
+module.exports = jobController

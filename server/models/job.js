@@ -8,13 +8,13 @@ module.exports = (sequelize, DataTypes) => {
   const job = sequelize.define('job', {
     author_job_id: DataTypes.NUMBER,
     received_job_id: DataTypes.NUMBER,
-    title: DataTypes.STRING,
-    description: DataTypes.STRING
+    content: DataTypes.TEXT,
+    expiredAt: DataTypes.DATE,
   }, {});
   
   job.associate = function(models) {
-    // job.hasOne(models.like, {as: 'likes'})
-    // job.hasOne(models.comment, {as: 'comments'})
+    job.hasOne(models.like, {as: 'likes'})
+    job.hasOne(models.comment, {as: 'comments'})
     job.belongsTo(models.user, {foreignKey: 'author_job_id'})
     job.belongsTo(models.user, {foreignKey: 'received_job_id'})
   };

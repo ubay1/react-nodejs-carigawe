@@ -1,18 +1,25 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { AppDispatch } from '../store'
 import { RootState } from '../store/rootReducer'
 import { RiSuitcaseLine, RiCloseLine, RiMenuLine, RiSendPlaneFill, RiCheckLine, RiArrowRightSLine, RiUserLine, RiHome3Line, RiLogoutCircleRLine, RiLoginCircleLine, RiEdit2Line } from "react-icons/ri";
-import {expiredToken} from '../store/user'
-import {setLoading} from '../store/loading'
+import { expiredToken } from '../store/user'
+import { setLoading } from '../store/loading'
 import { setPageActive } from '../store/pageActive'
 import { Slide, toast } from 'react-toastify'
 
-const Header = () => {
+interface ITypeHeader {
+  sudahDiPage: string;
+}
+
+const Header = (props: ITypeHeader) => {
   const [menuHide, setmenuHide] = useState(true)
+  const [diPageMana, setdiPageMana] = useState("")
+  const history = useHistory();
 
   const userRedux = useSelector((state: RootState) => state.user)
   const pageActive = useSelector((state: RootState) => state.pageActive)
@@ -32,11 +39,12 @@ const Header = () => {
   }
 
   useEffect(() => {
-    if(userRedux.token === '') {
+    if (userRedux.token === '') {
       dispatch(setLoading({
         show: true,
         timeout: 0
       }))
+      history.push('/login')
     }
   }, [dispatch, userRedux.token])
 
@@ -44,33 +52,37 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    // console.log('sudah dimana halamannya ? ', props.sudahDiPage)
+  }, [diPageMana])
+
 
   return (
-    <div
-      className="bg-white shadow-md  z-20 p-4  w-full pin-t 
-                lg:grid lg:grid-cols-lg-2rows-content
-                md:grid md:grid-cols-lg-3rows-content md:justify-between
-                flex justify-center
-                "
+    <div className="bg-white shadow-md  z-110 p-4  w-full pin-t 
+      lg:grid lg:grid-cols-lg-2rows-content
+      md:grid md:grid-cols-lg-3rows-content md:justify-between
+      flex justify-center
+      "
       id="myHeader"
     >
-      <div className="
-        flex items-center flex-no-shrink text-black 
-        "
+      <div className="flex items-center flex-no-shrink text-black "
       >
-        <Link className="text-4xl text-blue-600 tracking-wide font-semibold font_damion md:text-3xl" to="/">
+        <Link 
+          className="text-4xl text-blue-600 tracking-wide font-semibold font_damion md:text-3xl" 
+          to="/"
+        >
           Cari Gawe
-            </Link>
+        </Link>
       </div>
 
       {/* ketika lebar medium/tablet */}
       <div
         className="
-                hidden
-                text-black
-                md:flex md:items-center md:flex-no-shrink 
-                lg:hidden
-            ">
+          hidden
+          text-black
+          md:flex md:items-center md:flex-no-shrink 
+          lg:hidden
+        ">
         <ul
           className="
             md:list-reset md:mb-0
@@ -81,14 +93,24 @@ const Header = () => {
           <li className="mr-0">
             {
               userRedux.profile.recruiter
-                ?
-                <button className="pulse flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline" >
-                  <RiSuitcaseLine className="text-lg mr-3" /> Buat Lowongan
-                                </button>
+              ?
+                props.sudahDiPage === 'createjob' ?
+                <div></div>
+                : <Link
+                to="/recruiter/create-job"
+                className="flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline"
+                onClick={() => {
+                  dispatch(setPageActive({
+                    ispage: 'createjobs'
+                  }))
+                }}
+              >
+                <RiSuitcaseLine className="text-lg mr-3" /> Buat Lowongan
+              </Link>
                 :
-                <button className="pulse flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline" >
+                <button className="flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline" >
                   <RiSuitcaseLine className="text-lg mr-3" /> Lowongan Terbaru
-                                </button>
+                </button>
             }
           </li>
         </ul>
@@ -102,8 +124,8 @@ const Header = () => {
             md:flex md:justify-end
         ">
         <button
-          id="nav-toggle" 
-          className="flex items-center p-2 border rounded-lg text-white bg-blue-500 shadow-md border-transparent hover:border-transparent focus:outline-none"
+          id="nav-toggle"
+          className="flex items-center p-2 border rounded-lg text-white bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 shadow-md border-transparent hover:border-transparent focus:outline-none"
           onClick={() => {
             setmenuHide(!menuHide)
           }}
@@ -123,6 +145,7 @@ const Header = () => {
           lg:flex lg:flex-row lg:items-center lg:justify-between lg:w-full lg:static lg:bg-transparent lg:shadow-none lg:p-0 lg:top-0
           md:flex-col-reverse md:absolute md:right-4 md:top-16
           md:w-36 md:bg-white md:p-2 md:rounded-md md:shadow-lg
+          md:z-110
           ${menuHide === true ? 'md:hidden' : 'md:flex'}
           `
         }
@@ -140,18 +163,25 @@ const Header = () => {
           <li className="mr-0">
             {
               userRedux.profile.recruiter
-                ?
-                <button 
-                  className="
-                    pulse flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline
-                  " 
+              ?
+                props.sudahDiPage === 'createjob' ?
+                <div></div>
+                :
+                <Link
+                  to="/recruiter/create-job"
+                  className="flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline"
+                  onClick={() => {
+                    dispatch(setPageActive({
+                      ispage: 'createjobs'
+                    }))
+                  }}
                 >
                   <RiSuitcaseLine className="text-lg mr-3" /> Buat Lowongan
-                </button>
+                </Link>
                 :
-                <button 
+                <button
                   className="
-                    pulse flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline
+                    flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline
                   "
                 >
                   <RiSuitcaseLine className="text-lg mr-3" /> Lowongan Terbaru
@@ -159,8 +189,8 @@ const Header = () => {
             }
           </li>
         </ul>
-        
-        {/* lsit menu */}
+
+        {/* list menu */}
         <ul
           className={`
             lg:list-reset lg:mb-0
@@ -172,7 +202,7 @@ const Header = () => {
               ?
               <>
                 <li className="w-full ">
-                  <Link to="/" 
+                  <Link to="/"
                     className={`py-2 
                     md:flex md:flex-row md:justify-start md:items-center 
                     lg:px-4
@@ -184,18 +214,18 @@ const Header = () => {
                         ispage: 'beranda'
                       }))
                     }}
-                  > 
-                    <RiHome3Line 
+                  >
+                    <RiHome3Line
                       className={`
                         text-xl md:mx-4 lg:text-2xl lg:mx-0
                         
-                      `}/> 
+                      `} />
                     <span className="text-sm lg:hidden"> Beranda </span>
-                </Link>
+                  </Link>
                 </li>
 
                 <li className="w-full ">
-                  <Link to="/" 
+                  <Link to="/"
                     className={`py-2 
                     md:flex md:flex-row md:justify-start md:items-center
                     lg:px-4 
@@ -207,14 +237,14 @@ const Header = () => {
                         ispage: 'profil'
                       }))
                     }}
-                  > 
-                    <RiUserLine 
+                  >
+                    <RiUserLine
                       className={`
                         text-xl md:mx-4 lg:text-2xl lg:mx-0
                         
-                      `}/> 
+                      `} />
                     <span className="text-sm lg:hidden"> Profil </span>
-                </Link>
+                  </Link>
                 </li>
                 <li className="w-full ">
                   <button
@@ -230,7 +260,7 @@ const Header = () => {
                         show: true,
                         timeout: 300000
                       }))
-                      
+
                       setTimeout(() => {
                         toast('Anda telah keluar', {
                           position: "bottom-right",
@@ -244,11 +274,11 @@ const Header = () => {
                         expiredToken(dispatch)
                       }, 2000)
                     }}
-                  > 
-                    <RiLogoutCircleRLine 
+                  >
+                    <RiLogoutCircleRLine
                       className={`
                         text-xl md:mx-4 lg:text-2xl lg:mx-0
-                      `}/> 
+                      `} />
                     <span className="text-sm lg:hidden"> Keluar </span>
                   </button>
                 </li>
@@ -258,7 +288,8 @@ const Header = () => {
                     userRedux.profile.photo === ''
                       ?
                       <div
-                        className="bg-blue-500 w-9 text-white text-xl cursor-pointer p-2 rounded-full">
+                        className="bg-gradient-to-bl from-blue-400 to-blue-500 
+          hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 w-9 text-white text-xl cursor-pointer p-2 rounded-full">
                         <AiOutlineUser />
                       </div>
                       : 'ada foto'
@@ -319,7 +350,7 @@ const Header = () => {
                       hover:bg-gray-100 rounded-md
                     "
                   >
-                    <RiLoginCircleLine className="text-xl md:mx-4 lg:text-2xl lg:mx-0"/> 
+                    <RiLoginCircleLine className="text-xl md:mx-4 lg:text-2xl lg:mx-0" />
                     <span className="text-sm lg:hidden"> Masuk </span>
                   </Link>
                 </li>
@@ -333,7 +364,7 @@ const Header = () => {
                       hover:bg-gray-100 rounded-md
                     "
                   >
-                    <RiEdit2Line className="text-xl md:mx-4 lg:text-2xl lg:mx-0"/> 
+                    <RiEdit2Line className="text-xl md:mx-4 lg:text-2xl lg:mx-0" />
                     <span className="text-sm lg:hidden"> Daftar </span>
                   </Link>
                 </li>

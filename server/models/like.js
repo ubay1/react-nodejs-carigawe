@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   like.associate = function(models) {
-    // like.belongsTo(models.job, {foreignKey: 'job_id'})
-    // like.belongsTo(models.user, {foreignKey: 'user_id'})
+    like.belongsTo(models.job, {foreignKey: 'job_id'})
+    like.belongsTo(models.user, {foreignKey: 'user_id'})
   }
 
   return like;

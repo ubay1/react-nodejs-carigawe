@@ -22,7 +22,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 
-import { AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineSearch, AiFillHeart } from "react-icons/ai";
+import { RiQuestionAnswerFill } from "react-icons/ri";
 
 interface IPostJob {
   nama_pt: string;
@@ -48,6 +49,10 @@ const Home = () => {
   }, [])
 
   useEffect(() => {
+    console.log(valueKota)
+  }, [valueKota])
+
+  useEffect(() => {
     if (userRedux.token !== '') {
       setTimeout(() => {
         dispatch(setLoadingScreenHome({
@@ -65,63 +70,121 @@ const Home = () => {
   }, [dispatch, userRedux.token])
 
   const Recruiter = () => (
-    <div className="
-        -z-10 relative px-2 py-4  mb-14 bg-gray-50
-        md:mb-0
-      "
-    >
+    // <div className="
+    //     -z-10 relative px-2 py-4  mb-14 bg-gray-50
+    //     md:mb-0
+    //   "
+    // >
       <div className=" 
-                md:grid-cols-md-3rows-content
-                sm:grid sm:grid-cols-2
-            ">
+        md:grid-cols-md-3rows-content md:my-4 md:mb-4
+        sm:grid sm:grid-cols-2
+        mb-20 mt-5
+      ">
         {
           postJobs.map((item: any, index: number) => {
             return (
               <div
                 key={`indexPost-${index}`}
-                className="px-5 py-4 mx-2 my-2 bg-white dark:bg-gray-800 shadow rounded-lg"
+                className="px-5 py-4 mx-2 my-2 bg-white shadow rounded-lg"
               >
                 <div className="flex mb-4">
-                  <div className="ml-2 mt-0.5">
-                    <span className="block font-bold text-md leading-snug text-black dark:text-gray-100">Frontend Developer</span>
-                    <span className="block text-sm text-gray-500 dark:text-gray-400 font-light leading-snug">16 Februari 2021</span>
+                  <div className="mt-0.5">
+                    <p className="block font-bold text-md leading-snug text-black">Frontend Developer</p>
+                    <p className="block text-xs text-gray-500 font-light leading-snug">16 Februari 2021</p>
+
+                    <div id={`text-loker-${index}`} className="text-sm my-4 line-clamp-2">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores repudiandae ratione ipsa, deleniti debitis omnis dolorum ut earum veritatis, alias voluptatibus. Eos inventore doloribus dolore praesentium itaque ipsam amet illo.
+                    </div>
+                    <button id={`btn-readmore-${index}`} className="
+                    bg-gradient-to-bl from-blue-400 to-blue-500 
+                    hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
+                    cursor-pointer text-white shadow-md p-2 rounded-lg text-xs
+                    "
+                    onClick={() => {
+                      var aa = document.getElementById(`text-loker-${index}`);
+                      aa?.classList.replace('line-clamp-2', 'line-clamp-none')
+
+                      var bb = document.getElementById(`btn-hidemore-${index}`)
+                      bb?.classList.remove('hidden')
+
+                      var cc = document.getElementById(`btn-readmore-${index}`)
+                      cc?.classList.add('hidden')
+                    }}
+                    >
+                      Read more
+                    </button>
+
+                    <button 
+                    id={`btn-hidemore-${index}`} 
+                    className="
+                    hidden
+                    bg-gradient-to-bl from-blue-400 to-blue-500 
+                    hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
+                    cursor-pointer text-white shadow-md p-2 rounded-lg text-xs
+                    "
+                    onClick={() => {
+                      var aa = document.getElementById(`text-loker-${index}`);
+                      aa?.classList.replace('line-clamp-none', 'line-clamp-2')
+
+                      var bb = document.getElementById(`btn-hidemore-${index}`)
+                      bb?.classList.add('hidden')
+
+                      var cc = document.getElementById(`btn-readmore-${index}`)
+                      cc?.classList.remove('hidden')
+                    }}
+                    >
+                      Hide more
+                    </button>
                   </div>
                 </div>
+
                 <div className="flex justify-between items-center mt-5">
-                  <div className="flex ">
-                    <span className="ml-1 text-gray-500 dark:text-gray-400  font-light">8</span>
+                  <div className="flex flex-row items-center">
+                    <AiFillHeart className="text-red-500 cursor-pointer" />
+                    <div className="ml-1 text-xs text-gray-500  font-light">
+                      8
+                    </div>
                   </div>
-                  <div className="ml-1 text-gray-500 dark:text-gray-400 font-light">33 comments</div>
+                  <div className="flex flex-row items-center">
+                    <RiQuestionAnswerFill className="text-blue-500 cursor-pointer" />
+                    <div className="ml-1 text-xs text-gray-500 dark:text-gray-400 font-light ">
+                      33
+                    </div>
+                  </div>
                 </div>
               </div>
             )
           })
         }
       </div>
-    </div>
+    // </div>
   )
 
   const JobSeeker = () => (
     <div className="grid lg:grid-cols-lg-3rows-content">
       <div className="">
-        <div className="bg-blue-100 h-auto my-8 mx-4 py-8 px-4">
+        <div className="bg-blue-100 relative h-auto my-8 mx-4 py-8 px-4">
           <div className=" text-sm font-semibold text-gray-700 tracking-wide mb-1">Posisi Pekerjaan</div>
           <input className="w-full mb-2 text-sm py-2 px-2 shadow rounded-lg border-gray-300 focus:outline-none focus:border-blue-500" type="" placeholder="frontend developer" />
 
           <div className=" text-sm font-semibold text-gray-700 tracking-wide mb-1">Kota</div>
 
-          <Typeahead
-            id="domisili"
-            placeholder="domisili"
-            onChange={(selected) => {
-              setvalueKota(selected[0].label.toLowerCase())
-            }}
-            options={dataKota}
-          />
+          <div className="z-10 relative">
+            <Typeahead
+              id="domisili"
+              placeholder="domisili"
+              onChange={(selected) => {
+                console.log(selected)
+                setvalueKota(selected[0].label.toLowerCase())
+              }}
+              options={dataKota}
+              defaultInputValue={valueKota}
+            />
+          </div>
 
-          <button className=" bg-blue-500 relative hover:bg-blue-600 text-sm rounded-lg text-white shadow mt-2 w-full py-2 px-4 no-underline">
+          <button className=" bg-blue-500 relative z-0 hover:bg-blue-600 text-sm rounded-lg text-white shadow mt-2 w-full py-2 px-4 no-underline">
             <AiOutlineSearch className="absolute left-8 text-lg" />   Cari
-                    </button>
+          </button>
         </div>
       </div>
       <div className="px-8 py-8 bg-gray-50 -z-10 grid gap-4 lg:grid-cols-1 md:grid-cols-1 ">
@@ -162,8 +225,8 @@ const Home = () => {
     )
   } else {
     return (
-      <div>
-        <Header />
+      <>
+        <Header sudahDiPage="home"/>
 
         {
           userRedux.profile.recruiter
@@ -172,7 +235,7 @@ const Home = () => {
         }
 
         <Footer />
-      </div>
+      </>
     )
   }
 }

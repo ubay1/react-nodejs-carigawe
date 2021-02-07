@@ -258,7 +258,7 @@ const Register = () => {
                                 </div>
                                 <div className="mt-10">
                                 <button 
-                                    className="bg-blue-500 text-gray-100 p-4 w-full rounded-full tracking-wide font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg"
+                                    className="bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 text-gray-100 p-4 w-full rounded-full tracking-wide font-semibold font-display focus:outline-none focus:shadow-outline shadow-lg"
                                     type="submit"
                                     onClick={() => {
                                         // dispatch(setLoading({

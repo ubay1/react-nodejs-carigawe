@@ -1,7 +1,12 @@
 /* eslint-disable no-unused-vars */
 'use strict';
+
+const withDateNoTz = require('sequelize-date-no-tz-postgres');
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
+    const DataTypes = withDateNoTz(Sequelize);
+
     await queryInterface.createTable('jobs', {
       id: {
         allowNull: false,
@@ -37,11 +42,11 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DataTypes.DATE_NO_TZ
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DataTypes.DATE_NO_TZ
       }
     });
   },

@@ -33,7 +33,7 @@ const Loading = () => {
             {
                 loading.show === true
                 ?
-                <div className="w-full h-full bg-black bg-opacity-80 fixed text-white z-50 flex justify-center">
+                <div className="w-full h-full bg-black bg-opacity-80 fixed text-white z-120 flex justify-center">
                     <div className="loading-body flex items-center">
                         {/* <img
                             className="m-auto"

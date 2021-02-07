@@ -5,6 +5,8 @@ const { validationResult } = require('express-validator');
 const userController = require('../controller/user');
 const userValidation = require('./user_validation')
 
+const jobController = require('../controller/job');
+
 function handleValidationErrors(req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -20,5 +22,7 @@ router.post('/user/signout', userController.signout);
 router.post('/user/check_token', userController.checkToken);
 router.post('/user/get_user', userController.getUser);
 router.put('/user/:userId',userController.update);
+
+router.post('/recruiter/postjob', jobController.postJob);
 
 module.exports = router

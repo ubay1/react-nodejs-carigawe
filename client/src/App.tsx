@@ -12,6 +12,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
 import Loading from './components/Loading';
+import CreateJob from './pages/recruiter/CreateJobs';
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from "react";
@@ -24,13 +26,14 @@ const App = () => {
     <Provider store={store}>
     <Router>
       <Loading></Loading>
-      <div>
-          <Switch>
-              <Route exact path='/' component={Home} />
-              <Route exact path='/login' component={Login} />
-              <Route exact path='/register' component={Register} />
-          </Switch>
-      </div>
+      {/* <div> */}
+      <Switch>
+          <Route exact path='/' component={Home} />
+          <Route exact path='/login' component={Login} />
+          <Route exact path='/register' component={Register} />
+          <Route exact path='/recruiter/create-job' component={CreateJob} />
+      </Switch>
+      {/* </div> */}
     </Router>
     </Provider>
   );

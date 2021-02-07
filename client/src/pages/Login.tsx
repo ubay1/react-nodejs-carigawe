@@ -52,7 +52,7 @@ const Login = () => {
         },
         onSubmit: values => {
             httpLoginUser(values)
-          console.log(JSON.stringify(values, null, 2));
+        //   console.log(JSON.stringify(values, null, 2));
         },
         validationSchema: Yup.object({
             email: Yup.string()
@@ -85,6 +85,7 @@ const Login = () => {
                     token: responseLoginUser.data.accessToken
                 }))
                 dispatch(setReduxUsersProfile({
+                    id: responseGetUser.data.id,
                     email: responseGetUser.data.email,
                     email_verif: responseGetUser.data.email_verif,
                     job_seeker: responseGetUser.data.job_seeker,
@@ -202,8 +203,8 @@ const Login = () => {
                                     )}
                                 </div>
                                 <div className="mt-10">
-                                    <button className="bg-blue-500 text-gray-100 p-4 w-full rounded-full tracking-wide
-                                    font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-blue-600
+                                    <button className="bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 text-gray-100 p-4 w-full rounded-full tracking-wide
+                                    font-semibold font-display focus:outline-none focus:shadow-outline
                                     shadow-lg"
                                     type="submit"
                                     >
