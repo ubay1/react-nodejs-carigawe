@@ -233,6 +233,18 @@ const userController = {
       console.log(e);
       res.status(500).send(e);
     }
+  },
+
+  async cobaAssociation(req, res) {
+    try {
+      const job = await models.job.findAll({
+        include: [models.user]
+      })
+      console.log(job)
+      return res.status(200).json(job)
+    } catch(err) {
+      console.log(err)
+    }
   }
 }
 

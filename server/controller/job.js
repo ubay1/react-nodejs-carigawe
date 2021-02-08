@@ -33,11 +33,29 @@ const jobController = {
               expiredAt: req.body.expiredAt,
             }
           );
+
+          // {
+          //   include: [
+          //     {
+          //       model: models.user,
+          //       as: 'user'
+          //     }
+          //   ]
+          // }
+          
+          console.log(jobs)
   
-          res.status(200).json({
-            'message': 'Lowongan berhasil di publish',
-            'data': jobs
-          });
+          // if (jobs) {
+          //   res.status(200).json({
+          //     'message': 'Lowongan berhasil di publish',
+          //     'data': jobs
+          //   });
+          // } else {
+          //   res.status(400).json({
+          //     'message': 'Lowongan berhasil di publish',
+          //     'data': jobs
+          //   });
+          // }
         } else {
           return res.status(404).send({
             errors: "user tidak terdaftar."

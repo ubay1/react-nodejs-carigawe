@@ -14,24 +14,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      author_job_id: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         onDelete : 'CASCADE',
         references : {
             model : 'users',
             key : 'id',
-            as : 'author_job_id'
-        },
-      },
-      received_job_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        onDelete : 'CASCADE',
-        references : {
-            model : 'users',
-            key : 'id',
-            as : 'received_job_id'
+            // as : 'userId'
         },
       },
       title: {

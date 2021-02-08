@@ -22,6 +22,7 @@ router.post('/user/signout', userController.signout);
 router.post('/user/check_token', userController.checkToken);
 router.post('/user/get_user', userController.getUser);
 router.put('/user/:userId',userController.update);
+router.get('/coba_asosiation', userController.cobaAssociation);
 
 router.post('/recruiter/postjob', jobController.postJob);
 

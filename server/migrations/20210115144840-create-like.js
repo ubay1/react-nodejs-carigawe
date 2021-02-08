@@ -13,22 +13,22 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      job_id: {
+      jobId: {
         type: Sequelize.INTEGER,
         onDelete : 'CASCADE',
         references : {
             model : 'jobs',
             key : 'id',
-            as : 'job_id'
+            // as : 'jobId'
         },
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER,
         onDelete : 'CASCADE',
         references : {
             model : 'users',
             key : 'id',
-            as : 'user_id'
+            // as : 'userId'
         },
       },
       like: {

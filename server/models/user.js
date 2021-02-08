@@ -8,25 +8,19 @@ module.exports = (sequelize, DataTypes) => {
   const user = sequelize.define('user', {
     name: DataTypes.STRING,
     phone: DataTypes.STRING,
-    phone_verif: DataTypes.BOOLEAN,
     email: DataTypes.STRING,
-    email_verif: DataTypes.BOOLEAN,
-    password: DataTypes.TEXT,
+    // disable biar gakditampilin
+    // phone_verif: DataTypes.BOOLEAN,
+    // email_verif: DataTypes.BOOLEAN,
+    // password: DataTypes.TEXT, 
     photo: DataTypes.STRING,
     recruiter: DataTypes.BOOLEAN,
     job_seeker: DataTypes.BOOLEAN
-  }, 
-  // {
-  //   defaultScope: {
-  //     attributes: {
-  //       exclude: ['password']
-  //     }
-  //   }
-  // }
+  },
   );
 
   user.associate = function(models) {
-    user.hasMany(models.job, {as: 'jobs'})
+    user.hasMany(models.job)
     // User.hasOne(models.like, {as: 'likes'})
     // User.hasOne(models.comment, {as: 'comments'})
   };
