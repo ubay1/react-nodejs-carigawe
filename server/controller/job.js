@@ -15,58 +15,73 @@ const hashids = require('../utils/helper')
 const jobController = {
   async postJob(req, res) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
-      } else {
-        const decodeId = hashids.decode(req.body.author_job_id)
+      const decodeId = hashids.decode(req.body.userId)
+      console.log(req.body.userId)
+      const cekIdIsExist = await models.user.findOne({
+        attributes: ['id'],
+        where: { id: decodeId },
+      })
 
-        const cekIdIsExist = await models.user.findOne({
-          where: { id: decodeId }
-        })
-
-        if(cekIdIsExist) {
-          const jobs = await models.job.create(
-            {
-              author_job_id: decodeId,
-              content: req.body.content,
-              expiredAt: req.body.expiredAt,
-            }
-          );
-
-          // {
-          //   include: [
-          //     {
-          //       model: models.user,
-          //       as: 'user'
-          //     }
-          //   ]
-          // }
-          
-          console.log(jobs)
-  
-          // if (jobs) {
-          //   res.status(200).json({
-          //     'message': 'Lowongan berhasil di publish',
-          //     'data': jobs
-          //   });
-          // } else {
-          //   res.status(400).json({
-          //     'message': 'Lowongan berhasil di publish',
-          //     'data': jobs
-          //   });
-          // }
+      if(cekIdIsExist) {
+        // return res.status(200).json(cekIdIsExist)
+        const jobs = await models.job.create(
+          {
+            userId: decodeId,
+            content: req.body.content,
+            expiredAt: req.body.expiredAt,
+          }
+        );
+      
+        if (jobs) {
+          res.status(200).json({
+            'message': 'Lowongan berhasil di publish',
+            'data': jobs
+          });
         } else {
-          return res.status(404).send({
-            errors: "user tidak terdaftar."
+          res.status(400).json({
+            'message': 'Lowongan gagal di publish',
+            'data': null
           });
         }
-
+      } else {
+        return res.status(404).send({
+          errors: "user tidak terdaftar."
+        });
       }
-
-
     } catch(e) {
       console.log(e)
+    }
+  },
+  async getAllJob(req, res) {
+    try {
+      const jobs = await models.job.findAll({
+        attributes: ['id', 'userId', 'content', 'expiredAt', 'createdAt'],
+        include: [models.user]
+      })
+
+      const filterJobs = jobs.map((item) => {
+        return {
+          id: hashids.encode(item.id),
+          userId: hashids.encode(item.userId),
+          content: item.content,
+          createdAt: item.createdAt,
+          expiredAt: item.expiredAt,
+          user: {
+            name: item.user.name,
+            photo: item.user.photo,
+          }
+        }
+      })
+
+      res.status(200).json({
+        message: "data tersedia",
+        totalData: jobs.length,
+        data: filterJobs,
+      })
+    } catch (error) {
+      res.status(500).json({
+        error: error
+      })
     }
   }
 }

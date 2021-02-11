@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 const express = require('express');
 const router  = express.Router();
 const { validationResult } = require('express-validator');
 
+const authMiddleware = require('../middleware/auth')
 const userController = require('../controller/user');
-const userValidation = require('./user_validation')
+const userValidation2 = require('../middleware/validation')
 
 const jobController = require('../controller/job');
 
@@ -16,7 +18,7 @@ function handleValidationErrors(req, res, next) {
     next();
 }
 
-router.post('/user/signup', userValidation, handleValidationErrors,  userController.signup);
+router.post('/user/signup', userValidation2, handleValidationErrors,  userController.signup);
 router.post('/user/signin', userController.signin);
 router.post('/user/signout', userController.signout);
 router.post('/user/check_token', userController.checkToken);
@@ -24,6 +26,7 @@ router.post('/user/get_user', userController.getUser);
 router.put('/user/:userId',userController.update);
 router.get('/coba_asosiation', userController.cobaAssociation);
 
-router.post('/recruiter/postjob', jobController.postJob);
+router.post('/recruiter/post_job', authMiddleware, jobController.postJob);
+router.post('/recruiter/get_all_post_job', authMiddleware, jobController.getAllJob);
 
 module.exports = router

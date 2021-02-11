@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 const models = require('../models');
 const { validationResult } = require('express-validator');
+
 const bcrypt = require('bcrypt');
-const salt = bcrypt.genSaltSync(10);
+const saltBcrypt = bcrypt.genSaltSync(10);
+
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
 // get config vars
@@ -35,10 +37,6 @@ const userController = {
   async signup(req, res) {
 
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
-      } else {
         const cekEmailIsExist = await models.user.findOne({
           where: {
             email: req.body.email
@@ -73,26 +71,25 @@ const userController = {
                 phone_verif: false,
                 email: req.body.email,
                 email_verif: false,
-                password: bcrypt.hashSync(req.body.password, salt),
+                password: bcrypt.hashSync(req.body.password, saltBcrypt),
                 photo: '',
                 recruiter: req.body.recruiter,
                 job_seeker: req.body.job_seeker,
+                gender: req.body.gender,
               }
             );
 
             res.status(200).json({
-              'message': 'pendaftaran berhasil.',
-              'data': user
+              message: 'pendaftaran berhasil.',
+              data: user
             });
           }
 
         }
-
-      }
     }
     catch (e) {
       console.log(e);
-      res.status(400).send(e);
+      res.status(500).send(e);
     }
 
   },
@@ -137,6 +134,7 @@ const userController = {
         photo: user.photo,
         recruiter: user.recruiter,
         job_seeker: user.job_seeker,
+        gender: user.gender,
       })
 
       const newDataUser = filterDataUser(user)

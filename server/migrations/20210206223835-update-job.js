@@ -12,6 +12,6 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     await queryInterface.renameColumn('jobs', 'content', 'description')
-    await queryInterface.addColumn('jobs','title', { type: Sequelize.STRING })
+    await queryInterface.addColumn('jobs','title', { type: Sequelize.TEXT })
   }
 };

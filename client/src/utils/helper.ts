@@ -12,10 +12,11 @@ export function AxiosNormal<AxiosInstance>(timeout?: number) {
 
     // Add a request interceptor
     instance.interceptors.request.use(function (config) {
-        // Do something before request is sent
+        // console.log(config)
+        // get data with bearer
+        config.headers.authorization = `Bearer ${config.data.token}`
         return config;
     }, function (error) {
-        // Do something with request error
 
         return Promise.reject(error);
     });

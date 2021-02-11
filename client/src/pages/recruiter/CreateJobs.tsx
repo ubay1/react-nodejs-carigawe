@@ -19,13 +19,16 @@ import { initialStateUserAuthByAsync } from '../../store/user';
 import { useHistory } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import LoadingScreen from '../../assets/loading_screen.json';
-import { HTTPCheckToken } from '../../utils/http';
+import { HTTPCheckToken, HTTPPostJob } from '../../utils/http';
 import {httpCheckToken} from '../../store/user'
 import { setPageActive } from '../../store/pageActive';
+import { Slide, toast } from 'react-toastify';
+import { setLoading } from '../../store/loading';
 
 // RichTextEditor.Inject(HtmlEditor, Image, Link, Toolbar);
 
-export default function CreateJobs() {
+const CreateJobs = () => {
+  toast.configure()
   const userRedux = useSelector((state: RootState) => state.user)
   const loadingScreenHomeRedux = useSelector((state: RootState) => state.loadingScreenHome)
   const dispatch: AppDispatch = useDispatch()
@@ -55,6 +58,7 @@ export default function CreateJobs() {
 
   // didmount
   useEffect(() => {
+    document.title = 'Cari Gawe - Buat Loker'
     dispatch(setPageActive({ispage: 'createjobs'}))
   }, [])
   
@@ -74,18 +78,61 @@ export default function CreateJobs() {
     console.log(tanggalBatasPengiriman)
   }, [tanggalBatasPengiriman])
 
-  // cek apakah token expired
-  const cekToken = () => {
-    httpCheckToken(userRedux.token)
-    .then(res => {
-      console.log('apakah token expired ? oh ', res)
-      if (res === false) {
+  const httpPostJob = async (props: {token: string, userId: any, content: string, expiredAt: string}) => {
+    // console.log(props)
+    try {
+      dispatch(setLoading({
+        show: true,
+        timeout: 300000
+      }))
 
+      if (content === '' || props.expiredAt === ' ') {
+          dispatch(setLoading({
+            show: false,
+            timeout: 0
+          }))
+          toast('form wajib diisi semua', {
+            position: "bottom-right",
+            autoClose: 5000,
+            type: 'error',
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            transition: Slide
+          })
+      } else {
+        const responsePostJob = await HTTPPostJob({
+          token: props.token,
+          userId: props.userId,
+          content: props.content,
+          expiredAt: props.expiredAt,
+        })
+  
+        console.log(responsePostJob.data.message)
+  
+        setcontent('')
+        setwaktuBatasPengiriman('')
+        settanggalBatasPengiriman('')
+
+        setTimeout(() => {
+          dispatch(setLoading({
+            show: false,
+            timeout: 0
+          }))
+          toast(responsePostJob.data.message, {
+            position: "bottom-right",
+            autoClose: 5000,
+            type: 'success',
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            transition: Slide
+          })
+        }, 2000)
       }
-    })
-    .catch(err => {
-      console.log(err)
-    }) 
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   if (loadingScreenHomeRedux.show === true) {
@@ -140,7 +187,7 @@ export default function CreateJobs() {
             placeholderText="pilih tanggal"
             value={tanggalBatasPengiriman}
             onChange={(date: any) => {
-              settanggalBatasPengiriman(moment(date).format('DD-MM-yyyy'))
+              settanggalBatasPengiriman(moment(date).format('yyyy-MM-DD'))
             }} 
           />
           <TimePicker
@@ -148,6 +195,7 @@ export default function CreateJobs() {
             placeholder="pilih waktu"
             className="ml-2 text-lg py-2 px-2 border-2 rounded-lg border-gray-50 focus:outline-none  shadow-md mr-2
             "
+            // defaultValue={moment()}
             onChange={(value: any) => {
                 // console.log(value.format(str));
                 setwaktuBatasPengiriman(value.format(str))
@@ -164,8 +212,15 @@ export default function CreateJobs() {
             hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
             cursor-pointer text-white shadow-md p-2 rounded-lg
             w-24"
+            type="submit"
             onClick={() => {
-              cekToken()
+              httpPostJob({
+                  token: userRedux.token,
+                  userId: userRedux.profile.id,
+                  content: content,
+                  expiredAt: `${tanggalBatasPengiriman} ${waktuBatasPengiriman}`
+                }
+              )
             }}
           >Kirim</button>
         </div>
@@ -175,3 +230,5 @@ export default function CreateJobs() {
     )
   }
 }
+
+export default CreateJobs

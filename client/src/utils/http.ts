@@ -64,3 +64,43 @@ export async function HTTPGetUser(param: {token: string}): Promise<any> {
         }
     })
 }
+
+//################################ Recruiter ################################//
+export async function HTTPGetAllJob(param: {token: string}): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const data = {
+                token: param.token
+            }
+            const responseGetAllJob = await AxiosNormal(2000).post(`${DevApiUrl}/recruiter/get_all_post_job`, data)
+            return resolve(responseGetAllJob)
+        } catch (error) {
+            return reject(error)
+        }
+    })
+}
+
+export async function HTTPPostJob(
+    param: {
+        token: string, 
+        userId: string,
+        content: string,
+        expiredAt: string,
+    }): Promise<any> 
+    {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const data = {
+                token: param.token,
+                userId: param.userId,
+                content: param.content,
+                expiredAt: param.expiredAt,
+            }
+            const responsePostJob = await AxiosNormal(2000).post(`${DevApiUrl}/recruiter/post_job`, data)
+            return resolve(responsePostJob)
+        } catch (error) {
+            return reject(error)
+        }
+    })
+}
+//################################ Recruiter ################################//
