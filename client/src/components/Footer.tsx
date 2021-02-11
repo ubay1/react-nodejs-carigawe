@@ -69,7 +69,7 @@ const Footer = () => {
         {/* <span className="text-sm">Buat Loker</span> */}
       </div>
 
-      <Link to="/" 
+      <Link to="/profil" 
         className={`flex flex-col items-center p-1 rounded-md
           ${pageActive.ispage === 'profil' ? 'bg-blue-50' : 'bg-transparent'}
         `}

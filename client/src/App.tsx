@@ -13,6 +13,7 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import Loading from './components/Loading';
 import CreateJob from './pages/recruiter/CreateJobs';
+import Profil from './pages/profil/profil';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -32,6 +33,7 @@ const App = () => {
           <Route exact path='/login' component={Login} />
           <Route exact path='/register' component={Register} />
           <Route exact path='/recruiter/create-job' component={CreateJob} />
+          <Route exact path='/profil' component={Profil} />
       </Switch>
       {/* </div> */}
     </Router>

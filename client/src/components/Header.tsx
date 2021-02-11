@@ -70,6 +70,11 @@ const Header = (props: ITypeHeader) => {
         <Link 
           className="text-4xl text-blue-600 tracking-wide font-semibold font_damion md:text-3xl" 
           to="/"
+          onClick={() => {
+            dispatch(setPageActive({
+              ispage: 'beranda'
+            }))
+          }}
         >
           Cari Gawe
         </Link>
@@ -225,7 +230,7 @@ const Header = (props: ITypeHeader) => {
                 </li>
 
                 <li className="w-full ">
-                  <Link to="/"
+                  <Link to="/profil"
                     className={`py-2 
                     md:flex md:flex-row md:justify-start md:items-center
                     lg:px-4 

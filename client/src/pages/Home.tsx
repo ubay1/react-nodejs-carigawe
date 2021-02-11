@@ -195,8 +195,6 @@ const Home = () => {
   const userRedux = useSelector((state: RootState) => state.user)
   const dispatch: AppDispatch = useDispatch()
 
-  const [postJobs, setpostJobs] = useState([1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2])
-
   const yearNow = Moment(new Date()).format('YYYY');
 
   const [valueKota, setvalueKota] = useState('');
