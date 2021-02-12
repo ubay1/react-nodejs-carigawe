@@ -4,13 +4,9 @@ import Lottie from 'lottie-react';
 import EmptyPost from '../assets/empty2.json';
 
 const EmptyData = () => (
-  <div
-    className=" my-8
-      flex flex-col items-center justify-center
-    "
-  >
+  <div className="flex flex-col items-center justify-center">
     <Lottie animationData={EmptyPost} style={{ width: 200 }} />
-    Data tidak ditemukan
+    Belum ada postingan
   </div>
 )
 

@@ -15,8 +15,11 @@ const hashids = require('../utils/helper')
 const jobController = {
   async postJob(req, res) {
     try {
-      const decodeId = hashids.decode(req.body.userId)
-      console.log(req.body.userId)
+      const replaceToken = req.headers.authorization.replace('Bearer ', '')
+      const decoded = jwt.verify(replaceToken, process.env.TOKEN_SECRET);
+
+      const decodeId = hashids.decode(decoded.id)
+      console.log(decoded.id)
       const cekIdIsExist = await models.user.findOne({
         attributes: ['id'],
         where: { id: decodeId },
@@ -55,28 +58,53 @@ const jobController = {
   async getAllJob(req, res) {
     try {
       const jobs = await models.job.findAll({
-        attributes: ['id', 'userId', 'content', 'expiredAt', 'createdAt'],
-        include: [models.user]
+        attributes: ['content', 'expiredAt', 'createdAt'],
+        include: [{model: models.user, attributes:['name', 'photo', 'gender']}]
       })
 
-      const filterJobs = jobs.map((item) => {
-        return {
-          id: hashids.encode(item.id),
-          userId: hashids.encode(item.userId),
-          content: item.content,
-          createdAt: item.createdAt,
-          expiredAt: item.expiredAt,
-          user: {
-            name: item.user.name,
-            photo: item.user.photo,
-          }
-        }
+      // const filterJobs = jobs.map((item) => {
+      //   return {
+      //     id: hashids.encode(item.id),
+      //     userId: hashids.encode(item.userId),
+      //     content: item.content,
+      //     createdAt: item.createdAt,
+      //     expiredAt: item.expiredAt,
+      //     user: {
+      //       name: item.user.name,
+      //       photo: item.user.photo,
+      //       gender: item.user.gender,
+      //     }
+      //   }
+      // })
+
+      res.status(200).json({
+        message: "data tersedia",
+        totalData: jobs.length,
+        data: jobs,
+      })
+    } catch (error) {
+      res.status(500).json({
+        error: error
+      })
+    }
+  },
+  async getJobUser(req, res) {
+    try {
+      const replaceToken = req.headers.authorization.replace('Bearer ', '')
+      const decoded = jwt.verify(replaceToken, process.env.TOKEN_SECRET);
+
+      // return res.send (decoded)
+
+      const jobs = await models.job.findAll({
+        where: {userId: hashids.decode(decoded.id)},
+        attributes: ['content', 'expiredAt', 'createdAt'],
+        include: [{model: models.user, attributes:['name', 'photo', 'gender']}]
       })
 
       res.status(200).json({
         message: "data tersedia",
         totalData: jobs.length,
-        data: filterJobs,
+        data: jobs,
       })
     } catch (error) {
       res.status(500).json({

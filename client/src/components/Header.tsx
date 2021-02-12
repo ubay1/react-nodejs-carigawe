@@ -59,8 +59,8 @@ const Header = (props: ITypeHeader) => {
 
   return (
     <div className="bg-white shadow-md  z-110 p-4  w-full pin-t 
-      lg:grid lg:grid-cols-lg-2rows-content
-      md:grid md:grid-cols-lg-3rows-content md:justify-between
+      lg:grid lg:grid-cols-lg-2cols-content
+      md:grid md:grid-cols-lg-3cols-content md:justify-between
       flex justify-center
       "
       id="myHeader"
@@ -265,12 +265,16 @@ const Header = (props: ITypeHeader) => {
                         show: true,
                         timeout: 300000
                       }))
+                      
+                      dispatch(setPageActive({
+                        ispage: 'beranda'
+                      }))
 
                       setTimeout(() => {
                         toast('Anda telah keluar', {
                           position: "bottom-right",
                           autoClose: 5000,
-                          type: 'error',
+                          type: 'info',
                           hideProgressBar: false,
                           closeOnClick: true,
                           pauseOnHover: true,

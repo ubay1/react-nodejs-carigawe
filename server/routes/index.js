@@ -22,11 +22,12 @@ router.post('/user/signup', userValidation2, handleValidationErrors,  userContro
 router.post('/user/signin', userController.signin);
 router.post('/user/signout', userController.signout);
 router.post('/user/check_token', userController.checkToken);
-router.post('/user/get_user', userController.getUser);
+router.post('/user/get_user',authMiddleware, userController.getUser);
 router.put('/user/:userId',userController.update);
 router.get('/coba_asosiation', userController.cobaAssociation);
 
 router.post('/recruiter/post_job', authMiddleware, jobController.postJob);
 router.post('/recruiter/get_all_post_job', authMiddleware, jobController.getAllJob);
+router.post('/recruiter/get_all_post_job_user', authMiddleware, jobController.getJobUser);
 
 module.exports = router

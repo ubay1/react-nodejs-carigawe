@@ -72,8 +72,22 @@ export async function HTTPGetAllJob(param: {token: string}): Promise<any> {
             const data = {
                 token: param.token
             }
-            const responseGetAllJob = await AxiosNormal(2000).post(`${DevApiUrl}/recruiter/get_all_post_job`, data)
+            const responseGetAllJob = await AxiosNormal(10000).post(`${DevApiUrl}/recruiter/get_all_post_job`, data)
             return resolve(responseGetAllJob)
+        } catch (error) {
+            return reject(error)
+        }
+    })
+}
+
+export async function HTTPGetAllJobUser(param: {token: string}): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const data = {
+                token: param.token
+            }
+            const responseGetAllJobUser = await AxiosNormal(10000).post(`${DevApiUrl}/recruiter/get_all_post_job_user`, data)
+            return resolve(responseGetAllJobUser)
         } catch (error) {
             return reject(error)
         }

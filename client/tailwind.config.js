@@ -3,13 +3,29 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      height: theme => ({
+        "screen-1": "10vh",
+        "screen-2": "20vh",
+        "screen-3": "30vh",
+        "screen-4": "40vh",
+        "screen-5": "50vh",
+        "screen-6": "60vh",
+        "screen-7": "70vh",
+        "screen-8": "80vh",
+        "screen-9": "90vh",
+      }),
       gridTemplateColumns: {
-        'lg-2rows-content': '20% 80%',
-        'lg-2rows-content-menu': '40% 60%',
-        'lg-3rows-content': '20% 60% 20%',
-        'lg-4rows-content': '25% 25% 25% 25%',
-        'lg-5rows-content': '20% 20% 20% 20% 20%',
-        'md-3rows-content': '33.333333% 33.333333% 33.333333%',
+        'lg-2cols-content': '20% 80%',
+        'lg-2cols-content-menu': '40% 60%',
+        'lg-3cols-content': '20% 60% 20%',
+        'lg-4cols-content': '25% 25% 25% 25%',
+        'lg-5cols-content': '20% 20% 20% 20% 20%',
+        'md-3cols-content': '33.333333% 33.333333% 33.333333%',
+      },
+      gridTemplateRows: {
+        'lg-2rows-home-list-job': '80% 20%',
+        'lg-3rows-home-list-job': '80% 10% 10%',
+        'lg-4rows-home-list-job': '10% 70% 10% 10%',
       },
       zIndex: {
         '60': '60',

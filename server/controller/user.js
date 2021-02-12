@@ -22,7 +22,6 @@ function filterDataUser(data) {
     id: hashids.encode(data.id),
     name: data.name,
     phone: data.phone,
-    phone_verif: data.phone_verif,
     email: data.email,
     email_verif: data.email_verif,
     photo: data.photo,
@@ -68,7 +67,6 @@ const userController = {
               {
                 name: req.body.name,
                 phone: req.body.phone,
-                phone_verif: false,
                 email: req.body.email,
                 email_verif: false,
                 password: bcrypt.hashSync(req.body.password, saltBcrypt),
@@ -127,14 +125,14 @@ const userController = {
       const token = generateAccessToken({
         id: hashids.encode(user.id),
         name: user.name,
-        phone: user.phone,
-        phone_verif: user.phone_verif,
-        email: user.email,
-        email_verif: user.email_verif,
-        photo: user.photo,
-        recruiter: user.recruiter,
-        job_seeker: user.job_seeker,
-        gender: user.gender,
+        // phone: user.phone,
+        // phone_verif: user.phone_verif,
+        // email: user.email,
+        // email_verif: user.email_verif,
+        // photo: user.photo,
+        // recruiter: user.recruiter,
+        // job_seeker: user.job_seeker,
+        // gender: user.gender,
       })
 
       const newDataUser = filterDataUser(user)
@@ -152,7 +150,7 @@ const userController = {
       res.status(500).send({
         auth: false,
         email: req.body.email,
-        password: req.body.password,
+        // password: req.body.password,
         accessToken: null,
         message: "Error",
         errors: e
@@ -199,8 +197,23 @@ const userController = {
 
   async getUser(req, res) {
     try {
-      const decoded = jwt.verify(req.body.token, process.env.TOKEN_SECRET);
-      res.status(200).json(decoded)
+      const replaceToken = req.headers.authorization.replace('Bearer ', '')
+      const decoded = jwt.verify(replaceToken, process.env.TOKEN_SECRET);
+
+      const users = await models.user.findOne({
+        where: {
+          id: hashids.decode(decoded.id)
+        },
+        attributes: [
+          "name", "phone", "email", "email_verif", "photo", "background_image", "gender","recruiter","job_seeker",
+        ],
+        include: [{model: models.job, attributes: ['content', 'expiredAt', ]}]
+      })
+
+      res.status(200).json({
+        message: "data tersedia",
+        data: users,
+      })
     } catch (error) {
       res.status(500).json({
         error: error

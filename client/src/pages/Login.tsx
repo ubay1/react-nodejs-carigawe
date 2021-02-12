@@ -84,16 +84,18 @@ const Login = () => {
         dispatch(setAuthStatus({
           token: responseLoginUser.data.accessToken
         }))
+        
         dispatch(setReduxUsersProfile({
-          id: responseGetUser.data.id,
-          email: responseGetUser.data.email,
-          email_verif: responseGetUser.data.email_verif,
-          job_seeker: responseGetUser.data.job_seeker,
-          recruiter: responseGetUser.data.recruiter,
-          name: responseGetUser.data.name,
-          phone: responseGetUser.data.phone,
-          phone_verif: responseGetUser.data.phone_verif,
-          photo: responseGetUser.data.photo,
+          id: responseGetUser.data.data.id,
+          email: responseGetUser.data.data.email,
+          email_verif: responseGetUser.data.data.email_verif,
+          job_seeker: responseGetUser.data.data.job_seeker,
+          recruiter: responseGetUser.data.data.recruiter,
+          name: responseGetUser.data.data.name,
+          phone: responseGetUser.data.data.phone,
+          photo: responseGetUser.data.data.photo,
+          background_image: responseGetUser.data.data.background_image,
+          gender: responseGetUser.data.data.gender,
         }))
 
         setTimeout(() => {

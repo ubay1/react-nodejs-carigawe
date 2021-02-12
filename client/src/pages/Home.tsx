@@ -31,83 +31,127 @@ import EmptyData from '../components/EmptyData'
 import './home.css'
 import moment from 'moment';
 import profilAccountDefault from '../assets/avatar3.png'
+import profilAccountDefault2 from '../assets/avatar6.png'
 import ReactPlaceholder from 'react-placeholder';
 import "react-placeholder/lib/reactPlaceholder.css";
+import Loader from "react-loader-spinner";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 const Recruiter = ({dataPost, isLoading}: any): any => {
   // console.log(isLoading) 
   return(
     <div>
-      <ReactPlaceholder 
-      className="mt-2" 
-      type='media' 
-      rows={3} 
-      ready={isLoading === true ? false : true}
-      delay={1000} 
-      showLoadingAnimation={true}>
       {
+        isLoading === true
+        ? 
+          <div className="flex items-center justify-center mb-14">
+            <Loader
+              type="Rings"
+              color="#00BFFF"
+              height={100}
+              width={100}
+              // timeout={3000} //3 secs
+            />
+          </div>
+        :
         dataPost.length === 0
         ? 
+        <div
+          className="
+            h-screen-8
+            flex flex-col items-center justify-center
+          "
+        >
           <EmptyData />
+        </div>
         :
         <div className=" 
-          lg:grid-cols-lg-4rows-content
-          md:grid-cols-md-3rows-content md:my-4 md:mb-4
+          lg:grid-cols-lg-4cols-content
+          md:grid-cols-md-3cols-content md:my-4 md:mb-4
           sm:grid sm:grid-cols-2
           mb-20 mt-5
         ">
           {
             dataPost.map((item: any, index: number) => {
+              // console.log(dataPost)
               return(
                 <div
                   key={`indexPost-${index}`}
-                  className="px-5 py-4 mx-2 my-2 bg-white shadow rounded-lg"
+                  className="px-5 py-4 
+                  mx-2 my-2 
+                  bg-white shadow rounded-lg
+                  grid grid-rows-lg-4rows-home-list-job
+                  h-full"
                 >
-                  <div className="flex mb-4">
-                    <div className="mt-0.5 overflow-x-auto w-full">
-                      <div 
-                        className="
-                        flex flex-row items-center justify-start
-                        mb-2
-                      ">
-                        
-                          {
-                          item.user.photo === ''
+
+                  {/* nama user dan tgl postingan */}
+                  <div className="">
+                    <div 
+                      className="
+                      h-full
+                      flex flex-row items-center justify-start
+                      mb-2
+                    ">    
+                      {
+                        item.user.photo === ''
+                        ? 
+                          item.user.gender === 'L'
                           ?
                             <img 
                               src={profilAccountDefault} 
                               alt="foto-profil" 
                               className="h-8 w-8 mr-1 rounded-full shadow-md"
                             />
-                          : item.user.photo
-                          }
-                        <div className="block font-bold text-md leading-snug text-black">
-                          <p className="text-md">{ item.user.name }</p>
-                          <p className="block text-xs text-gray-500 font-light leading-snug"> 
-                          { moment(item.createdAt).format('YYYY-MM-DD hh:mm:ss')}
-                          </p>
-                        </div>
+                          :
+                            <img 
+                              src={profilAccountDefault2} 
+                              alt="foto-profil" 
+                              className="h-8 w-8 mr-1 rounded-full shadow-md"
+                            />
+                        :
+                          <img 
+                            src={item.user.photo} 
+                            alt="foto-profil" 
+                            className="h-8 w-8 mr-1 rounded-full shadow-md"
+                          />
+                      }
+                      <div className="block font-bold text-md leading-snug text-black">
+                        <p className="text-md">{ item.user.name }</p>
+                        <p className="block text-xs text-gray-500 font-light leading-snug"> 
+                        { moment(item.createdAt).format('YYYY-MM-DD hh:mm:ss')}
+                        </p>
                       </div>
+                    </div>
+                  </div>
 
-                      <div id={`text-loker-${index}`} className="text-sm my-4 line-clamp-2">
-                        {
-                          parse(item.content)
-                        }
-                      </div>
-                      
-                      <button id={`btn-readmore-${index}`} className="
+                  {/* isi postingan */}
+                  <div className="mt-0.5 overflow-x-auto w-full">
+                    <div id={`text-loker-${index}`} 
+                    className="text-sm my-4 line-clamp-3
+                    ">
+                      {
+                        parse(item.content)
+                      }
+                    </div>
+                  </div>
+
+                  {/* button read more*/}
+                  <div className="">
+                    <button id={`btn-readmore-${index}`} className="
+                      h-full
                       bg-gradient-to-bl from-blue-400 to-blue-500 
                       hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
-                      cursor-pointer text-white shadow-md p-2 rounded-lg text-xs
+                      text-white shadow-md p-2 rounded-lg text-xs
+                      focus:outline-none
                       "
                       onClick={() => {
                       }}
                       >
                         Read more
-                      </button>
-                    </div>
+                    </button>
                   </div>
 
+                  {/* button like & comment*/}
                   <div className="flex justify-between items-center mt-5">
                     <div className="flex flex-row items-center">
                       <AiFillHeart className="text-red-500 text-md cursor-pointer" />
@@ -128,13 +172,12 @@ const Recruiter = ({dataPost, isLoading}: any): any => {
           }
         </div>
       }
-      </ReactPlaceholder>
     </div>
   )
 }
 
 const JobSeeker = () => (
-  <div className="grid lg:grid-cols-lg-3rows-content">
+  <div className="grid lg:grid-cols-lg-3cols-content">
     <div className="">
       <div className="bg-blue-100 relative h-auto my-8 mx-4 py-8 px-4">
         <div className=" text-sm font-semibold text-gray-700 tracking-wide mb-1">Posisi Pekerjaan</div>
@@ -232,11 +275,7 @@ const Home = () => {
         }))
       }, 2000)
     } else {
-      // setTimeout(() => {
-      //     dispatch(setLoadingScreenHome({
-      //         show: false
-      //     }))
-      // }, 2000)
+      console.log('gaada token di home')
       initialStateUserAuthByAsync(dispatch)
     }
   }, [dispatch, userRedux.token])

@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
     phone: DataTypes.STRING,
     email: DataTypes.STRING,
     // disable biar gakditampilin
-    phone_verif: DataTypes.BOOLEAN,
     email_verif: DataTypes.BOOLEAN,
     password: DataTypes.TEXT, 
     photo: DataTypes.STRING,

@@ -13,10 +13,10 @@ export interface IUserProfile {
   id?: string,
   name?: string,
   phone?: string,
-  phone_verif?: boolean,
   email?: string,
   email_verif?: boolean,
   photo?: string,
+  background_image?: string,
   recruiter?: string,
   job_seeker?: string,
   gender?: string,
@@ -32,13 +32,13 @@ const initialState: UserState = {
   token: '',
   // loginWith: '',
   profile: {
-    id: '',
+    // id: '',
     name: '',
     phone: '',
-    phone_verif: false,
     email: '',
     email_verif: false,
     photo: '',
+    background_image: '',
     recruiter: '',
     job_seeker: '',
     gender: '',
@@ -63,13 +63,13 @@ export const expiredToken = (dispatch: AppDispatch) => {
     token: ''
   }))
   dispatch(setReduxUsersProfile({
-    id: '',
+    // id: '',
     name: '',
     phone: '',
-    phone_verif: false,
     email: '',
     email_verif: false,
     photo: '',
+    background_image: '',
     recruiter: '',
     job_seeker: '',
     gender: '',
@@ -86,13 +86,13 @@ export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
       token: '',
       // loginWith: '',
       profile: {
-        id: '',
+        // id: '',
         name: '',
         phone: '',
-        phone_verif: false,
         email: '',
         email_verif: false,
         photo: '',
+        background_image: '',
         recruiter: '',
         job_seeker: '',
         gender: '',
@@ -119,19 +119,21 @@ export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
                   token: defaultValue.token
                 })
 
+                // console.log(responseGetUser)
+
                 if (responseGetUser.status === 200) {
                   // console.log('get user');
                   dispatch(setReduxUsersProfile({
-                    id: responseGetUser.data.id,
-                    name: responseGetUser.data.name,
-                    phone: responseGetUser.data.phone,
-                    phone_verif: responseGetUser.data.phone_verif,
-                    email: responseGetUser.data.email,
-                    email_verif: responseGetUser.data.email_verif,
-                    photo: responseGetUser.data.photo,
-                    recruiter: responseGetUser.data.recruiter,
-                    job_seeker: responseGetUser.data.job_seeker,
-                    gender: responseGetUser.data.gender,
+                    // id: responseGetUser.data.id,
+                    name: responseGetUser.data.data.name,
+                    phone: responseGetUser.data.data.phone,
+                    email: responseGetUser.data.data.email,
+                    email_verif: responseGetUser.data.data.email_verif,
+                    photo: responseGetUser.data.data.photo,
+                    background_image: responseGetUser.data.data.background_image,
+                    recruiter: responseGetUser.data.data.recruiter,
+                    job_seeker: responseGetUser.data.data.job_seeker,
+                    gender: responseGetUser.data.data.gender,
                   }))
                 }
 
@@ -169,15 +171,16 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setReduxUsersProfile(state, action: PayloadAction<IUserProfile>) {
-      state.profile.id = action.payload.id
+      // state.profile.id = action.payload.id
       state.profile.name = action.payload.name
       state.profile.phone = action.payload.phone
-      state.profile.phone_verif = action.payload.phone_verif
       state.profile.email = action.payload.email
       state.profile.email_verif = action.payload.email_verif
       state.profile.photo = action.payload.photo
+      state.profile.background_image = action.payload.background_image
       state.profile.recruiter = action.payload.recruiter
       state.profile.job_seeker = action.payload.job_seeker
+      state.profile.gender = action.payload.gender
     },
 
     // updateReduxDeviceRoom: (state, action: PayloadAction<any>) => {
