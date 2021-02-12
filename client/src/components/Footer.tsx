@@ -24,7 +24,7 @@ const Footer = () => {
     <div
       className="
       bg-white fixed bottom-0 
-        z-10
+        z-110
         p-2 px-4 w-full
         flex justify-between items-center
         md:hidden

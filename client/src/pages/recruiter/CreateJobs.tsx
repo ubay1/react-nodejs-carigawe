@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react'
@@ -24,8 +26,90 @@ import {httpCheckToken} from '../../store/user'
 import { setPageActive } from '../../store/pageActive';
 import { Slide, toast } from 'react-toastify';
 import { setLoading } from '../../store/loading';
-
+import DropZone,{useDropzone} from 'react-dropzone';
 // RichTextEditor.Inject(HtmlEditor, Image, Link, Toolbar);
+
+function Previews(props: {imageContent: any}) {
+  const [filess, setFiles] = useState([]);
+  const [fileKebesaran, setfileKebesaran] = useState('')
+
+  const {getRootProps, getInputProps, isDragActive, isDragReject, fileRejections} = useDropzone({
+    accept: 'image/*',
+    maxSize: 100000,
+    onDrop: (acceptedFiles: any) => {
+      console.log('test = ', acceptedFiles[0])
+
+      acceptedFiles.map((file: any) => {
+        Object.assign(file, {
+          preview: URL.createObjectURL(file)
+        })
+      });
+
+      setFiles(acceptedFiles)
+    }
+  });
+
+
+  const thumbs = filess.map((item: any) => {
+    var reader = new FileReader();
+    reader.readAsDataURL(item); 
+    reader.onloadend = function() {
+        var base64data = reader.result;                
+        console.log(base64data);
+        props.imageContent(base64data)
+    }
+    return(
+      <div key={item.name}>
+        <div className="">
+          <img
+            className="p-1 border-2 border-gray-100 w-24 h-full"
+            src={item.preview}
+          />
+          {item.name}
+        </div>
+      </div>
+    )
+  })
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks
+    // filess.map((file: any) => {
+      console.log(filess)
+    //   URL.revokeObjectURL(file.preview)
+    // });
+  }, [filess]);
+
+  return (
+    <>
+    <div className="
+      md:mt-5
+      mt-10 mx-4 mb-1
+    "> 
+      <div className="text-xs text-gray-400">
+        pilih gambar <span className="italic font-bold">*optional</span>
+      </div>
+    </div>
+    <div className="rounded-lg mx-4  border-2 border-gray-100 p-4">
+      <div {...getRootProps({className: 'dropzone bg-gray-50 flex flex-col items-center justify-center border-4 border-gray-200 border-dashed mb-2 p-4 focus:outline-none'})}>
+        <input {...getInputProps()} />
+        <p className="text-gray-300">
+          {!isDragActive && 'Klik di sini atau tarik file gambar untuk diunggah!'}
+          {isDragActive && !isDragReject && "Type file sesuai!"}
+          {isDragReject && "Type file tidak sesuai!"}
+          {/* {isDragActive ? "Drop file!" : "klik disini atau tarik file"} */}
+        </p>
+      </div>
+      {/* <div>
+        {files}
+      </div> */}
+      <div>
+        {thumbs}
+      </div>
+    </div>
+    <div className="text-blue-500 text-xs mx-4 font-bold">(max: 100kb)</div>
+    </>
+  );
+}
 
 const CreateJobs = () => {
   toast.configure()
@@ -34,6 +118,8 @@ const CreateJobs = () => {
   const dispatch: AppDispatch = useDispatch()
   const history = useHistory();
   
+  const [judulContent, setjudulContent] = useState('')
+  const [imageContent, setimageContent] = useState('')
   const [content, setcontent] = useState<any>('')
   const [tanggalBatasPengiriman, settanggalBatasPengiriman] = useState('');
   const [waktuBatasPengiriman, setwaktuBatasPengiriman] = useState('')
@@ -43,12 +129,11 @@ const CreateJobs = () => {
 
   const toolbarSetting = {
     items: ['Bold', 'Italic', 'Underline', 'SourceCode', 'StrikeThrough',
-    'FontName', 'FontSize', 'Image', 'FontColor', 'BackgroundColor',
-    'LowerCase', 'UpperCase', '|',
-    'Formats', 'Alignments', 'OrderedList', 'UnorderedList',
-    'Outdent', 'Indent', '|',
-    'CreateLink', '|', 'ClearFormat', 'Print',
-    'FullScreen', '|', 'Undo', 'Redo']
+    'FontName', 'FontSize', 'FontColor', 'BackgroundColor',
+    'Formats', 'Alignments',
+    'Outdent', 'Indent',
+    'CreateLink',
+    'FullScreen', 'Undo', 'Redo']
   }
 
   const quickToolbarSettings = {
@@ -77,6 +162,11 @@ const CreateJobs = () => {
   useEffect(() => {
     console.log(tanggalBatasPengiriman)
   }, [tanggalBatasPengiriman])
+
+  function eventHandlerImage(image:any) {
+    // console.log(image)
+    setimageContent(image)
+  }
 
   const httpPostJob = async (props: {token: string, userId: any, content: string, expiredAt: string}) => {
     // console.log(props)
@@ -148,15 +238,29 @@ const CreateJobs = () => {
       <>
         <Header sudahDiPage="createjob"/>
 
-        <div className="
-          md:mt-5
-          mt-10 mx-4
-        "> <p className="text-xs text-gray-400">isi content</p>
+      <div className="md:mx-20">
+        <div className="md:mt-5 mt-10 mx-4"> 
+          <p className="text-xs text-gray-400">judul content</p>
         </div>
-        <div className="
-          md:my-0
-          shadow-lg mx-4
-        ">
+        <div className="mx-4">
+          <input 
+            type="text" 
+            name="judul"
+            className=" border-2 border-gray-100 w-full md:w-1/2 h-12 py-2 px-2 
+            rounded-lg focus:outline-none"
+            onChange={(e: any) => {
+              setjudulContent(e.target.value)
+            }}
+            placeholder="Masukan judul"
+          />
+        </div>
+
+        <Previews imageContent={eventHandlerImage}/>
+
+        <div className="md:mt-5 mt-10 mx-4"> 
+          <p className="text-xs text-gray-400">isi content</p>
+        </div>
+        <div className=" md:my-0 shadow-md mx-4">
           <RichTextEditorComponent
             value={content}
             change={param => {
@@ -165,14 +269,12 @@ const CreateJobs = () => {
             }}
             height={450} 
             toolbarSettings={toolbarSetting} quickToolbarSettings={quickToolbarSettings}>
-            <Inject services={[Toolbar, Image, Link, HtmlEditor, QuickToolbar]}/>
+            <Inject services={[Toolbar, Link, HtmlEditor, QuickToolbar]}/>
           </RichTextEditorComponent>
         </div>
 
-        <div className="
-          md:mt-5
-          mt-10 mx-4
-        "> <p className="text-xs text-gray-400">batas pengiriman lamaran</p>
+        <div className="md:mt-5 mt-10 mx-4"> 
+          <p className="text-xs text-gray-400">batas pengiriman lamaran</p>
         </div>
         
         <div className="
@@ -181,10 +283,10 @@ const CreateJobs = () => {
           mx-4
         ">
           <DatePicker 
-            className="w-full text-lg py-2 px-2 border-2 rounded-lg border-gray-50 focus:outline-none  shadow-md mr-2
+            className="w-full text-lg py-2 px-2 rounded-lg border-2 border-gray-100 focus:outline-none   mr-2
             "
             dateFormat="dd/MM/yyyy"
-            placeholderText="pilih tanggal"
+            placeholderText="Pilih tanggal"
             value={tanggalBatasPengiriman}
             onChange={(date: any) => {
               settanggalBatasPengiriman(moment(date).format('yyyy-MM-DD'))
@@ -192,8 +294,8 @@ const CreateJobs = () => {
           />
           <TimePicker
             showSecond={showSecond}
-            placeholder="pilih waktu"
-            className="ml-2 text-lg py-2 px-2 border-2 rounded-lg border-gray-50 focus:outline-none  shadow-md mr-2
+            placeholder="Pilih waktu"
+            className="ml-2 text-lg py-2 px-2 rounded-lg border-2 border-gray-100 focus:outline-none   mr-2
             "
             // defaultValue={moment()}
             onChange={(value: any) => {
@@ -202,15 +304,14 @@ const CreateJobs = () => {
             }}
           />,
         </div>
-        <div 
-          className="flex items-center justify-center
+        <div className="flex items-center justify-center
           mb-20 mt-6
           md:mb-10
         ">
           <button 
             className="bg-gradient-to-bl from-blue-400 to-blue-500 
             hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
-            cursor-pointer text-white shadow-md p-2 rounded-lg
+            cursor-pointer text-white  p-2 rounded-lg
             w-24"
             type="submit"
             onClick={() => {
@@ -224,11 +325,13 @@ const CreateJobs = () => {
             }}
           >Kirim</button>
         </div>
+      </div>
 
         <Footer />
       </>
     )
   }
 }
+
 
 export default CreateJobs

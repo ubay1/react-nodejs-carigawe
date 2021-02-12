@@ -30,6 +30,8 @@ const jobController = {
         const jobs = await models.job.create(
           {
             userId: decodeId,
+            title: req.body.title,
+            image_content: req.body.image_content,
             content: req.body.content,
             expiredAt: req.body.expiredAt,
           }
