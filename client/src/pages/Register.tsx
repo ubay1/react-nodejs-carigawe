@@ -15,9 +15,10 @@ import AnimationAuth from './AnimationAuth';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { RootState } from '../store/rootReducer';
-import { initialStateUserAuthByAsync } from '../store/user';
+// import { initialStateUserAuthByAsync } from '../store/user';
 import Lottie from 'lottie-react';
 import LoadingScreen from '../assets/loading_screen.json';
+import { initialStateUserAuthByAsync } from '../store/user';
 
 const Register = () => {
     toast.configure()
@@ -31,20 +32,31 @@ const Register = () => {
 
     useEffect(() => {
         document.title = 'Cari Gawe - Pendaftaran'
+        setTimeout(() => {
+            dispatch(setLoadingScreenHome({
+              show: false
+            }))
+        }, 2000)
     }, [])
 
-    useEffect(() => {
-        if(userRedux.token !== '') {
-            setTimeout(() => {
-                dispatch(setLoadingScreenHome({
-                    show: false
-                }))
-                history.push('/')
-            }, 2500)
-        } else {
-            initialStateUserAuthByAsync(dispatch)
-        }
-    }, [dispatch, history, userRedux.token])
+    // useEffect(() => {
+    //     if (userRedux.token !== '') {
+    //       setTimeout(() => {
+    //         dispatch(setLoadingScreenHome({
+    //           show: false
+    //         }))
+    //         history.push('/')
+    //       }, 2500)
+    //     } else {
+    //       initialStateUserAuthByAsync(dispatch)
+    //       setTimeout(() => {
+    //         dispatch(setLoadingScreenHome({
+    //           show: false
+    //         }))
+    //         history.push('/')
+    //       }, 2500)
+    //     }
+    //   }, [dispatch, history, userRedux.token])
     
     const formik = useFormik({
         initialValues: {

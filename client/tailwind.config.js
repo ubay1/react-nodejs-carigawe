@@ -26,6 +26,7 @@ module.exports = {
         'lg-2rows-home-list-job': '80% 20%',
         'lg-3rows-home-list-job': '80% 10% 10%',
         'lg-4rows-home-list-job': '10% 70% 10% 10%',
+        'lg-7rows-home-list-job': '10% 30% 20% 10% 10% 10% 10%',
       },
       zIndex: {
         '60': '60',
@@ -54,8 +55,27 @@ module.exports = {
         8: '8',
         9: '9',
         10: '10',
-      }
+      },
     },
+    screens: {
+      'xs': '480px',
+      // => @media (min-width: 640px) { ... }
+      
+      'sm': '640px',
+      // => @media (min-width: 640px) { ... }
+
+      'md': '768px',
+      // => @media (min-width: 768px) { ... }
+
+      'lg': '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      'xl': '1280px',
+      // => @media (min-width: 1280px) { ... }
+
+      '2xl': '1536px',
+      // => @media (min-width: 1536px) { ... }
+    }
   },
   variants: {
     extend: {},

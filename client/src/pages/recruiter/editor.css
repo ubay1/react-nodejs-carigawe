@@ -59,3 +59,40 @@
     width: 20px;
     transition: color 0.3s ease;
 }
+
+#domisili2 {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 0px;
+    border-width: 1px !important;
+    max-height: 150px !important;
+    padding-left: 10px;
+    padding-right: 10px;
+    /* --tw-border-opacity: 1 !important;
+    border-color: rgba(243, 244, 246, var(--tw-border-opacity)) !important; */
+    /* margin-top: 4px; */
+    box-shadow: 0px 2px 4px rgb(0 0 0 / 30%);
+}
+
+.rbt-input-main {
+    width: 100%;
+    height: 3rem !important;
+    padding: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    border-bottom-width: 1px !important;
+    line-height: 1.25rem;
+    border-radius: 0 !important;
+    /* --tw-shadow: unset; */
+    box-shadow: unset !important;
+    --tw-border-opacity: 1 !important;
+    border-color: rgba(209, 213, 219, var(--tw-border-opacity)) !important;
+}
+.rbt-input-main:focus {
+    --tw-border-opacity: 1 !important;
+    border-color: rgba(59, 130, 246, var(--tw-border-opacity)) !important;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}

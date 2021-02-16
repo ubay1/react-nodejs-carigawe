@@ -7,13 +7,17 @@ import { Link, useHistory } from 'react-router-dom'
 import { AppDispatch } from '../store'
 import { RootState } from '../store/rootReducer'
 import { RiSuitcaseLine, RiCloseLine, RiMenuLine, RiSendPlaneFill, RiCheckLine, RiArrowRightSLine, RiUserLine, RiHome3Line, RiLogoutCircleRLine, RiLoginCircleLine, RiEdit2Line } from "react-icons/ri";
-import { expiredToken } from '../store/user'
+import { IoEllipsisVertical, IoSearch } from "react-icons/io5";
+// import { expiredToken } from '../store/user'
 import { setLoading } from '../store/loading'
 import { setPageActive } from '../store/pageActive'
 import { Slide, toast } from 'react-toastify'
+import Cookies from 'js-cookie'
+import { expiredToken } from '../store/user'
 
 interface ITypeHeader {
-  sudahDiPage: string;
+  sudahDiPage?: string;
+  actionSearchJob?: any;
 }
 
 const Header = (props: ITypeHeader) => {
@@ -25,31 +29,33 @@ const Header = (props: ITypeHeader) => {
   const pageActive = useSelector((state: RootState) => state.pageActive)
   const dispatch: AppDispatch = useDispatch()
 
-  const handleScroll = () => {
-    const header = document.getElementById('myHeader')
-    const offset = window.pageYOffset;
-    if (offset > 0) {
-      header?.classList.add('sticky')
-      header?.classList.add('top-0')
-    }
-    else {
-      header?.classList.remove('sticky')
-      header?.classList.remove('top-0')
-    }
-  }
+  // const handleScroll = () => {
+  //   const header = document.getElementById('myHeader')
+  //   const offset = window.pageYOffset;
+  //   if (offset > 0) {
+  //     header?.classList.add('sticky')
+  //     header?.classList.add('top-0')
+  //     dispatch(setHeaderScroll({isScroll: true}))
+  //   }
+  //   else {
+  //     header?.classList.remove('sticky')
+  //     header?.classList.remove('top-0')
+  //     dispatch(setHeaderScroll({isScroll: false}))
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   if (userRedux.token === '') {
+  //     dispatch(setLoading({
+  //       show: true,
+  //       timeout: 0
+  //     }))
+  //     history.push('/login')
+  //   }
+  // }, [dispatch, userRedux.token])
 
   useEffect(() => {
-    if (userRedux.token === '') {
-      dispatch(setLoading({
-        show: true,
-        timeout: 0
-      }))
-      history.push('/login')
-    }
-  }, [dispatch, userRedux.token])
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
+    // window.addEventListener('scroll', handleScroll)
   }, [])
 
   useEffect(() => {
@@ -58,13 +64,16 @@ const Header = (props: ITypeHeader) => {
 
 
   return (
-    <div className="bg-white shadow-md  z-110 p-4  w-full pin-t 
+    <div className="
       lg:grid lg:grid-cols-lg-2cols-content
       md:grid md:grid-cols-lg-3cols-content md:justify-between
-      flex justify-center
+      flex justify-between
+      fixed top-0
+      bg-white shadow z-120 p-4  w-full
       "
       id="myHeader"
     >
+      {/* logo */}
       <div className="flex items-center flex-no-shrink text-black "
       >
         <Link 
@@ -80,7 +89,38 @@ const Header = (props: ITypeHeader) => {
         </Link>
       </div>
 
-      {/* ketika lebar medium/tablet */}
+      {/* ketika lebar small/hp */}
+      <div
+        className="
+            md:hidden 
+            flex justify-end items-center
+        ">
+        <button
+          id="nav-toggle"
+          className={`items-center p-1 border rounded-full mr-2 text-white 
+          bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl 
+          hover:from-blue-500 
+          hover:to-blue-400 shadow-md border-transparent hover:border-transparent focus:outline-none
+          ${userRedux.profile.recruiter ? 'hidden' : 'flex '}
+          `}
+          onClick={() => {
+            props.actionSearchJob('test')
+          }}
+        >
+          <IoSearch className="text-xl" />
+        </button>
+        <button
+          id="nav-toggle"
+          className="flex items-center p-1 border rounded-full text-white bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 shadow-md border-transparent hover:border-transparent focus:outline-none"
+          onClick={() => {
+            setmenuHide(!menuHide)
+          }}
+        >
+          <IoEllipsisVertical className="text-xl" />
+        </button>
+      </div>
+
+      {/* button buat lowongan ketika lebar medium/tablet */}
       <div
         className="
           hidden
@@ -121,7 +161,7 @@ const Header = (props: ITypeHeader) => {
         </ul>
       </div>
 
-      {/* button menu responsive */}
+      {/* button menu responsive untuk tablet */}
       <div
         className="
             hidden
@@ -141,17 +181,18 @@ const Header = (props: ITypeHeader) => {
               : <RiCloseLine className="text-xl text-white" />
           }
         </button>
-
       </div>
 
+      {/* button responsive untuk nampilin list menu */}
       <div
         className={`
-          hidden
           lg:flex lg:flex-row lg:items-center lg:justify-between lg:w-full lg:static lg:bg-transparent lg:shadow-none lg:p-0 lg:top-0
-          md:flex-col-reverse md:absolute md:right-4 md:top-16
-          md:w-36 md:bg-white md:p-2 md:rounded-md md:shadow-lg
-          md:z-110
-          ${menuHide === true ? 'md:hidden' : 'md:flex'}
+          md:w-36
+          z-110
+          w-36
+          bg-white p-2 rounded-md shadow-lg
+          flex-col-reverse absolute right-4 top-16
+          ${menuHide === true ? 'hidden' : 'flex'}
           `
         }
       >
@@ -160,9 +201,8 @@ const Header = (props: ITypeHeader) => {
           className="
             lg:list-reset lg:mb-0
             lg:flex lg:items-center lg:justify-center
-            md:hidden
-            flex items-center justify-center
             mb-2
+            hidden
           "
         >
           <li className="mr-0">
@@ -195,12 +235,12 @@ const Header = (props: ITypeHeader) => {
           </li>
         </ul>
 
-        {/* list menu */}
+        {/* list menu untuk table dan hp*/}
         <ul
           className={`
             lg:list-reset lg:mb-0
             lg:flex-row 
-            md:flex md:flex-col md:items-center md:justify-center
+            flex flex-col items-center justify-center
           `}>
           {
             userRedux.token !== ''
@@ -208,9 +248,12 @@ const Header = (props: ITypeHeader) => {
               <>
                 <li className="w-full ">
                   <Link to="/"
-                    className={`py-2 
-                    md:flex md:flex-row md:justify-start md:items-center 
+                    className={`
                     lg:px-4
+                    md:flex md:flex-row md:justify-start md:items-center 
+                    hidden
+                    py-2 
+                    w-full
                     hover:bg-gray-100 rounded-md
                     ${pageActive.ispage === 'beranda' ? 'bg-blue-50' : 'bg-transparent'}
                     `}
@@ -222,18 +265,19 @@ const Header = (props: ITypeHeader) => {
                   >
                     <RiHome3Line
                       className={`
-                        text-xl md:mx-4 lg:text-2xl lg:mx-0
-                        
+                      text-xl mx-4 lg:text-2xl lg:mx-0
                       `} />
                     <span className="text-sm lg:hidden"> Beranda </span>
                   </Link>
                 </li>
-
                 <li className="w-full ">
                   <Link to="/profil"
-                    className={`py-2 
-                    md:flex md:flex-row md:justify-start md:items-center
-                    lg:px-4 
+                    className={`
+                    lg:px-4
+                    md:flex md:flex-row md:justify-start md:items-center 
+                    hidden
+                    py-2 
+                    w-full
                     hover:bg-gray-100 rounded-md
                     ${pageActive.ispage === 'profil' ? 'bg-blue-50' : 'bg-transparent'}
                     `}
@@ -245,30 +289,31 @@ const Header = (props: ITypeHeader) => {
                   >
                     <RiUserLine
                       className={`
-                        text-xl md:mx-4 lg:text-2xl lg:mx-0
-                        
+                      text-xl mx-4 lg:text-2xl lg:mx-0
                       `} />
                     <span className="text-sm lg:hidden"> Profil </span>
                   </Link>
                 </li>
                 <li className="w-full ">
                   <button
-                    className={`py-2 
-                    w-full
-                    md:flex md:flex-row md:justify-start md:items-center 
+                    className={`
                     lg:px-4
+                    flex flex-row justify-start items-center 
+                    py-2 
+                    w-full
                     hover:bg-gray-100 rounded-md
                     `}
 
                     onClick={() => {
+                      Cookies.remove('token')
                       dispatch(setLoading({
                         show: true,
                         timeout: 300000
                       }))
                       
-                      dispatch(setPageActive({
-                        ispage: 'beranda'
-                      }))
+                      // dispatch(setPageActive({
+                      //   ispage: 'beranda'
+                      // }))
 
                       setTimeout(() => {
                         toast('Anda telah keluar', {
@@ -280,100 +325,51 @@ const Header = (props: ITypeHeader) => {
                           pauseOnHover: true,
                           transition: Slide
                         })
+                        
                         expiredToken(dispatch)
+                        history.push('/login')
+                        dispatch(setLoading({
+                          show: false,
+                          timeout: 0
+                        }))
                       }, 2000)
                     }}
                   >
                     <RiLogoutCircleRLine
                       className={`
-                        text-xl md:mx-4 lg:text-2xl lg:mx-0
+                      text-xl mx-4 lg:text-2xl lg:mx-0
                       `} />
                     <span className="text-sm lg:hidden"> Keluar </span>
                   </button>
                 </li>
-
-                {/* <li className="mr-0">
-                  {
-                    userRedux.profile.photo === ''
-                      ?
-                      <div
-                        className="bg-gradient-to-bl from-blue-400 to-blue-500 
-          hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 w-9 text-white text-xl cursor-pointer p-2 rounded-full">
-                        <AiOutlineUser />
-                      </div>
-                      : 'ada foto'
-                  }
-                </li> */}
-                {/* <li
-                  className="
-                    lg:hidden
-                  "
-                >
-                  {userRedux.profile.name}
-                </li>
-                <li
-                  className="
-                    lg:hidden
-                    text-xs
-                  "
-                >
-                  {userRedux.profile.email}
-                </li>
-                <li
-                  className="
-                    lg:hidden
-                    text-xs
-                  "
-                >
-                  <button
-                    className={`
-                      p-1 rounded-md shadow font-semibold text-white
-                      ${userRedux.profile.email_verif === false ? 'bg-red-400' : 'bg-green-400'}
-                    `}
-                  >
-                    {
-                      userRedux.profile.email_verif === false
-                        ? <>
-                          <div className="flex items-center justify-center">
-                            <RiSendPlaneFill className="text-md mr-1" /> verifikasi
-                          </div>
-                          </>
-                        : <>
-                          <div className="flex items-center justify-center">
-                            <RiCheckLine className="text-md mr-1" /> terverifikasi
-                          </div>
-                        </>
-                    }
-                  </button>
-                </li> */}
               </>
               :
               <>
                 <li className="w-full">
                   <Link to="/login"
                     className="
+                      lg:px-4
+                      flex flex-row justify-start items-center 
                       py-2 
                       w-full
-                      md:flex md:flex-row md:justify-start md:items-center 
-                      lg:px-4
-                      hover:bg-gray-100 rounded-md
+                    hover:bg-gray-100 rounded-md
                     "
                   >
-                    <RiLoginCircleLine className="text-xl md:mx-4 lg:text-2xl lg:mx-0" />
+                    <RiLoginCircleLine className="text-xl mx-4 lg:text-2xl lg:mx-0" />
                     <span className="text-sm lg:hidden"> Masuk </span>
                   </Link>
                 </li>
                 <li className="w-full">
                   <Link to="/register"
                     className="
+                      lg:px-4
+                      flex flex-row justify-start items-center 
                       py-2 
                       w-full
-                      md:flex md:flex-row md:justify-start md:items-center 
-                      lg:px-4
-                      hover:bg-gray-100 rounded-md
+                    hover:bg-gray-100 rounded-md
                     "
                   >
-                    <RiEdit2Line className="text-xl md:mx-4 lg:text-2xl lg:mx-0" />
+                    <RiEdit2Line className="text-xl mx-4 lg:text-2xl lg:mx-0" />
                     <span className="text-sm lg:hidden"> Daftar </span>
                   </Link>
                 </li>

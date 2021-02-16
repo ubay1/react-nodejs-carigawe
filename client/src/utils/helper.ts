@@ -13,9 +13,13 @@ export function AxiosNormal<AxiosInstance>(timeout?: number) {
     // Add a request interceptor
     instance.interceptors.request.use(function (config) {
         // console.log(config)
-        // get data with bearer
+        if (typeof config.data === 'undefined') {
+            return config;
+        } else {
+            // get data with bearer
         config.headers.authorization = `Bearer ${config.data.token}`
         return config;
+        }
     }, function (error) {
 
         return Promise.reject(error);

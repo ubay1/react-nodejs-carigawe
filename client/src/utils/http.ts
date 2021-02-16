@@ -66,13 +66,10 @@ export async function HTTPGetUser(param: {token: string}): Promise<any> {
 }
 
 //################################ Recruiter ################################//
-export async function HTTPGetAllJob(param: {token: string}): Promise<any> {
+export async function HTTPGetAllJob(): Promise<any> {
     return new Promise(async (resolve, reject) => {
         try {
-            const data = {
-                token: param.token
-            }
-            const responseGetAllJob = await AxiosNormal(10000).post(`${DevApiUrl}/recruiter/get_all_post_job`, data)
+            const responseGetAllJob = await AxiosNormal(10000).get(`${DevApiUrl}/recruiter/get_all_post_job`)
             return resolve(responseGetAllJob)
         } catch (error) {
             return reject(error)
@@ -97,7 +94,9 @@ export async function HTTPGetAllJobUser(param: {token: string}): Promise<any> {
 export async function HTTPPostJob(
     param: {
         token: string, 
-        userId: string,
+        title: string,
+        image_content: string,
+        city: string,
         content: string,
         expiredAt: string,
     }): Promise<any> 
@@ -106,7 +105,9 @@ export async function HTTPPostJob(
         try {
             const data = {
                 token: param.token,
-                userId: param.userId,
+                title: param.title,
+                image_content: param.image_content,
+                city: param.city,
                 content: param.content,
                 expiredAt: param.expiredAt,
             }

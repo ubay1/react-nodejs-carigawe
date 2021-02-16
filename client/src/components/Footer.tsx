@@ -3,7 +3,7 @@ import Moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../store/rootReducer'
 
-import { RiHome3Line, RiUserLine, RiAddFill } from "react-icons/ri";
+import { RiHome3Line, RiUserLine, RiAddFill, RiLoginCircleLine } from "react-icons/ri";
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppDispatch } from '../store';
@@ -20,15 +20,16 @@ const Footer = () => {
   // <div className="h-full py-8 bg-blue-400 flex items-center justify-center text-center text-sm text-white">
   //   © {yearNow} Cari Gawe
   // </div>
+  
   return(
     <div
-      className="
+      className={`
       bg-white fixed bottom-0 
         z-110
         p-2 px-4 w-full
         flex justify-between items-center
         md:hidden
-      "
+      `}
       style={{
         boxShadow: '0px -2px 4px rgba(0,0,0,.1)'
       }}
@@ -48,40 +49,57 @@ const Footer = () => {
         <span className="text-xs">Beranda</span>
       </Link>
 
-      <div className="flex flex-col items-center">
-        <Link
-          to="/recruiter/create-job"
-          className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline"
-          onClick={() => {
-            dispatch(setPageActive({
-              ispage: 'createjobs'
-            }))
-          }}
-        >
-          <RiAddFill className="
-            text-4xl absolute top-2 cursor-pointer
-            bg-gradient-to-bl from-blue-400 to-blue-500 
-            hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
-            rounded-full text-white shadow-lg
-            "
-          />
-        </Link>
-        {/* <span className="text-sm">Buat Loker</span> */}
-      </div>
+      {
+        userRedux.token !== '' && userRedux.profile.recruiter
+        ?
+        <div className="flex flex-col items-center">
+          <Link
+            to="/recruiter/create-job"
+            className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline"
+            onClick={() => {
+              dispatch(setPageActive({
+                ispage: 'createjobs'
+              }))
+            }}
+          >
+            <RiAddFill className="
+              text-4xl absolute top-2 cursor-pointer
+              bg-gradient-to-bl from-blue-400 to-blue-500 
+              hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
+              rounded-full text-white shadow-lg
+              "
+            />
+          </Link>
+          {/* <span className="text-sm">Buat Loker</span> */}
+        </div>
+        : userRedux.token !== '' && userRedux.profile.job_seeker
+        ? <div></div> : <div></div>
+      }
 
-      <Link to="/profil" 
-        className={`flex flex-col items-center p-1 rounded-md
-          ${pageActive.ispage === 'profil' ? 'bg-blue-50' : 'bg-transparent'}
-        `}
-        onClick={() => {
-          dispatch(setPageActive({
-            ispage: 'profil'
-          }))
-        }}
-      >
-        <RiUserLine className="text-xl"/>
-        <span className="text-xs">Profil</span>
-      </Link>
+      {
+        userRedux.token !== ''
+        ?
+          <Link to="/profil" 
+            className={`flex flex-col items-center p-1 rounded-md
+              ${pageActive.ispage === 'profil' ? 'bg-blue-50' : 'bg-transparent'}
+            `}
+            onClick={() => {
+              dispatch(setPageActive({
+                ispage: 'profil'
+              }))
+            }}
+          >
+            <RiUserLine className="text-xl"/>
+            <span className="text-xs">Profil</span>
+          </Link>
+        : 
+          <Link to="/login" 
+            className={`flex flex-col items-center p-1 rounded-md bg-transparent`}
+          >
+            <RiLoginCircleLine className="text-xl"/>
+            <span className="text-xs">Login</span>
+          </Link>
+      }
     </div>
   )
 }

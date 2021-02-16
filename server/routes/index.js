@@ -27,7 +27,7 @@ router.put('/user/:userId',userController.update);
 router.get('/coba_asosiation', userController.cobaAssociation);
 
 router.post('/recruiter/post_job', authMiddleware, jobController.postJob);
-router.post('/recruiter/get_all_post_job', authMiddleware, jobController.getAllJob);
+router.get('/recruiter/get_all_post_job', jobController.getAllJob);
 router.post('/recruiter/get_all_post_job_user', authMiddleware, jobController.getJobUser);
 
 module.exports = router

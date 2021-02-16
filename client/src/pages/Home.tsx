@@ -19,12 +19,13 @@ import { AppDispatch } from '../store';
 import Lottie from 'lottie-react';
 import LoadingScreen from '../assets/loading_screen.json';
 import { setLoadingScreenHome } from '../store/loadingScreenHome';
+// initialStateUserAuthByAsync, 
 import { initialStateUserAuthByAsync, UserState } from '../store/user';
 import { TitleComponent } from '../components/TitleComponent';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { AiOutlineSearch, AiFillHeart } from "react-icons/ai";
-import { RiQuestionAnswerFill } from "react-icons/ri";
+import { AiOutlineSearch, AiFillHeart,AiFillLike, } from "react-icons/ai";
+import { RiQuestionAnswerFill, RiMapPin2Line } from "react-icons/ri";
 import { HTTPGetAllJob } from '../utils/http';
 import parse from 'html-react-parser';
 import EmptyData from '../components/EmptyData'
@@ -36,11 +37,12 @@ import ReactPlaceholder from 'react-placeholder';
 import "react-placeholder/lib/reactPlaceholder.css";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import Cookies from 'js-cookie';
 
-const Recruiter = ({dataPost, isLoading}: any): any => {
+const Recruiter = ({dataJob, isLoading}: any): any => {
   // console.log(isLoading) 
   return(
-    <div>
+    <div className="relative top-16">
       {
         isLoading === true
         ? 
@@ -54,7 +56,7 @@ const Recruiter = ({dataPost, isLoading}: any): any => {
             />
           </div>
         :
-        dataPost.length === 0
+        dataJob.length === 0
         ? 
         <div
           className="
@@ -67,105 +69,129 @@ const Recruiter = ({dataPost, isLoading}: any): any => {
         :
         <div className=" 
           lg:grid-cols-lg-4cols-content
-          md:grid-cols-md-3cols-content md:my-4 md:mb-4
-          sm:grid sm:grid-cols-2
-          mb-20 mt-5
+          md:grid-cols-md-3cols-content md:my-4 md:mb-10
+          xs:grid-cols-2
+          xs:grid sm:grid-cols-2
+          sm:mt-4
+          mb-40 mt-6
         ">
           {
-            dataPost.map((item: any, index: number) => {
-              // console.log(dataPost)
+            dataJob.map((item: any, index: number) => {
+              // console.log(dataJob)
               return(
                 <div
                   key={`indexPost-${index}`}
-                  className="px-5 py-4 
-                  mx-2 my-2 
+                  className="
+                  sm:my-2 
+                  mx-2 mb-4 
                   bg-white shadow rounded-lg
-                  grid grid-rows-lg-4rows-home-list-job
-                  h-full"
+                  h-full
+                  "
                 >
 
-                  {/* nama user dan tgl postingan */}
-                  <div className="">
-                    <div 
-                      className="
-                      h-full
-                      flex flex-row items-center justify-start
-                      mb-2
-                    ">    
-                      {
-                        item.user.photo === ''
-                        ? 
-                          item.user.gender === 'L'
-                          ?
-                            <img 
-                              src={profilAccountDefault} 
-                              alt="foto-profil" 
-                              className="h-8 w-8 mr-1 rounded-full shadow-md"
-                            />
+                  {/* gambar content */}
+                  <div className="h-32 relative bg-black rounded-t-lg">
+                    {
+                      item.image_content !== ''
+                      ? 
+                      <img 
+                        src={item.image_content} 
+                        alt=""
+                        className="h-full w-full object-cover rounded-t-lg opacity-60"
+                      />
+                      : ''
+                    }
+                  
+                    {/* nama user dan tgl postingan */}
+                    <div className="absolute bottom-0">
+                      <div 
+                        className="
+                        m-2
+                        h-full
+                        flex flex-row items-center justify-start
+                        mb-2
+                      ">    
+                        {
+                          item.user.photo === ''
+                          ? 
+                            item.user.gender === 'L'
+                            ?
+                              <img 
+                                src={profilAccountDefault} 
+                                alt="foto-profil" 
+                                className="h-10 w-10 mr-1 rounded-full shadow-md"
+                              />
+                            :
+                              <img 
+                                src={profilAccountDefault2} 
+                                alt="foto-profil" 
+                                className="h-10 w-10 mr-1 rounded-full shadow-md"
+                              />
                           :
                             <img 
-                              src={profilAccountDefault2} 
+                              src={item.user.photo} 
                               alt="foto-profil" 
-                              className="h-8 w-8 mr-1 rounded-full shadow-md"
+                              className="h-10 w-10 mr-1 rounded-full shadow-md"
                             />
-                        :
-                          <img 
-                            src={item.user.photo} 
-                            alt="foto-profil" 
-                            className="h-8 w-8 mr-1 rounded-full shadow-md"
-                          />
-                      }
-                      <div className="block font-bold text-md leading-snug text-black">
-                        <p className="text-md">{ item.user.name }</p>
-                        <p className="block text-xs text-gray-500 font-light leading-snug"> 
-                        { moment(item.createdAt).format('YYYY-MM-DD hh:mm:ss')}
-                        </p>
+                        }
+                        <div className="ml-2 mt-0.5">
+                          <span className="block font-medium text-base leading-snug text-white dark:text-gray-100">{item.user.name}</span>
+                          <span className="block text-sm text-white font-light leading-snug">{moment(item.createdAt).format('DD MMM YYYY HH:mm:ss')}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* isi postingan */}
-                  <div className="mt-0.5 overflow-x-auto w-full">
-                    <div id={`text-loker-${index}`} 
-                    className="text-sm my-4 line-clamp-3
-                    ">
-                      {
-                        parse(item.content)
-                      }
-                    </div>
-                  </div>
 
-                  {/* button read more*/}
-                  <div className="">
-                    <button id={`btn-readmore-${index}`} className="
-                      h-full
-                      bg-gradient-to-bl from-blue-400 to-blue-500 
-                      hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
-                      text-white shadow-md p-2 rounded-lg text-xs
-                      focus:outline-none
-                      "
-                      onClick={() => {
-                      }}
-                      >
-                        Read more
-                    </button>
-                  </div>
-
-                  {/* button like & comment*/}
-                  <div className="flex justify-between items-center mt-5">
-                    <div className="flex flex-row items-center">
-                      <AiFillHeart className="text-red-500 text-md cursor-pointer" />
-                      <div className="ml-1 text-sm text-gray-500  font-light">
-                        8
+                  {/* grid grid-rows-lg-7rows-home-list-job */}
+                  <div className="mt-2 p-2">
+                      <div className="flex flex-col justify-start">
+                        <div className="text-md uppercase font-bold line-clamp-1">
+                          {item.title}
+                        </div> 
+                        <div className="text-sm flex flex-row items-center">
+                          <RiMapPin2Line /> {item.city}
+                        </div>
+                      </div>
+                    
+                    {/* isi postingan */}
+                    <div className="mt-3 overflow-hidden w-full">
+                      <div id={`text-loker-${index}`} 
+                      className="text-xs line-clamp-3
+                      ">
+                        {
+                          parse(item.content)
+                        }
                       </div>
                     </div>
-                    <div className="flex flex-row items-center">
-                      <RiQuestionAnswerFill className="text-blue-500 text-md cursor-pointer" />
-                      <div className="ml-1 text-sm text-gray-500 dark:text-gray-400 font-light ">
-                        33
-                      </div>
+
+                    {/* batas pengiriman */}
+                    {/* <div className="mt-4 w-full">
+                      <p className="text-gray-400 text-xs">kirimkan lamaran sebelum:</p>
+                      <p className="font-bold  text-sm">{moment(item.expiredAt).format('YYYY-MM-DD HH:mm:ss')}</p>
+                    </div> */}
+
+                    {/* penempatan kerja */}
+                    {/* <div className="mb-4 mt-2 w-full">
+                      <p className="text-gray-400 text-xs">penempatan</p>
+                      <p className="font-bold text-sm">{item.city}</p>
+                    </div> */}
+                    
+                    {/* button read more*/}
+                    <div className="">
+                      <button id={`btn-readmore-${index}`} className="
+                        text-blue-500 text-xs underline
+                        "
+                        onClick={() => {
+                        }}
+                        >
+                          Lihat selengkapnya
+                      </button>
                     </div>
+
+                    {/* button like & comment*/}
                   </div>
+
                 </div>
               )
             })
@@ -176,64 +202,194 @@ const Recruiter = ({dataPost, isLoading}: any): any => {
   )
 }
 
-const JobSeeker = () => (
-  <div className="grid lg:grid-cols-lg-3cols-content">
-    <div className="">
-      <div className="bg-blue-100 relative h-auto my-8 mx-4 py-8 px-4">
-        <div className=" text-sm font-semibold text-gray-700 tracking-wide mb-1">Posisi Pekerjaan</div>
-        <input className="w-full mb-2 text-sm py-2 px-2 shadow rounded-lg border-gray-300 focus:outline-none focus:border-blue-500" type="" placeholder="frontend developer" />
-
-        <div className=" text-sm font-semibold text-gray-700 tracking-wide mb-1">Kota</div>
-
-        <div className="z-10 relative">
-          <Typeahead
-            id="domisili"
-            placeholder="domisili"
-            onChange={(selected) => {
-              console.log(selected)
-              // setvalueKota(selected[0].label.toLowerCase())
-            }}
-            options={dataKota}
-            // defaultInputValue={valueKota}
-          />
+const JobSeeker = ({dataJob, isLoading}: any) => {
+  return( 
+    <div className="relative top-16">
+      {
+        isLoading === true
+        ? 
+          <div className="flex items-center justify-center mb-14">
+            <Loader
+              type="Rings"
+              color="#00BFFF"
+              height={100}
+              width={100}
+              // timeout={3000} //3 secs
+            />
+          </div>
+        :
+        dataJob.length === 0
+        ? 
+        <div
+          className="
+            h-screen-8
+            flex flex-col items-center justify-center
+          "
+        >
+          <EmptyData />
         </div>
+        :
+        <div className="md:flex md:justify-between md:items-start">
+          {/* search job */}
+          <div className="md:w-3/12 hidden md:block" id="searchJobId">
+            <div className="relative h-auto my-8 mx-2">
+              {/* <div className=" text-xs text-gray-500 mb-1">
+                Posisi Pekerjaan
+              </div> */}
+              <input className="w-full mb-2 text-sm py-2 px-2 shadow rounded-lg border-gray-300 focus:outline-none focus:border-blue-500" type="" placeholder="Posisi pekerjaan.." />
 
-        <button className=" bg-blue-500 relative z-0 hover:bg-blue-600 text-sm rounded-lg text-white shadow mt-2 w-full py-2 px-4 no-underline">
-          <AiOutlineSearch className="absolute left-8 text-lg" />   Cari
-        </button>
-      </div>
-    </div>
-    <div className="px-8 py-8 bg-gray-50 -z-10 grid gap-4 lg:grid-cols-1 md:grid-cols-1 ">
-      {/* {
-        postJobs.map((item: any, index: number) => {
-          return ( */}
-            <div
-              key={`indexPost-${0}`}
-              className="px-5 py-4  bg-white dark:bg-gray-800 shadow rounded-lg w-full"
-            >
-              <div className="flex mb-4">
-                <img className="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
-                <div className="ml-2 mt-0.5">
-                  <span className="block font-medium text-base leading-snug text-black dark:text-gray-100">Loyce Kuvalis</span>
-                  <span className="block text-sm text-gray-500 dark:text-gray-400 font-light leading-snug">16 December at 08:25</span>
-                </div>
+              {/* <div className=" text-xs text-gray-500 mb-1">Kota</div> */}
+
+              <div className="z-10 relative">
+                <Typeahead
+                  id="domisili"
+                  placeholder="Kota.."
+                  onChange={(selected) => {
+                    console.log(selected)
+                    // setvalueKota(selected[0].label.toLowerCase())
+                  }}
+                  options={dataKota}
+                  // defaultInputValue={valueKota}
+                />
               </div>
-              <p className="text-gray-800 dark:text-gray-100 leading-snug md:leading-normal">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-              <div className="flex justify-between items-center mt-5">
-                <div className="flex ">
-                  <span className="ml-1 text-gray-500 dark:text-gray-400  font-light">8</span>
-                </div>
-                <div className="ml-1 text-gray-500 dark:text-gray-400 font-light">33 comments</div>
-              </div>
+
+              <button className=" bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 relative z-0 text-sm 
+              rounded-lg text-white shadow mt-2 w-full py-2 px-4 no-underline">
+                <AiOutlineSearch className="absolute left-8 text-lg" />   Cari
+              </button>
             </div>
-          {/* )
-        })
-      } */}
-    </div>
-  </div>
-)
+          </div>
+          
+          {/* list job */}
+          <div className={`
+            px-6 py-8 
+            border-l-2 border-r-2 border-gray-100 
+          bg-gray-50 
+            h-full
+            md:w-3/6
+          `}>
+            {
+              dataJob.map((item: any, index: number) => {
+                return (
+                  <div
+                    key={`indexPostJobSeeker-${index}`}
+                    className="mb-6 bg-white dark:bg-gray-800 shadow rounded-lg w-full h-auto
+                    "
+                  >
+                    {/* image content */}
+                    <div className="h-40 relative bg-black rounded-t-lg">
+                      {
+                        item.image_content !== ''
+                        ? 
+                        <img 
+                          src={item.image_content} 
+                          alt=""
+                          className="h-full w-full object-cover rounded-t-lg opacity-60"
+                        />
+                        : ''
+                      }
+                    
+                      {/* nama user dan tgl postingan */}
+                      <div className="absolute bottom-0 w-full">
+                        <div className="flex justify-between items-end">
+                          <div className=" m-2 h-full flex flex-row items-center 
+                          justify-start mb-2">    
+                            {
+                              item.user.photo === ''
+                              ? 
+                                item.user.gender === 'L'
+                                ?
+                                  <img 
+                                    src={profilAccountDefault} 
+                                    alt="foto-profil" 
+                                    className="h-12 w-12 mr-1 rounded-full shadow-md"
+                                  />
+                                :
+                                  <img 
+                                    src={profilAccountDefault2} 
+                                    alt="foto-profil" 
+                                    className="h-12 w-12 mr-1 rounded-full shadow-md"
+                                  />
+                              :
+                                <img 
+                                  src={item.user.photo} 
+                                  alt="foto-profil" 
+                                  className="h-12 w-12 mr-1 rounded-full shadow-md"
+                                />
+                            }
+                            <div className="ml-2 mt-0.5">
+                              <span className="block font-medium text-base leading-snug text-white dark:text-gray-100">{item.user.name}</span>
+                              <span className="block text-sm text-white font-light leading-snug">{moment(item.createdAt).format('DD MMM YYYY HH:mm:ss')}</span>
+                            </div>
+                          </div>
+                          <div className="m-2 text-sm text-white flex flex-row items-center">
+                            <RiMapPin2Line color="white"/> {item.city}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-const Home = () => {
+                    {/* jabatan */}
+                    <div className="text-center mt-2 text-md uppercase font-bold line-clamp-1">
+                      {item.title}
+                    </div>
+
+                    {/* jobdesk */}
+                    <div className="mt-3 overflow-hidden w-full">
+                      <div id={`text-loker-${index}`} 
+                      className="px-3 text-sm line-clamp-3
+                      ">
+                        {
+                          parse(item.content)
+                        }
+                      </div>
+                    </div>
+                    {/* button read more*/}
+                    <div className="">
+                      <button id={`btn-readmore-${index}`} className="
+                        text-blue-500 text-sm px-3 underline
+                        "
+                        onClick={() => {
+                        }}
+                        >
+                          Lihat selengkapnya
+                      </button>
+                    </div>
+
+                    {/* button like & comment*/}
+                    <div className="flex justify-between items-center mt-5 mb-2 xs:-mb-1 px-4 pb-4">
+                      <div className="flex flex-row items-center">
+                        <AiFillLike className="text-blue-500 text-md cursor-pointer" />
+                        <div className="ml-1 text-sm text-gray-500  font-light">
+                          0
+                        </div>
+                      </div>
+                      <div className="flex flex-row items-center">
+                        <RiQuestionAnswerFill className="text-blue-500 text-md cursor-pointer" />
+                        <div className="ml-1 text-sm text-gray-500 dark:text-gray-400 font-light ">
+                          0
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })
+            } 
+          </div>
+
+          {/* job terpopuler */}
+          <div className="md:w-3/12">
+            <div className="relative h-auto my-8 mx-2">
+              ini populer job
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  )
+}
+
+const Home = (props: any) => {
   const loadingScreenHomeRedux = useSelector((state: RootState) => state.loadingScreenHome)
   const userRedux = useSelector((state: RootState) => state.user)
   const dispatch: AppDispatch = useDispatch()
@@ -243,17 +399,17 @@ const Home = () => {
   const [valueKota, setvalueKota] = useState('');
   const [isLoading, setisLoading] = useState(true)
   const [dataRecruiter, setdataRecruiter] = useState<any[]>([]);
+  const [dataJob, setdataJob] = useState<any[]>([]);
 
   useEffect(() => {
     document.title = 'Cari Gawe - Beranda'
+    httpGetAllJob()
   }, [])
 
-  const httpGetAllJob = async (token: string) => {
+  const httpGetAllJob = async () => {
     try {
-      const responseGetAllJob = await HTTPGetAllJob({
-        token: token
-      })
-      setdataRecruiter(responseGetAllJob.data.data)
+      const responseGetAllJob = await HTTPGetAllJob()
+      setdataJob(responseGetAllJob.data.data)
       // setTimeout(() => {
         setisLoading(false)
       // }, 5000)
@@ -262,13 +418,20 @@ const Home = () => {
     }
   }
 
+  // function berjalan ketika di smartphone,
+  // akan menampilkan pencarian pekerjaan
+  function eventSearchJob(data: any) {
+    var el = document.getElementById('searchJobId')
+    el?.classList.toggle('hidden')
+  }
+
   useEffect(() => {
     // console.log(valueKota)
   }, [valueKota])
 
   useEffect(() => {
     if (userRedux.token !== '') {
-      httpGetAllJob(userRedux.token)
+      console.log('ada token di home = ', userRedux.token)
       setTimeout(() => {
         dispatch(setLoadingScreenHome({
           show: false
@@ -277,6 +440,11 @@ const Home = () => {
     } else {
       console.log('gaada token di home')
       initialStateUserAuthByAsync(dispatch)
+      setTimeout(() => {
+        dispatch(setLoadingScreenHome({
+          show: false
+        }))
+      }, 2000)
     }
   }, [dispatch, userRedux.token])
 
@@ -289,12 +457,13 @@ const Home = () => {
   } else {
     return (
       <>
-        <Header sudahDiPage="home"/>
+        <Header sudahDiPage="home" actionSearchJob={eventSearchJob}/>
 
+        {/* <button onClick={props.handleLogin}>Log In</button> */}
         {
           userRedux.profile.recruiter
-          ? <Recruiter dataPost={dataRecruiter} isLoading={isLoading}/>
-          : <JobSeeker />
+          ? <Recruiter dataJob={dataJob} isLoading={isLoading}/>
+          : <JobSeeker dataJob={dataJob} isLoading={isLoading} />
         }
 
         <Footer />

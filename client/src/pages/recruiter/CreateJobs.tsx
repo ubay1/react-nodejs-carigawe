@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './editor.css'
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -17,7 +17,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch } from '../../store';
 import { setLoadingScreenHome } from '../../store/loadingScreenHome';
 import { RootState } from '../../store/rootReducer';
-import { initialStateUserAuthByAsync } from '../../store/user';
+// import { initialStateUserAuthByAsync } from '../../store/user';
 import { useHistory } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import LoadingScreen from '../../assets/loading_screen.json';
@@ -27,89 +27,70 @@ import { setPageActive } from '../../store/pageActive';
 import { Slide, toast } from 'react-toastify';
 import { setLoading } from '../../store/loading';
 import DropZone,{useDropzone} from 'react-dropzone';
+import { Typeahead } from 'react-bootstrap-typeahead';
+import { dataKota } from '../../utils/interface';
 // RichTextEditor.Inject(HtmlEditor, Image, Link, Toolbar);
+import TitleForm from './TitleForm'
 
-function Previews(props: {imageContent: any}) {
+function Previews(props: {imageContent: any, isPublish?: any, eventPublish: any}) {
   const [filess, setFiles] = useState([]);
-  const [fileKebesaran, setfileKebesaran] = useState('')
 
   const {getRootProps, getInputProps, isDragActive, isDragReject, fileRejections} = useDropzone({
     accept: 'image/*',
     maxSize: 100000,
     onDrop: (acceptedFiles: any) => {
-      console.log('test = ', acceptedFiles[0])
-
+      // console.log('test = ', acceptedFiles[0])
       acceptedFiles.map((file: any) => {
         Object.assign(file, {
           preview: URL.createObjectURL(file)
         })
       });
 
+      props.eventPublish(false)
+
       setFiles(acceptedFiles)
     }
   });
 
-
-  const thumbs = filess.map((item: any) => {
+  filess.map((item: any) => {
     var reader = new FileReader();
     reader.readAsDataURL(item); 
     reader.onloadend = function() {
-        var base64data = reader.result;                
-        console.log(base64data);
+      var base64data = reader.result;                
+      // console.log(base64data);
+      if (props.isPublish === true) {
+        props.imageContent('')
+      } else {
         props.imageContent(base64data)
+      }
     }
-    return(
-      <div key={item.name}>
-        <div className="">
-          <img
-            className="p-1 border-2 border-gray-100 w-24 h-full"
-            src={item.preview}
-          />
-          {item.name}
-        </div>
-      </div>
-    )
   })
-
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks
-    // filess.map((file: any) => {
-      console.log(filess)
-    //   URL.revokeObjectURL(file.preview)
-    // });
-  }, [filess]);
 
   return (
     <>
     <div className="
       md:mt-5
-      mt-10 mx-4 mb-1
+      mt-5 mx-4 mb-1
     "> 
-      <div className="text-xs text-gray-400">
-        pilih gambar <span className="italic font-bold">*optional</span>
+      <div className="text-xs text-black">
+        pilih gambar [<span className="italic font-bold">*optional dan max: 100kb</span>]
       </div>
     </div>
-    <div className="rounded-lg mx-4  border-2 border-gray-100 p-4">
-      <div {...getRootProps({className: 'dropzone bg-gray-50 flex flex-col items-center justify-center border-4 border-gray-200 border-dashed mb-2 p-4 focus:outline-none'})}>
+    <div className="mx-4 ">
+      <div {...getRootProps({className: 'dropzone bg-gray-50 flex flex-col items-center justify-center border-4 border-gray-300 border-dashed mb-2 p-8 focus:outline-none hover:border-4 hover:border-blue-500'})}>
         <input {...getInputProps()} />
         <p className="text-gray-300">
           {!isDragActive && 'Klik di sini atau tarik file gambar untuk diunggah!'}
           {isDragActive && !isDragReject && "Type file sesuai!"}
           {isDragReject && "Type file tidak sesuai!"}
-          {/* {isDragActive ? "Drop file!" : "klik disini atau tarik file"} */}
         </p>
       </div>
-      {/* <div>
-        {files}
-      </div> */}
-      <div>
-        {thumbs}
-      </div>
     </div>
-    <div className="text-blue-500 text-xs mx-4 font-bold">(max: 100kb)</div>
     </>
   );
 }
+
+const MemoPreviews = React.memo(Previews)
 
 const CreateJobs = () => {
   toast.configure()
@@ -118,11 +99,15 @@ const CreateJobs = () => {
   const dispatch: AppDispatch = useDispatch()
   const history = useHistory();
   
-  const [judulContent, setjudulContent] = useState('')
+  const [judulContent, setjudulContent] = useState<any>('')
+  const [kotaContent, setkotaContent] = useState<any>('')
   const [imageContent, setimageContent] = useState('')
-  const [content, setcontent] = useState<any>('')
-  const [tanggalBatasPengiriman, settanggalBatasPengiriman] = useState('');
-  const [waktuBatasPengiriman, setwaktuBatasPengiriman] = useState('')
+  const [isPublish, setisPublish] = useState<any>(false)
+  const [isiContent, setisiContent] = useState<any>('')
+  const [waktuBatasPengiriman, setwaktuBatasPengiriman] = useState<any>('')
+
+  const refKota: any = useRef();
+  const refWaktu: any = useRef();
 
   const showSecond = true;
   const str = showSecond ? 'HH:mm:ss' : 'HH:mm';
@@ -146,6 +131,10 @@ const CreateJobs = () => {
     document.title = 'Cari Gawe - Buat Loker'
     dispatch(setPageActive({ispage: 'createjobs'}))
   }, [])
+
+  useEffect(() => {
+    console.log('image content = ', imageContent)
+  }, [imageContent])
   
   useEffect(() => {
     if (userRedux.token !== '') {
@@ -155,20 +144,27 @@ const CreateJobs = () => {
         }))
       }, 2500)
     } else {
-      initialStateUserAuthByAsync(dispatch)
+      // initialStateUserAuthByAsync(dispatch)
     }
   }, [dispatch, history, userRedux.token])
 
-  useEffect(() => {
-    console.log(tanggalBatasPengiriman)
-  }, [tanggalBatasPengiriman])
-
   function eventHandlerImage(image:any) {
-    // console.log(image)
     setimageContent(image)
   }
 
-  const httpPostJob = async (props: {token: string, userId: any, content: string, expiredAt: string}) => {
+  function eventHandlerPublish(data:any) {
+    setisPublish(data)
+  }
+
+  type IPostJob = {
+    token: string, 
+    title: string, 
+    image_content?: any, 
+    city: string, 
+    content: string, 
+    expiredAt: string
+  }
+  const httpPostJob = async (props: IPostJob) => {
     // console.log(props)
     try {
       dispatch(setLoading({
@@ -176,7 +172,7 @@ const CreateJobs = () => {
         timeout: 300000
       }))
 
-      if (content === '' || props.expiredAt === ' ') {
+      if (props.title === '' || props.city === '' || props.content === '' || props.expiredAt === ' ') {
           dispatch(setLoading({
             show: false,
             timeout: 0
@@ -193,16 +189,21 @@ const CreateJobs = () => {
       } else {
         const responsePostJob = await HTTPPostJob({
           token: props.token,
-          userId: props.userId,
+          title: props.title,
+          image_content: props.image_content,
+          city: props.city,
           content: props.content,
           expiredAt: props.expiredAt,
         })
   
         console.log(responsePostJob.data.message)
-  
-        setcontent('')
+
+        setisPublish(true)
+        setjudulContent('')
+        setkotaContent('')
+        refKota.current.clear()
+        setisiContent('')
         setwaktuBatasPengiriman('')
-        settanggalBatasPengiriman('')
 
         setTimeout(() => {
           dispatch(setLoading({
@@ -238,34 +239,59 @@ const CreateJobs = () => {
       <>
         <Header sudahDiPage="createjob"/>
 
-      <div className="md:mx-20">
-        <div className="md:mt-5 mt-10 mx-4"> 
-          <p className="text-xs text-gray-400">judul content</p>
-        </div>
-        <div className="mx-4">
+      <div className="md:mx-32">
+        {/* <TitleForm title="Jabatan" /> */}
+        <div className="mx-4 mt-5">
           <input 
             type="text" 
             name="judul"
-            className=" border-2 border-gray-100 w-full md:w-1/2 h-12 py-2 px-2 
-            rounded-lg focus:outline-none"
+            className="w-full h-12 py-2 
+            border-b border-gray-300 focus:outline-none focus:border-blue-500"
             onChange={(e: any) => {
               setjudulContent(e.target.value)
             }}
-            placeholder="Masukan judul"
+            value={judulContent}
+            placeholder="Masukan jabatan"
           />
         </div>
 
-        <Previews imageContent={eventHandlerImage}/>
-
-        <div className="md:mt-5 mt-10 mx-4"> 
-          <p className="text-xs text-gray-400">isi content</p>
+        {/* <TitleForm title="kota domisili" /> */}
+        <div className="z-10 relative mx-4 mt-5">
+          <Typeahead
+            id="domisili2"
+            placeholder="Masukan penempatan kerja"
+            onChange={(selected) => {
+              console.log(selected)
+              if (selected.length !== 0) {
+                setkotaContent(selected[0].label.toLowerCase())
+              }
+            }}
+            options={dataKota}
+            defaultInputValue={kotaContent}
+            ref={refKota}
+          />
         </div>
-        <div className=" md:my-0 shadow-md mx-4">
+
+        <MemoPreviews imageContent={eventHandlerImage} isPublish={isPublish} eventPublish={eventHandlerPublish}/>
+        {
+          imageContent !== ''
+          ?     
+          <div className="mx-4 mt-2 mb-5">
+            <img
+              className="p-1 border-2 border-gray-100 w-24 h-full"
+              src={imageContent}
+            />
+          </div>
+          : <div className="mb-5"></div>
+        }
+
+        <TitleForm title="deskripsi pekerjaan" />
+        <div className="mt-10 md:my-0 mx-4">
           <RichTextEditorComponent
-            value={content}
+            value={isiContent}
             change={param => {
               // console.log(param?.value)
-              setcontent(param?.value)
+              setisiContent(param?.value)
             }}
             height={450} 
             toolbarSettings={toolbarSetting} quickToolbarSettings={quickToolbarSettings}>
@@ -273,37 +299,25 @@ const CreateJobs = () => {
           </RichTextEditorComponent>
         </div>
 
-        <div className="md:mt-5 mt-10 mx-4"> 
-          <p className="text-xs text-gray-400">batas pengiriman lamaran</p>
-        </div>
-        
+        <TitleForm title="batas pengiriman lamaran" />
         <div className="
           md:p-0 md:justify-start md:bg-transparent
           flex items-center
           mx-4
         ">
-          <DatePicker 
-            className="w-full text-lg py-2 px-2 rounded-lg border-2 border-gray-100 focus:outline-none   mr-2
-            "
-            dateFormat="dd/MM/yyyy"
-            placeholderText="Pilih tanggal"
-            value={tanggalBatasPengiriman}
-            onChange={(date: any) => {
-              settanggalBatasPengiriman(moment(date).format('yyyy-MM-DD'))
-            }} 
-          />
-          <TimePicker
-            showSecond={showSecond}
-            placeholder="Pilih waktu"
-            className="ml-2 text-lg py-2 px-2 rounded-lg border-2 border-gray-100 focus:outline-none   mr-2
-            "
-            // defaultValue={moment()}
-            onChange={(value: any) => {
-                // console.log(value.format(str));
-                setwaktuBatasPengiriman(value.format(str))
+          <input 
+            type="datetime-local" 
+            name="bataspengiriman"
+            className=" w-full h-12 
+            border-b border-gray-300 focus:outline-none focus:border-blue-500"
+            onChange={(e: any) => {
+              setwaktuBatasPengiriman(e.target.value)
             }}
-          />,
+            value={waktuBatasPengiriman}
+            placeholder="Masukan waktu"
+          />
         </div>
+
         <div className="flex items-center justify-center
           mb-20 mt-6
           md:mb-10
@@ -317,9 +331,11 @@ const CreateJobs = () => {
             onClick={() => {
               httpPostJob({
                   token: userRedux.token,
-                  userId: userRedux.profile.id,
-                  content: content,
-                  expiredAt: `${tanggalBatasPengiriman} ${waktuBatasPengiriman}`
+                  title: judulContent,
+                  city: kotaContent,
+                  image_content: imageContent,
+                  content: isiContent,
+                  expiredAt: moment(waktuBatasPengiriman).format('YYYY-MM-DD HH:mm:ss')
                 }
               )
             }}

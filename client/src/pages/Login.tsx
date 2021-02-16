@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-restricted-globals */
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable jsx-a11y/anchor-is-valid */
@@ -14,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../store';
 import { HTTPGetUser, HTTPLoginUser } from '../utils/http';
 import Cookies from 'js-cookie';
+// initialStateUserAuthByAsync
 import { initialStateUserAuthByAsync, setAuthStatus, setReduxUsersProfile } from '../store/user';
 import { RootState } from '../store/rootReducer';
 import { setLoadingScreenHome } from '../store/loadingScreenHome';
@@ -30,20 +32,31 @@ const Login = () => {
 
   useEffect(() => {
     document.title = 'Cari Gawe - Masuk'
+    setTimeout(() => {
+      dispatch(setLoadingScreenHome({
+        show: false
+      }))
+    }, 2000)
   }, [])
 
-  useEffect(() => {
-    if (userRedux.token !== '') {
-      setTimeout(() => {
-        dispatch(setLoadingScreenHome({
-          show: false
-        }))
-        history.push('/')
-      }, 2500)
-    } else {
-      initialStateUserAuthByAsync(dispatch)
-    }
-  }, [dispatch, history, userRedux.token])
+  // useEffect(() => {
+  //   if (userRedux.token !== '') {
+  //     setTimeout(() => {
+  //       dispatch(setLoadingScreenHome({
+  //         show: false
+  //       }))
+  //       history.push('/')
+  //     }, 2500)
+  //   } else {
+  //     initialStateUserAuthByAsync(dispatch)
+  //     setTimeout(() => {
+  //       dispatch(setLoadingScreenHome({
+  //         show: false
+  //       }))
+  //       history.push('/')
+  //     }, 2500)
+  //   }
+  // }, [dispatch, history, userRedux.token])
 
   const formik = useFormik({
     initialValues: {
@@ -51,12 +64,12 @@ const Login = () => {
       password: '',
     },
     onSubmit: values => {
+      // console.log(JSON.stringify(values, null, 2));
       httpLoginUser(values)
-      //   console.log(JSON.stringify(values, null, 2));
     },
     validationSchema: Yup.object({
       email: Yup.string()
-        .email("Invalid email format")
+        .email("format email tidak sesuai")
         .required("Wajib diisi"),
       password: Yup.string()
         .required("Wajib diisi"),
@@ -148,14 +161,14 @@ const Login = () => {
       <div className="lg:flex">
         <div className="lg:w-1/2 xl:max-w-screen-sm">
           <div className="
-                        px-10
-                        h-screen 
-                        flex flex-col justify-center
-                        sm:px-24 
-                        md:px-48 
-                        lg:px-12 lg:mt-0 lg:h-screen lg:flex lg:shadow-lg lg:ml-3 lg:mr-3 
-                        xl:px-12 xl:max-w-2xl
-                        "
+            px-10
+            h-screen 
+            flex flex-col justify-center
+            sm:px-24 
+            md:px-48 
+            lg:px-12 lg:mt-0 lg:h-screen lg:flex lg:shadow-lg lg:ml-3 lg:mr-3 
+            xl:px-12 xl:max-w-2xl
+            "
           >
             <div className="">
               <div className="py-6 flex justify-center">
@@ -184,12 +197,11 @@ const Login = () => {
                   <div className="flex justify-between items-center">
                     <div className="text-sm font-bold text-gray-700 tracking-wide">
                       Password
-                                        </div>
+                    </div>
                     <div>
-                      <a className="text-xs font-display font-semibold text-blue-600 hover:text-blue-800
-                                            cursor-pointer">
+                      <a className="text-xs font-display font-semibold text-blue-600 hover:text-blue-800 cursor-pointer">
                         Lupa Password?
-                                            </a>
+                      </a>
                     </div>
                   </div>
                   <input
@@ -206,12 +218,12 @@ const Login = () => {
                 </div>
                 <div className="mt-10">
                   <button className="bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 text-gray-100 p-4 w-full rounded-full tracking-wide
-                                    font-semibold font-display focus:outline-none focus:shadow-outline
-                                    shadow-lg"
+                  font-semibold font-display focus:outline-none focus:shadow-outline
+                  shadow-lg"
                     type="submit"
                   >
                     Masuk
-                                    </button>
+                  </button>
                 </div>
               </form>
               <div className="my-6 text-sm font-display font-semibold text-gray-700 text-center">

@@ -33,6 +33,7 @@ const jobController = {
             title: req.body.title,
             image_content: req.body.image_content,
             content: req.body.content,
+            city: req.body.city,
             expiredAt: req.body.expiredAt,
           }
         );
@@ -60,7 +61,7 @@ const jobController = {
   async getAllJob(req, res) {
     try {
       const jobs = await models.job.findAll({
-        attributes: ['content', 'expiredAt', 'createdAt'],
+        attributes: ['content','image_content','title','city','expiredAt', 'createdAt'],
         include: [{model: models.user, attributes:['name', 'photo', 'gender']}]
       })
 
@@ -99,7 +100,7 @@ const jobController = {
 
       const jobs = await models.job.findAll({
         where: {userId: hashids.decode(decoded.id)},
-        attributes: ['content', 'expiredAt', 'createdAt'],
+        attributes: ['content','image_content','title','city','expiredAt', 'createdAt'],
         include: [{model: models.user, attributes:['name', 'photo', 'gender']}]
       })
 

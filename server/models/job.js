@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
   const job = sequelize.define('job', {
     // userId: DataTypes.INTEGER,
     content: DataTypes.TEXT,
-    expiredAt: DataTypes.DATE
+    expiredAt: DataTypes.DATE,
+    image_content: DataTypes.TEXT,
+    title: DataTypes.STRING,
+    city: DataTypes.STRING,
   }, {});
   
   job.associate = function(models) {
