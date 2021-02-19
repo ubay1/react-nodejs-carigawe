@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 const models = require('../models');
 const { validationResult } = require('express-validator');
@@ -9,12 +10,44 @@ const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
 // get config vars
 dotenv.config();
-const moment = require('moment')
 
+const moment = require('moment')
 const hashids = require('../utils/helper')
+
+var nodemailer = require('nodemailer');
+const send = require('../helper/sendEmail');
+
+const fs = require('fs');
+const mustache = require('mustache');
+
+const crypto = require('crypto');
+const algorithm = "aes-128-cbc";
+const salt = "aB090bog4";
+const hash = crypto.createHash("sha1");
+
+hash.update(salt);
+
+let key = hash.digest().slice(0, 16);
+crypto.createHash('sha256').update(String(crypto.createSecretKey)).digest('base64').substr(0, 32);
+const iv = crypto.randomBytes(16);
+
+function decrypt(text) {
+  let iv = Buffer.from(text.iv, 'hex');
+  let encryptedText = Buffer.from(text.encryptedData, 'hex');
+  
+  let decipher = crypto.createDecipheriv(algorithm, key, iv);
+  let decrypted = decipher.update(encryptedText);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  
+  return decrypted.toString();
+}
 
 function generateAccessToken(data) {
   return jwt.sign(data, process.env.TOKEN_SECRET, { expiresIn: '24h' }); //24 jam
+}
+
+function decodeToken(token) {
+  return jwt.verify(token, process.env.TOKEN_SECRET);
 }
 
 function filterDataUser(data) {
@@ -158,6 +191,72 @@ const userController = {
     }
   },
 
+  async sendVerifyEmail(req,res) {
+    const replaceToken = req.headers.authorization.replace('Bearer ', '')
+    const decoded = decodeToken(replaceToken)
+    const payload = {...req}
+
+    try {
+
+      await send.sendVerifyEmail(decoded, payload, replaceToken);
+      res.status(200).json({
+        message: `email verifikasi telah dikirim ke email ${req.body.email}`,
+      })
+    } catch (error) {
+      res.status(500).json({
+        error: error
+      })
+    }
+  },
+
+  async verifyEmail(req, res){
+    
+    const email = req.query.email;
+    const token = req.query.token;
+    const users = await models.user.findOne({
+      where: {
+        email: email,
+      },
+    })
+
+    // jika email telah diverifikasi
+    if(users.email_verif === true) {
+      res.render('../views/sudah_verif',{
+        message: 'email sudah diverifikasi sebelumnya'
+      });
+    } else {
+      const parseToken = JSON.parse(token)
+      const decryptedToken = decrypt(parseToken)
+      console.log(decryptedToken)
+
+      console.log('sudah expired = ',moment().isAfter(decryptedToken))
+      // jika token tidak sesuai sama token yang ada di db
+      if (users.email_verification_token !== parseToken.encryptedData){
+        res.render('../views/token_salah',{
+          message: 'token tidak sesuai'
+        });
+      } else {
+        // jika token telah kadaluarsa
+        if (moment().isAfter(decryptedToken) === true) {
+          res.render('../views/verif_gagal',{
+            message: 'verifikasi email gagal, karna token telah kadaluarsa. silahkan lakukan verifikasi ulang'
+          });
+        }
+        else {
+          users.update({
+            email_verif: true,
+            email_verification_token: null
+          })
+  
+          res.render('../views/verif_sukses',{
+            message: 'verifikasi email sukses'
+          });
+        }
+      }
+
+    }
+  },
+
   async signout(req, res) {
     try {
       const destroy = jwt.destroy(req.body.token)
@@ -198,7 +297,7 @@ const userController = {
   async getUser(req, res) {
     try {
       const replaceToken = req.headers.authorization.replace('Bearer ', '')
-      const decoded = jwt.verify(replaceToken, process.env.TOKEN_SECRET);
+      const decoded = decodeToken(replaceToken)
 
       const users = await models.user.findOne({
         where: {

@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     recruiter: DataTypes.BOOLEAN,
     job_seeker: DataTypes.BOOLEAN,
     gender: DataTypes.STRING,
+    email_verification_token: DataTypes.TEXT,
   },
   );
 

@@ -19,14 +19,15 @@ import ReactPlaceholder from 'react-placeholder';
 import "react-placeholder/lib/reactPlaceholder.css";
 import moment from 'moment'
 import parse from 'html-react-parser';
-import { AiFillHeart } from 'react-icons/ai'
-import { RiQuestionAnswerFill } from 'react-icons/ri'
+import { AiFillHeart, AiFillLike } from 'react-icons/ai'
+import { RiMapPin2Line, RiQuestionAnswerFill } from 'react-icons/ri'
 import EmptyData from '../../components/EmptyData'
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import { initialStateUserAuthByAsync } from '../../store/user'
 
-const AllPost = ({dataPost, isLoading}: any): any => {
-  console.log(dataPost) 
+const AllPost = ({dataJob, isLoading}: any): any => {
+  // console.log(dataJob) 
   return(
     <div>
       {
@@ -42,7 +43,7 @@ const AllPost = ({dataPost, isLoading}: any): any => {
             />
           </div>
         :
-        dataPost.length === 0
+        dataJob.length === 0
         ? 
           <div
             className="
@@ -57,15 +58,19 @@ const AllPost = ({dataPost, isLoading}: any): any => {
           md:grid-cols-md-3cols-content md:my-4 md:mb-10
           xs:grid-cols-2
           xs:grid sm:grid-cols-2
-          mb-20 mt-5
+          sm:mt-4
+          gap-y-4
+          mb-24 mt-6
         ">
           {
-            dataPost.map((item: any, index: number) => {
+            dataJob.map((item: any, index: number) => {
+              const isExpired = moment().isAfter(item.expiredAt)
               return(
                 <div
                   key={`indexPost-${index}`}
                   className="
-                  mx-2 my-2 
+                  sm:my-2 
+                  mx-2 mb-4 
                   bg-white shadow rounded-lg
                   h-full
                   "
@@ -79,7 +84,7 @@ const AllPost = ({dataPost, isLoading}: any): any => {
                       <img 
                         src={item.image_content} 
                         alt=""
-                        className="h-full w-full object-cover rounded-t-lg opacity-70"
+                        className="h-full w-full object-cover rounded-t-lg opacity-60"
                       />
                       : ''
                     }
@@ -101,42 +106,60 @@ const AllPost = ({dataPost, isLoading}: any): any => {
                               <img 
                                 src={profilAccountDefault} 
                                 alt="foto-profil" 
-                                className="h-8 w-8 mr-1 rounded-full shadow-md"
+                                className="h-10 w-10 mr-1 rounded-full shadow-md"
                               />
                             :
                               <img 
                                 src={profilAccountDefault2} 
                                 alt="foto-profil" 
-                                className="h-8 w-8 mr-1 rounded-full shadow-md"
+                                className="h-10 w-10 mr-1 rounded-full shadow-md"
                               />
                           :
                             <img 
                               src={item.user.photo} 
                               alt="foto-profil" 
-                              className="h-8 w-8 mr-1 rounded-full shadow-md"
+                              className="h-10 w-10 mr-1 rounded-full shadow-md"
                             />
                         }
-                        <div className="block font-bold text-md leading-snug text-white">
-                          <p className="text-md">{ item.user.name }</p>
-                          <p className="block text-xs text-white font-semibold leading-snug"> 
-                          { moment(item.createdAt).format('YYYY-MM-DD hh:mm:ss')}
-                          </p>
+                        <div className="ml-2 mt-0.5">
+                          <span className="block font-medium text-base leading-snug text-white dark:text-gray-100">{item.user.name}</span>
+                          <span className="block text-sm text-white font-light leading-snug">{moment(item.createdAt).format('DD MMM YYYY HH:mm:ss')}</span>
                         </div>
                       </div>
                     </div>
+
+                    {/* aktif / tidak */}
+                    {
+                      isExpired === true 
+                      ? 
+                        <div className="absolute top-0 right-0 p-1 text-white text-sm
+                         bg-red-500 rounded-tr-lg">
+                          sudah tutup
+                        </div>
+                      : 
+                        <div className="absolute top-0 right-0 p-1 text-white text-sm
+                        bg-green-500 rounded-tr-lg">
+                          masih buka 
+                        </div> 
+                    }
                   </div>
 
 
                   {/* grid grid-rows-lg-7rows-home-list-job */}
-                  <div className="mt-4 px-2">
-                    <div className="text-md uppercase text-center font-bold line-clamp-1">
-                      {item.title}
-                    </div>
+                  <div className="mt-2 p-2">
+                      <div className="flex flex-col justify-start">
+                        <div className="text-md uppercase font-bold line-clamp-1">
+                          {item.title}
+                        </div> 
+                        <div className="text-sm flex flex-row items-center">
+                          <RiMapPin2Line /> {item.city}
+                        </div>
+                      </div>
                     
                     {/* isi postingan */}
                     <div className="mt-3 overflow-hidden w-full">
                       <div id={`text-loker-${index}`} 
-                      className="text-sm line-clamp-2
+                      className="text-xs line-clamp-3
                       ">
                         {
                           parse(item.content)
@@ -159,7 +182,7 @@ const AllPost = ({dataPost, isLoading}: any): any => {
                     {/* button read more*/}
                     <div className="">
                       <button id={`btn-readmore-${index}`} className="
-                        text-blue-500 font-bold text-sm underline
+                        text-blue-500 text-xs underline
                         "
                         onClick={() => {
                         }}
@@ -169,22 +192,23 @@ const AllPost = ({dataPost, isLoading}: any): any => {
                     </div>
 
                     {/* button like & comment*/}
-                    <div className="flex justify-between items-center mt-5">
-                      <div className="flex flex-row items-center">
-                        <AiFillHeart className="text-red-500 text-md cursor-pointer" />
-                        <div className="ml-1 text-sm text-gray-500  font-light">
-                          0
-                        </div>
+                  </div>
+
+                  {/* button like & comment*/}
+                  <div className="flex justify-between items-center mt-2 mb-2 pb-4 xs:pb-0 px-4">
+                    <div className="flex flex-row items-center">
+                      <AiFillLike className="text-blue-500 text-md cursor-pointer" />
+                      <div className="ml-1 text-sm text-gray-500  font-light">
+                        0
                       </div>
-                      <div className="flex flex-row items-center">
-                        <RiQuestionAnswerFill className="text-blue-500 text-md cursor-pointer" />
-                        <div className="ml-1 text-sm text-gray-500 dark:text-gray-400 font-light ">
-                          0
-                        </div>
+                    </div>
+                    <div className="flex flex-row items-center">
+                      <RiQuestionAnswerFill className="text-blue-500 text-md cursor-pointer" />
+                      <div className="ml-1 text-sm text-gray-500 dark:text-gray-400 font-light ">
+                        0
                       </div>
                     </div>
                   </div>
-
                 </div>
               )
             })
@@ -223,18 +247,25 @@ const Profil = () => {
     }
   }
 
-  // useEffect(() => {
-  //   if (userRedux.token !== '') {
-  //     httpGetAllJobUser(userRedux.token)
-  //     setTimeout(() => {
-  //       dispatch(setLoadingScreenHome({
-  //         show: false
-  //       }))
-  //     }, 2000)
-  //   } else {
-  //     // initialStateUserAuthByAsync(dispatch)
-  //   }
-  // }, [dispatch, history, userRedux.token])
+  useEffect(() => {
+    if (userRedux.token !== '') {
+      // console.log('ada token di home = ', userRedux.token)
+      httpGetAllJobUser(userRedux.token)
+      setTimeout(() => {
+        dispatch(setLoadingScreenHome({
+          show: false
+        }))
+      }, 2000)
+    } else {
+      // console.log('gaada token di home')
+      initialStateUserAuthByAsync(dispatch)
+      setTimeout(() => {
+        dispatch(setLoadingScreenHome({
+          show: false
+        }))
+      }, 2000)
+    }
+  }, [dispatch, userRedux.token])
 
   if (loadingScreenHomeRedux.show === true) {
     return(
@@ -247,7 +278,7 @@ const Profil = () => {
       <>
         <Header sudahDiPage="profil" />
 
-        <div className="">
+        <div className="relative top-16">
           <div className="bg-blue-100 h-full py-6 flex flex-col items-center justify-center">
             {
               userRedux.profile.photo === ''
@@ -296,10 +327,10 @@ const Profil = () => {
           </div>
         </div>
 
-        <div className="flex justify-center items-center my-4 font-bold ">
+        <div className="flex justify-center items-center my-4 mt-20 font-bold ">
           <h1 className=" p-1 border-b-4 border-blue-400">Semua Postingan</h1>
         </div>
-        <AllPost dataPost={allPostJob} isLoading={isLoading}/>
+        <AllPost dataJob={allPostJob} isLoading={isLoading}/>
 
         <Footer />
       </>

@@ -97,7 +97,7 @@ const Header = (props: ITypeHeader) => {
         ">
         <button
           id="nav-toggle"
-          className={`items-center p-1 border rounded-full mr-2 text-white 
+          className={`items-center p-2 border rounded-full mr-2 text-white 
           bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl 
           hover:from-blue-500 
           hover:to-blue-400 shadow-md border-transparent hover:border-transparent focus:outline-none
@@ -111,12 +111,12 @@ const Header = (props: ITypeHeader) => {
         </button>
         <button
           id="nav-toggle"
-          className="flex items-center p-1 border rounded-full text-white bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 shadow-md border-transparent hover:border-transparent focus:outline-none"
+          className="flex items-center p-2 border rounded-md text-white bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 shadow-md border-transparent hover:border-transparent focus:outline-none"
           onClick={() => {
             setmenuHide(!menuHide)
           }}
         >
-          <IoEllipsisVertical className="text-xl" />
+          <RiMenuLine className="text-xl" />
         </button>
       </div>
 
@@ -267,7 +267,9 @@ const Header = (props: ITypeHeader) => {
                       className={`
                       text-xl mx-4 lg:text-2xl lg:mx-0
                       `} />
-                    <span className="text-sm lg:hidden"> Beranda </span>
+                    <span className={`text-sm 
+                    ${pageActive.ispage !== 'beranda' ? 'lg:hidden': ''} pl-2`
+                    } title="beranda"> Beranda </span>
                   </Link>
                 </li>
                 <li className="w-full ">
@@ -291,7 +293,9 @@ const Header = (props: ITypeHeader) => {
                       className={`
                       text-xl mx-4 lg:text-2xl lg:mx-0
                       `} />
-                    <span className="text-sm lg:hidden"> Profil </span>
+                    <span className={`text-sm 
+                    ${pageActive.ispage !== 'profil' ? 'lg:hidden': ''} pl-2`
+                    } title="profil"> Profil </span>
                   </Link>
                 </li>
                 <li className="w-full ">
@@ -339,7 +343,7 @@ const Header = (props: ITypeHeader) => {
                       className={`
                       text-xl mx-4 lg:text-2xl lg:mx-0
                       `} />
-                    <span className="text-sm lg:hidden"> Keluar </span>
+                    <span className="text-sm lg:hidden" title="keluar"> Keluar </span>
                   </button>
                 </li>
               </>

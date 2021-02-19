@@ -1,0 +1,14 @@
+<%- include('./partial_email/header', {title: 'Verif email sukses'}) %>
+  <tr>
+    <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
+      <div style="font-family: sans-serif; font-size: 18px; text-align: center; font-weight: normal; margin: 0; font-weight: bold; margin-left: 10px; margin-top: 20px; margin-bottom: 10px;">
+        <%= message %>
+      </div>
+      <div style="width: 50%; margin: auto; margin-bottom: 20px;">
+        <a href="http://localhost:3000/profil" style="height: 100%; display: flex; justify-content: center; align-items: center; color: #ffffff; text-decoration: none; background-color: #3498db; border: solid 1px #28648b; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: #3498db;">kembali ke apps
+        </a> 
+      </div>
+    </td>
+  </tr>
+<%- include('./partial_email/footer') %>
+                  

@@ -20,6 +20,8 @@ function handleValidationErrors(req, res, next) {
 
 router.post('/user/signup', userValidation2, handleValidationErrors,  userController.signup);
 router.post('/user/signin', userController.signin);
+router.post('/user/send_verify_email', authMiddleware, userController.sendVerifyEmail);
+router.get('/user/verify', userController.verifyEmail);
 router.post('/user/signout', userController.signout);
 router.post('/user/check_token', userController.checkToken);
 router.post('/user/get_user',authMiddleware, userController.getUser);

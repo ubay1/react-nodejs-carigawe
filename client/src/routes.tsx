@@ -8,7 +8,8 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import Profil from './pages/profil/profil';
 import Register from './pages/Register';
-import PageNotFound from './pages/404/404'
+import CreateJobs from './pages/recruiter/CreateJobs';
+import PageNotFound from './pages/404/404';
 
 toast.configure()
 
@@ -41,6 +42,16 @@ const ROUTES = [
     key: "APP_HOME", 
     exact: true, 
     component: Home 
+  },
+  { path: "/profil", 
+    key: "APP_PROFIL", 
+    exact: true, 
+    component: Profil
+  },
+  { path: "/recruiter/create-job", 
+    key: "APP_RECRUITER_CREATEJOB", 
+    exact: true, 
+    component: CreateJobs
   },
     // component: (props: any) => {
       //   if (!Cookies.get("token")) {

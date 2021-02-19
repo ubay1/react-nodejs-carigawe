@@ -40,7 +40,6 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Cookies from 'js-cookie';
 
 const Recruiter = ({dataJob, isLoading}: any): any => {
-  // console.log(isLoading) 
   return(
     <div className="relative top-16">
       {
@@ -69,15 +68,16 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
         :
         <div className=" 
           lg:grid-cols-lg-4cols-content
-          md:grid-cols-md-3cols-content md:my-4 md:mb-10
+          md:grid-cols-md-3cols-content md:my-4 md:mb-24
           xs:grid-cols-2
           xs:grid sm:grid-cols-2
           sm:mt-4
+          gap-y-4
           mb-40 mt-6
         ">
           {
             dataJob.map((item: any, index: number) => {
-              // console.log(dataJob)
+              const isExpired = moment().isAfter(item.expiredAt)
               return(
                 <div
                   key={`indexPost-${index}`}
@@ -140,19 +140,35 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                         </div>
                       </div>
                     </div>
+
+                    {/* aktif / tidak */}
+                    {
+                      isExpired === true 
+                      ? 
+                        <div className="absolute top-0 right-0 p-1 text-white text-sm
+                         bg-red-500 rounded-tr-lg">
+                          sudah tutup
+                        </div>
+                      : 
+                        <div className="absolute top-0 right-0 p-1 text-white text-sm
+                        bg-green-500 rounded-tr-lg">
+                          masih buka 
+                        </div> 
+                    }
                   </div>
 
 
                   {/* grid grid-rows-lg-7rows-home-list-job */}
                   <div className="mt-2 p-2">
-                      <div className="flex flex-col justify-start">
-                        <div className="text-md uppercase font-bold line-clamp-1">
-                          {item.title}
-                        </div> 
-                        <div className="text-sm flex flex-row items-center">
-                          <RiMapPin2Line /> {item.city}
-                        </div>
+                    <div className="flex flex-col justify-start mb-2">
+                      <div className="text-md uppercase font-bold line-clamp-1">
+                        {item.title}
+                      </div> 
+                      <div className="text-sm flex flex-row items-center">
+                        <RiMapPin2Line /> {item.city}
                       </div>
+                    </div>
+                    <hr/>
                     
                     {/* isi postingan */}
                     <div className="mt-3 overflow-hidden w-full">
@@ -164,18 +180,6 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                         }
                       </div>
                     </div>
-
-                    {/* batas pengiriman */}
-                    {/* <div className="mt-4 w-full">
-                      <p className="text-gray-400 text-xs">kirimkan lamaran sebelum:</p>
-                      <p className="font-bold  text-sm">{moment(item.expiredAt).format('YYYY-MM-DD HH:mm:ss')}</p>
-                    </div> */}
-
-                    {/* penempatan kerja */}
-                    {/* <div className="mb-4 mt-2 w-full">
-                      <p className="text-gray-400 text-xs">penempatan</p>
-                      <p className="font-bold text-sm">{item.city}</p>
-                    </div> */}
                     
                     {/* button read more*/}
                     <div className="">
@@ -236,11 +240,12 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
               {/* <div className=" text-xs text-gray-500 mb-1">
                 Posisi Pekerjaan
               </div> */}
-              <input className="w-full mb-2 text-sm py-2 px-2 shadow rounded-lg border-gray-300 focus:outline-none focus:border-blue-500" type="" placeholder="Posisi pekerjaan.." />
+              <input className="w-full h-12 py-2 
+            border-b border-gray-300 focus:outline-none focus:border-blue-500" type="" placeholder="Posisi pekerjaan.." />
 
               {/* <div className=" text-xs text-gray-500 mb-1">Kota</div> */}
 
-              <div className="z-10 relative">
+              <div className="z-10 relative mt-4">
                 <Typeahead
                   id="domisili"
                   placeholder="Kota.."
@@ -262,14 +267,16 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
           
           {/* list job */}
           <div className={`
-            px-6 py-8 
+            px-6 py-8
             border-l-2 border-r-2 border-gray-100 
-          bg-gray-50 
+            bg-gray-50 
             h-full
             md:w-3/6
+            sm:mt-0
           `}>
             {
               dataJob.map((item: any, index: number) => {
+              const isExpired = moment().isAfter(item.expiredAt)
                 return (
                   <div
                     key={`indexPostJobSeeker-${index}`}
@@ -291,7 +298,6 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                     
                       {/* nama user dan tgl postingan */}
                       <div className="absolute bottom-0 w-full">
-                        <div className="flex justify-between items-end">
                           <div className=" m-2 h-full flex flex-row items-center 
                           justify-start mb-2">    
                             {
@@ -322,32 +328,50 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                               <span className="block text-sm text-white font-light leading-snug">{moment(item.createdAt).format('DD MMM YYYY HH:mm:ss')}</span>
                             </div>
                           </div>
-                          <div className="m-2 text-sm text-white flex flex-row items-center">
-                            <RiMapPin2Line color="white"/> {item.city}
+                      </div>
+                    
+                      {/* aktif / tidak */}
+                      {
+                        isExpired === true 
+                        ? 
+                          <div className="absolute top-0 right-0 p-1 text-white text-sm
+                          bg-red-500 rounded-tr-lg">
+                            sudah tutup
                           </div>
-                        </div>
+                        : 
+                          <div className="absolute top-0 right-0 p-1 text-white text-sm
+                          bg-green-500 rounded-tr-lg">
+                            masih buka 
+                          </div> 
+                      }
+                    </div>
+
+                    <div className="mt-2 p-2">
+                    <div className="flex flex-col justify-start mb-2">
+                      <div className="text-md uppercase font-bold line-clamp-1">
+                        {item.title}
+                      </div> 
+                      <div className="text-sm flex flex-row items-center">
+                        <RiMapPin2Line /> {item.city}
                       </div>
                     </div>
-
-                    {/* jabatan */}
-                    <div className="text-center mt-2 text-md uppercase font-bold line-clamp-1">
-                      {item.title}
-                    </div>
-
-                    {/* jobdesk */}
+                    <hr/>
+                    
+                    {/* isi postingan */}
                     <div className="mt-3 overflow-hidden w-full">
                       <div id={`text-loker-${index}`} 
-                      className="px-3 text-sm line-clamp-3
+                      className="text-xs line-clamp-3
                       ">
                         {
                           parse(item.content)
                         }
                       </div>
                     </div>
+                    
                     {/* button read more*/}
                     <div className="">
                       <button id={`btn-readmore-${index}`} className="
-                        text-blue-500 text-sm px-3 underline
+                        text-blue-500 text-xs underline
                         "
                         onClick={() => {
                         }}
@@ -356,18 +380,19 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                       </button>
                     </div>
 
-                    {/* button like & comment*/}
-                    <div className="flex justify-between items-center mt-5 mb-2 xs:-mb-1 px-4 pb-4">
-                      <div className="flex flex-row items-center">
-                        <AiFillLike className="text-blue-500 text-md cursor-pointer" />
-                        <div className="ml-1 text-sm text-gray-500  font-light">
-                          0
+                      {/* button like & comment*/}
+                      <div className="flex justify-between items-center mt-5 mb-2 ">
+                        <div className="flex flex-row items-center">
+                          <AiFillLike className="text-blue-500 text-md cursor-pointer" />
+                          <div className="ml-1 text-sm text-gray-500  font-light">
+                            0
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex flex-row items-center">
-                        <RiQuestionAnswerFill className="text-blue-500 text-md cursor-pointer" />
-                        <div className="ml-1 text-sm text-gray-500 dark:text-gray-400 font-light ">
-                          0
+                        <div className="flex flex-row items-center">
+                          <RiQuestionAnswerFill className="text-blue-500 text-md cursor-pointer" />
+                          <div className="ml-1 text-sm text-gray-500 dark:text-gray-400 font-light ">
+                            0
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -431,14 +456,14 @@ const Home = (props: any) => {
 
   useEffect(() => {
     if (userRedux.token !== '') {
-      console.log('ada token di home = ', userRedux.token)
+      // console.log('ada token di home = ', userRedux.token)
       setTimeout(() => {
         dispatch(setLoadingScreenHome({
           show: false
         }))
       }, 2000)
     } else {
-      console.log('gaada token di home')
+      // console.log('gaada token di home')
       initialStateUserAuthByAsync(dispatch)
       setTimeout(() => {
         dispatch(setLoadingScreenHome({

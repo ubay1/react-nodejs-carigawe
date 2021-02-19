@@ -22,7 +22,7 @@ import { useHistory } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import LoadingScreen from '../../assets/loading_screen.json';
 import { HTTPCheckToken, HTTPPostJob } from '../../utils/http';
-import {httpCheckToken} from '../../store/user'
+import {httpCheckToken, initialStateUserAuthByAsync} from '../../store/user'
 import { setPageActive } from '../../store/pageActive';
 import { Slide, toast } from 'react-toastify';
 import { setLoading } from '../../store/loading';
@@ -126,6 +126,16 @@ const CreateJobs = () => {
     link: ['Open', 'Edit', 'UnLink']
   }
 
+  var ctrlDown = false,
+      ctrlKey = 17,
+      cmdKey = 91,
+      vKey = 86,
+      cKey = 67;
+
+    function keydown(e: any) {
+      console.log(e.keyCode)
+    }
+
   // didmount
   useEffect(() => {
     document.title = 'Cari Gawe - Buat Loker'
@@ -133,20 +143,27 @@ const CreateJobs = () => {
   }, [])
 
   useEffect(() => {
-    console.log('image content = ', imageContent)
-  }, [imageContent])
+    // console.log('kota content = ', kotaContent)
+  }, [kotaContent])
   
   useEffect(() => {
     if (userRedux.token !== '') {
+      // console.log('ada token di home = ', userRedux.token)
       setTimeout(() => {
         dispatch(setLoadingScreenHome({
           show: false
         }))
-      }, 2500)
+      }, 2000)
     } else {
-      // initialStateUserAuthByAsync(dispatch)
+      // console.log('gaada token di home')
+      initialStateUserAuthByAsync(dispatch)
+      setTimeout(() => {
+        dispatch(setLoadingScreenHome({
+          show: false
+        }))
+      }, 2000)
     }
-  }, [dispatch, history, userRedux.token])
+  }, [dispatch, userRedux.token])
 
   function eventHandlerImage(image:any) {
     setimageContent(image)
@@ -172,7 +189,8 @@ const CreateJobs = () => {
         timeout: 300000
       }))
 
-      if (props.title === '' || props.city === '' || props.content === '' || props.expiredAt === ' ') {
+      if (props.title === '' || props.city === '' || props.content === '' || 
+      props.expiredAt === 'Invalid date') {
           dispatch(setLoading({
             show: false,
             timeout: 0
@@ -239,7 +257,7 @@ const CreateJobs = () => {
       <>
         <Header sudahDiPage="createjob"/>
 
-      <div className="md:mx-32">
+      <div className="md:mx-32 relative mt-24">
         {/* <TitleForm title="Jabatan" /> */}
         <div className="mx-4 mt-5">
           <input 
@@ -260,11 +278,15 @@ const CreateJobs = () => {
           <Typeahead
             id="domisili2"
             placeholder="Masukan penempatan kerja"
-            onChange={(selected) => {
-              console.log(selected)
+            onChange={(selected: any) => {
+              // console.log(selected)
               if (selected.length !== 0) {
                 setkotaContent(selected[0].label.toLowerCase())
               }
+            }}
+            onInputChange={(e: any) => {
+              // console.log(e)
+              setkotaContent(e)
             }}
             options={dataKota}
             defaultInputValue={kotaContent}
@@ -286,7 +308,7 @@ const CreateJobs = () => {
         }
 
         <TitleForm title="deskripsi pekerjaan" />
-        <div className="mt-10 md:my-0 mx-4">
+        <div className="md:my-0 mx-4">
           <RichTextEditorComponent
             value={isiContent}
             change={param => {
@@ -326,7 +348,7 @@ const CreateJobs = () => {
             className="bg-gradient-to-bl from-blue-400 to-blue-500 
             hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
             cursor-pointer text-white  p-2 rounded-lg
-            w-24"
+            w-24 focus:outline-none"
             type="submit"
             onClick={() => {
               httpPostJob({
