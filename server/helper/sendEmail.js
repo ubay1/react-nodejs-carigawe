@@ -38,7 +38,7 @@ function encrypt (text) {
 
 module.exports = {
   async sendVerifyEmail(decoded, req, token) {
-    const templateVerify = fs.readFileSync('./helper/templateVerify.html', 'utf8');
+    const templateVerify = fs.readFileSync('./template_email/verify_email.html', 'utf8');
 
     const tokenEmail = moment().add(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
     const encryptToken = encrypt(tokenEmail)
