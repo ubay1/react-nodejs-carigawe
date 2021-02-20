@@ -56,6 +56,10 @@ module.exports = {
         9: '9',
         10: '10',
       },
+      boxShadow: {
+        blue: '0 2px 10px 0 rgba(59, 130, 246, .4)',
+        red: '0 2px 10px 0 rgba(248, 113, 113, .4)'
+      },
     },
     screens: {
       'xs': '480px',

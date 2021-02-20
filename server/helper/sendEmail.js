@@ -72,7 +72,8 @@ module.exports = {
             name: decoded.name,
             id: id,
             email: req.body.email,
-            token: JSON.stringify(encryptToken)
+            token: JSON.stringify(encryptToken),
+            year: moment().format('YYYY')
         })
     }
 

@@ -9,6 +9,7 @@ export async function HTTPRegisterUser(param: registerUser): Promise<any> {
             const data = {
                 name: param.name,
                 phone: param.phone,
+                gender: param.gender,
                 email: param.email,
                 password: param.password,
                 recruiter: param.roles_jobs === 'recruiter' ? true : false,
@@ -59,6 +60,21 @@ export async function HTTPGetUser(param: {token: string}): Promise<any> {
             }
             const responseGetUser = await AxiosNormal(2000).post(`${DevApiUrl}/user/get_user`, data)
             return resolve(responseGetUser)
+        } catch (error) {
+            return reject(error)
+        }
+    })
+}
+
+export async function HTTPVerifyEmail(param: {token: string, email: any}): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const data = {
+                token: param.token,
+                email: param.email
+            }
+            const responseVerifyEmail = await AxiosNormal(2000).post(`${DevApiUrl}/user/send_verify_email`, data)
+            return resolve(responseVerifyEmail)
         } catch (error) {
             return reject(error)
         }

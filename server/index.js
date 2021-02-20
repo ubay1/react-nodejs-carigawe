@@ -13,12 +13,8 @@ app.use(bodyParser.urlencoded({extended : false}));
 const routes = require('./routes/index');
 app.use('/api', routes);
 
-app.get('/', function(req, res) {
-    res.render('test');
-});
-
-app.get('/verif_gagal', function(req, res) {
-    res.render('verif_gagal');
+app.get('/woyo', function(req, res) {
+    res.render('woyo');
 });
 
 const PORT = 8000;

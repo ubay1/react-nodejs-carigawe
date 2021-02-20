@@ -62,6 +62,7 @@ const Register = () => {
         initialValues: {
           name: '',
           phone: '',
+          gender: '',
           email: '',
           password: '',
           roles_jobs: ''
@@ -74,13 +75,15 @@ const Register = () => {
 
             httpRegisterUser(values)
 
-            console.log(JSON.stringify(values, null, 2));
+            // console.log(JSON.stringify(values, null, 2));
           
         },
         validationSchema: Yup.object({
             name: Yup.string()
               .required("Wajib diisi"),
             phone: Yup.number()
+            .required("Wajib diisi"),
+            gender: Yup.string()
             .required("Wajib diisi"),
             email: Yup.string()
               .email("Invalid email format")
@@ -98,6 +101,7 @@ const Register = () => {
             const responseRegisterUser = await HTTPRegisterUser({
                 name: params.name,
                 phone: params.phone,
+                gender: params.gender,
                 email: params.email,
                 password: params.password,
                 roles_jobs: params.roles_jobs
@@ -152,10 +156,10 @@ const Register = () => {
             <div className="lg:flex">
                 <div className="lg:w-1/2 xl:max-w-screen-sm">
                     <div className="
-                        mb-10 px-10
+                        px-4 mb-10
                         sm:px-24 
                         md:px-48 
-                        lg:px-12 lg:mt-0 lg:mb-0 lg:flex lg:flex-col lg:justify-start lg:shadow-lg lg:pb-4 lg:ml-3 mr-3 
+                        lg:px-12 lg:mt-0 lg:mb-0 lg:flex lg:flex-col lg:justify-start lg:shadow-lg lg:pb-4 lg:ml-3
                         xl:px-12 xl:max-w-2xl
                         "
                     >
@@ -197,6 +201,41 @@ const Register = () => {
                                     />
                                     {formik.errors.phone && formik.touched.phone && (
                                         <p className="text-red-400">{formik.errors.phone}</p>
+                                    )}
+                                </div>
+                                <div className="mt-8">
+                                    <div className="flex justify-between items-center">
+                                        <div className="text-sm font-bold text-gray-700 tracking-wide">
+                                            Jenis Kelamin
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-row">
+                                        <div className="inline-flex items-center mt-3 w-1/2">
+                                            <input 
+                                                type="radio" 
+                                                id="Laki" 
+                                                name="gender" 
+                                                className="h-5 w-5 text-gray-600" 
+                                                value="L"
+                                                onChange={formik.handleChange}
+                                            />
+                                            <label htmlFor="Laki" className="ml-2 text-gray-700">Laki-Laki
+                                            </label>
+                                        </div>
+                                        <div className="inline-flex items-center mt-3 w-1/2">
+                                            <input 
+                                                type="radio" 
+                                                id="Perempuan" 
+                                                name="gender" 
+                                                className="h-5 w-5 text-gray-600" 
+                                                value="P"
+                                                onChange={formik.handleChange}
+                                            />
+                                            <label htmlFor="Perempuan" className="ml-2 text-gray-700">Perempuan</label>
+                                        </div>
+                                    </div>
+                                    {formik.errors.gender && (
+                                        <p className="text-red-400">{formik.errors.gender}</p>
                                     )}
                                 </div>
                                 <div className="mt-8">

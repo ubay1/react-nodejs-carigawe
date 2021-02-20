@@ -1,6 +1,7 @@
 export interface registerUser {
     name: string;
     phone: string;
+    gender: string;
     email: string;
     password: string;
     roles_jobs?: any;

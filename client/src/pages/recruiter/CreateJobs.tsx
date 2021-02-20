@@ -114,7 +114,7 @@ const CreateJobs = () => {
 
   const toolbarSetting = {
     items: ['Bold', 'Italic', 'Underline', 'SourceCode', 'StrikeThrough',
-    'FontName', 'FontSize', 'FontColor', 'BackgroundColor',
+    'FontName', 'FontColor', 'BackgroundColor',
     'Formats', 'Alignments',
     'Outdent', 'Indent',
     'CreateLink',
@@ -126,16 +126,6 @@ const CreateJobs = () => {
     link: ['Open', 'Edit', 'UnLink']
   }
 
-  var ctrlDown = false,
-      ctrlKey = 17,
-      cmdKey = 91,
-      vKey = 86,
-      cKey = 67;
-
-    function keydown(e: any) {
-      console.log(e.keyCode)
-    }
-
   // didmount
   useEffect(() => {
     document.title = 'Cari Gawe - Buat Loker'
@@ -143,8 +133,8 @@ const CreateJobs = () => {
   }, [])
 
   useEffect(() => {
-    // console.log('kota content = ', kotaContent)
-  }, [kotaContent])
+    console.log('isi content = ', isiContent)
+  }, [isiContent])
   
   useEffect(() => {
     if (userRedux.token !== '') {

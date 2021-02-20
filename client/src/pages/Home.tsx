@@ -90,16 +90,24 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                 >
 
                   {/* gambar content */}
-                  <div className="h-32 relative bg-black rounded-t-lg">
+                  <div className="h-32 relative rounded-t-lg">
                     {
                       item.image_content !== ''
                       ? 
-                      <img 
-                        src={item.image_content} 
-                        alt=""
-                        className="h-full w-full object-cover rounded-t-lg opacity-60"
-                      />
-                      : ''
+                      <div className="bg-black h-full w-full rounded-t-lg">
+                        <img 
+                          src={item.image_content} 
+                          alt=""
+                          className="h-full w-full object-cover rounded-t-lg opacity-60"
+                        />
+                      </div>
+                      : 
+                      <div className="text-white bg-gradient-to-b from-blue-400 to-blue-500 
+                      rounded-t-lg flex items-center justify-center h-full">
+                        <div className="font_damion text-4xl opacity-40 ">
+                          Cari Gawe
+                        </div>
+                      </div>
                     }
                   
                     {/* nama user dan tgl postingan */}
@@ -136,7 +144,7 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                         }
                         <div className="ml-2 mt-0.5">
                           <span className="block font-medium text-base leading-snug text-white dark:text-gray-100">{item.user.name}</span>
-                          <span className="block text-sm text-white font-light leading-snug">{moment(item.createdAt).format('DD MMM YYYY HH:mm:ss')}</span>
+                          <span className="block text-xs text-white font-light leading-snug">{moment(item.createdAt).format('DD MMM YYYY HH:mm:ss')}</span>
                         </div>
                       </div>
                     </div>
@@ -159,7 +167,7 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
 
 
                   {/* grid grid-rows-lg-7rows-home-list-job */}
-                  <div className="mt-2 p-2">
+                  <div className="mt-0 p-2">
                     <div className="flex flex-col justify-start mb-2">
                       <div className="text-md uppercase font-bold line-clamp-1">
                         {item.title}
@@ -293,7 +301,13 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                           alt=""
                           className="h-full w-full object-cover rounded-t-lg opacity-60"
                         />
-                        : ''
+                        : 
+                        <div className="text-white bg-gradient-to-b from-blue-400 
+                        to-blue-500  rounded-t-lg flex items-center justify-center h-full">
+                        <div className="font_damion text-4xl opacity-40 ">
+                          Cari Gawe
+                        </div>
+                      </div>
                       }
                     
                       {/* nama user dan tgl postingan */}
@@ -346,7 +360,7 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                       }
                     </div>
 
-                    <div className="mt-2 p-2">
+                    <div className="mt-0 p-2">
                     <div className="flex flex-col justify-start mb-2">
                       <div className="text-md uppercase font-bold line-clamp-1">
                         {item.title}

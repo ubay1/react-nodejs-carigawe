@@ -93,6 +93,10 @@
       }
     }
     </style>
+    
+    <script>
+      const moment = require('moment')
+    </script>
   </head>
   <body class="" style="background-color: #f6f6f6; font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; line-height: 1.4; margin: 0; padding: 0; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
     <table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background-color: #f6f6f6;">
@@ -126,7 +130,7 @@
                                 <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt;  height: 50px;">
                                   <tbody>
                                     <tr>
-                                      <td colspan="6" style="font-family: sans-serif; font-size: 14px; background-color: #3498db; border-radius: 5px; text-align: center;"> 
+                                      <td colspan="6" style="font-family: sans-serif; font-size: 14px; background-color: #3498db; border-radius: 5px; text-align: center; display: flex; justify-content: center; align-items: center;"> 
                                         <a href="http://localhost:8000/api/user/verify?email={{email}}&token={{token}}" target="_blank" style="height: 100%; display: flex; justify-content: center; align-items: center; color: #ffffff; text-decoration: none; background-color: #3498db; border: solid 1px #28648b; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: #3498db;">verifikasi email
                                         </a> 
                                       </td>
@@ -151,7 +155,9 @@
               <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
                 <tr>
                   <td class="content-block" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 12px; color: #999999; text-align: center;">
-                    <span class="apple-link" style="color: #999999; font-size: 12px; text-align: center;">Cari gawe. Bekasi, Indonesia</span>
+                    <span class="apple-link" style="color: #999999; font-size: 12px; text-align: center;">
+                      © {{year}} Cari Gawe, Bekasi, Indonesia
+                    </span>
                   </td>
                 </tr>
               </table>
@@ -165,4 +171,8 @@
       </tr>
     </table>
   </body>
+  <script>
+    const year = new Date().getFullYear()
+    document.getElementById('time').innerHTML = year
+  </script>
 </html>
