@@ -21,7 +21,7 @@ import { RootState } from '../store/rootReducer';
 import { setLoadingScreenHome } from '../store/loadingScreenHome';
 import Lottie from 'lottie-react';
 import LoadingScreen from '../assets/loading_screen.json';
-
+import socket from '../utils/socket'
 
 const Login = () => {
   toast.configure()
@@ -127,6 +127,14 @@ const Login = () => {
           })
           history.push('/')
         }, 2000)
+
+        // Join chatroom
+        const username = responseGetUser.data.data.name
+        const room = 'room_beranda'
+        socket.emit('joinRoom', { username, room});
+        // socket.on('roomUsers', ({ room, users }: any) => {
+        //   console.log(users)
+        // });
 
       }
 

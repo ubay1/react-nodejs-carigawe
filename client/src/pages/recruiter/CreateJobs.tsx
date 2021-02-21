@@ -21,7 +21,7 @@ import { RootState } from '../../store/rootReducer';
 import { useHistory } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import LoadingScreen from '../../assets/loading_screen.json';
-import { HTTPCheckToken, HTTPPostJob } from '../../utils/http';
+import { HTTPCheckToken, HTTPGetAllJobSocket, HTTPPostJob } from '../../utils/http';
 import {httpCheckToken, initialStateUserAuthByAsync} from '../../store/user'
 import { setPageActive } from '../../store/pageActive';
 import { Slide, toast } from 'react-toastify';
@@ -31,15 +31,21 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import { dataKota } from '../../utils/interface';
 // RichTextEditor.Inject(HtmlEditor, Image, Link, Toolbar);
 import TitleForm from './TitleForm'
+import socket from '../../utils/socket';
 
-function Previews(props: {imageContent: any, isPublish?: any, eventPublish: any}) {
+
+
+interface IPreviews {
+  imagePreview: any, imageContent?: any, 
+  isPublish?: any, eventPublish: any
+}
+function Previews(props: IPreviews) {
   const [filess, setFiles] = useState([]);
 
   const {getRootProps, getInputProps, isDragActive, isDragReject, fileRejections} = useDropzone({
-    accept: 'image/*',
+    accept: 'image/jpeg, image/jpg, image/png',
     maxSize: 100000,
     onDrop: (acceptedFiles: any) => {
-      // console.log('test = ', acceptedFiles[0])
       acceptedFiles.map((file: any) => {
         Object.assign(file, {
           preview: URL.createObjectURL(file)
@@ -52,6 +58,7 @@ function Previews(props: {imageContent: any, isPublish?: any, eventPublish: any}
     }
   });
 
+  // ubah ke base64 untuk preview
   filess.map((item: any) => {
     var reader = new FileReader();
     reader.readAsDataURL(item); 
@@ -59,9 +66,10 @@ function Previews(props: {imageContent: any, isPublish?: any, eventPublish: any}
       var base64data = reader.result;                
       // console.log(base64data);
       if (props.isPublish === true) {
-        props.imageContent('')
+        props.imagePreview('')
       } else {
-        props.imageContent(base64data)
+        props.imagePreview(base64data)
+        props.imageContent(item)
       }
     }
   })
@@ -101,6 +109,7 @@ const CreateJobs = () => {
   
   const [judulContent, setjudulContent] = useState<any>('')
   const [kotaContent, setkotaContent] = useState<any>('')
+  const [imagePreview, setimagePreview] = useState('')
   const [imageContent, setimageContent] = useState('')
   const [isPublish, setisPublish] = useState<any>(false)
   const [isiContent, setisiContent] = useState<any>('')
@@ -155,7 +164,12 @@ const CreateJobs = () => {
     }
   }, [dispatch, userRedux.token])
 
-  function eventHandlerImage(image:any) {
+  function eventImagePreview(image:any) {
+    setimagePreview(image)
+  }
+
+  function eventImageContent(image:any) {
+    // console.log(image)
     setimageContent(image)
   }
 
@@ -204,7 +218,7 @@ const CreateJobs = () => {
           expiredAt: props.expiredAt,
         })
   
-        console.log(responsePostJob.data.message)
+        // console.log(responsePostJob.data.message)
 
         setisPublish(true)
         setjudulContent('')
@@ -228,6 +242,13 @@ const CreateJobs = () => {
             transition: Slide
           })
         }, 2000)
+
+        // Emit message to server
+        socket.emit('postJob', {msg: 'woyyy'});
+        
+        const responseGetAllJobSocket = await HTTPGetAllJobSocket()
+        console.log(responseGetAllJobSocket)
+
       }
     } catch (error) {
       console.log(error)
@@ -284,18 +305,22 @@ const CreateJobs = () => {
           />
         </div>
 
-        <MemoPreviews imageContent={eventHandlerImage} isPublish={isPublish} eventPublish={eventHandlerPublish}/>
+        <MemoPreviews imagePreview={eventImagePreview} imageContent={eventImageContent} isPublish={isPublish} eventPublish={eventHandlerPublish}/>
         {
-          imageContent !== ''
+          imagePreview !== ''
           ?     
           <div className="mx-4 mt-2 mb-5">
             <img
               className="p-1 border-2 border-gray-100 w-24 h-full"
-              src={imageContent}
+              src={imagePreview}
             />
           </div>
           : <div className="mb-5"></div>
         }
+
+        {/* <input type="file" placeholder="masukan gambar" accept="image/*" onChange={(param: any)=>{
+          console.log(param.target.files[0])
+        }}/> */}
 
         <TitleForm title="deskripsi pekerjaan" />
         <div className="md:my-0 mx-4">
@@ -345,11 +370,15 @@ const CreateJobs = () => {
                   token: userRedux.token,
                   title: judulContent,
                   city: kotaContent,
-                  image_content: imageContent,
+                  image_content: imagePreview,
                   content: isiContent,
                   expiredAt: moment(waktuBatasPengiriman).format('YYYY-MM-DD HH:mm:ss')
                 }
               )
+              // Emit message to server
+              // socket.emit('postJob', 'kirim data lowongan terbaru');
+              // const responseGetAllJobSocket = await HTTPGetAllJobSocket()
+              // console.log(responseGetAllJobSocket)
             }}
           >Kirim</button>
         </div>

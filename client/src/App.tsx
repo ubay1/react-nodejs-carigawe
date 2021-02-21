@@ -25,7 +25,19 @@ import {store} from './store';
 import { Provider } from 'react-redux';
 import ROUTES, { RenderRoutes } from "./routes";
 
+// import {io} from "socket.io-client";
+// const ENDPOINT = "http://127.0.0.1:8000";
+import socket from './utils/socket'
+
 const App = () => {
+  
+  useEffect(() => {
+    // const socket = io(ENDPOINT);
+    // socket.on('roomUsers', ({ room, users }: any) => {
+    //   console.log(users)
+    // });
+  }, []);
+  
   function logout() {
     localStorage.removeItem("user");
     window.history.go(1)
@@ -35,7 +47,7 @@ const App = () => {
     <Router>
       <Loading></Loading>
       {/* {displayRouteMenu(ROUTES)} */}
-      <RenderRoutes routes={ROUTES} />
+      <RenderRoutes routes={ROUTES}/>
       {/* <div> */}
       {/* <Switch>
           <Route exact path='/' />

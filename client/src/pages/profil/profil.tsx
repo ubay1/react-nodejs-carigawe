@@ -73,7 +73,7 @@ const AllPost = ({dataJob, isLoading}: any): any => {
                   className="
                   sm:my-2 
                   mx-2 mb-4 
-                  bg-white shadow rounded-lg
+                  bg-white shadow-md rounded-lg
                   h-full
                   "
                 >

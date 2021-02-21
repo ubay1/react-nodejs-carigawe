@@ -17,8 +17,8 @@ export function AxiosNormal<AxiosInstance>(timeout?: number) {
             return config;
         } else {
             // get data with bearer
-        config.headers.authorization = `Bearer ${config.data.token}`
-        return config;
+            config.headers.Authorization = `Bearer ${config.data.token}`
+            return config;
         }
     }, function (error) {
 

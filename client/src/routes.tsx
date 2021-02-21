@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
+import React, { useState } from "react";
 import { Route, Switch, BrowserRouter as Router, Redirect } from "react-router-dom";
 import Cookies from 'js-cookie';
 import { Slide, toast } from 'react-toastify';
@@ -18,6 +19,7 @@ const ROUTES = [
     key: "APP_LOGIN", 
     exact: true, 
     component: (props: any) => {
+      // console.log(props)
       if (!Cookies.get("token")) {
         return <Login />;
       } else {
@@ -87,11 +89,14 @@ export default ROUTES;
  * https://reacttraining.com/react-router/web/example/route-config
  */
 function RouteWithSubRoutes(route: any) {
+  // console.log('props compoennt route = ', dataSocket)
   return (
     <Route
       path={route.path}
       exact={route.exact}
-      render={props => <route.component {...props} routes={route.routes} />}
+      render={props => {
+        return(<route.component {...props} routes={route.routes} />)
+      }}
     />
   );
 }
@@ -99,7 +104,8 @@ function RouteWithSubRoutes(route: any) {
 /**
  * Use this component for any new section of routes (any config object that has a "routes" property
  */
-export function RenderRoutes({ routes }: any) {
+export function RenderRoutes({ routes, dataSocket }: any) {
+  // console.log('data socket = ', dataSocket)
   return (
     <Switch>
       {routes.map((route: any, i: number) => {

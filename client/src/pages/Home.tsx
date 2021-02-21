@@ -38,6 +38,8 @@ import "react-placeholder/lib/reactPlaceholder.css";
 import Loader from "react-loader-spinner";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Cookies from 'js-cookie';
+import socket from '../utils/socket'
+import { Slide, toast } from 'react-toastify';
 
 const Recruiter = ({dataJob, isLoading}: any): any => {
   return(
@@ -84,7 +86,7 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                   className="
                   sm:my-2 
                   mx-2 mb-4 
-                  bg-white shadow rounded-lg
+                  bg-white shadow-md rounded-lg
                   h-full
                   "
                 >
@@ -429,6 +431,7 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
 }
 
 const Home = (props: any) => {
+  toast.configure()
   const loadingScreenHomeRedux = useSelector((state: RootState) => state.loadingScreenHome)
   const userRedux = useSelector((state: RootState) => state.user)
   const dispatch: AppDispatch = useDispatch()
@@ -441,9 +444,29 @@ const Home = (props: any) => {
   const [dataJob, setdataJob] = useState<any[]>([]);
 
   useEffect(() => {
+    // Get room and users
+    socket.on('roomUsers', ({ room, users }: any) => {
+      console.log(users)
+    });
+  
+    // get new data job
+    socket.on('getNewDataJob', (data: any) => {
+      toast('ada lowongan terbaru nih', {
+        position: "bottom-right",
+        autoClose: 5000,
+        type: 'info',
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        transition: Slide
+      })
+      setdataJob(data)
+    })
+
     document.title = 'Cari Gawe - Beranda'
     httpGetAllJob()
   }, [])
+  
 
   const httpGetAllJob = async () => {
     try {

@@ -6,11 +6,48 @@ const bcrypt = require('bcrypt');
 const salt = bcrypt.genSaltSync(10);
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
+const multer = require("multer") 
+const path = require("path") 
+const fs = require('fs-extra')
 // get config vars
 dotenv.config();
 const moment = require('moment')
-
 const hashids = require('../utils/helper')
+
+var storage = multer.diskStorage({ 
+  destination: function (req, file, cb) { 
+
+      // Uploads is the Upload_folder_name 
+      cb(null, "uploads") 
+  }, 
+  filename: function (req, file, cb) { 
+    cb(null, file.fieldname + "-" + Date.now()+".jpg") 
+  } 
+}) 
+
+// Define the maximum size for uploading 
+// picture i.e. 1 MB. it is optional 
+const maxSize = 1 * 1000 * 1000;
+
+var upload = multer({  
+  storage: storage, 
+  limits: { fileSize: maxSize }, 
+  fileFilter: function (req, file, cb){ 
+  
+      // Set the filetypes, it is optional 
+      var filetypes = /jpeg|jpg|png|gif|webp/; 
+      var mimetype = filetypes.test(file.mimetype); 
+
+      var extname = filetypes.test(path.extname(file.originalname).toLowerCase()); 
+      
+      if (mimetype && extname) { 
+          return cb(null, true); 
+      } 
+    
+      cb("Error: file hanya support - " + filetypes); 
+    }  
+// mypic is the name of file attribute 
+}).any("photo");
 
 const jobController = {
   async postJob(req, res) {
@@ -25,35 +62,52 @@ const jobController = {
         where: { id: decodeId },
       })
 
+      let photo_file = "jobs_" + moment().format('YYYY_MM_DD_HH_mm_ss') + ".png";
+      const rootDir = process.cwd();
+      let next_path = "/uploads/jobs/";
+
       if(cekIdIsExist) {
-        // return res.status(200).json(cekIdIsExist)
-        const jobs = await models.job.create(
-          {
-            userId: decodeId,
-            title: req.body.title,
-            image_content: req.body.image_content,
-            content: req.body.content,
-            city: req.body.city,
-            expiredAt: req.body.expiredAt,
-          }
-        );
-      
-        if (jobs) {
-          res.status(200).json({
-            'message': 'Lowongan berhasil di publish',
-            'data': jobs
-          });
+        // Base64 to Img
+        let base64Image = req.body.image_content.split(";base64,").pop();
+        let base64Type = req.body.image_content.split(";base64,", 1).pop();
+        if (base64Type === "data:image/jpeg" || base64Type === "data:image/jpg" || base64Type === "data:image/png") {
+            try {
+                fs.writeFile(
+                  rootDir + next_path + photo_file, base64Image, { encoding: "base64" }, 
+                  function (err) {
+                    console.log("File created "+photo_file);
+                  }
+                );
+                
+                const jobs = models.job.create(
+                  {
+                    userId: decodeId,
+                    title: req.body.title,
+                    image_content: photo_file,
+                    content: req.body.content,
+                    city: req.body.city,
+                    expiredAt: req.body.expiredAt,
+                  }
+                );
+              
+                if (jobs) {
+                  res.status(200).json({
+                    'message': 'Lowongan berhasil di publish',
+                    'data': jobs
+                  });
+                } else {
+                  res.status(400).json({
+                    'message': 'Lowongan gagal di publish',
+                    'data': null
+                  });
+                }
+            } catch (error) {
+                throw new Error("Failed Create File");
+            }
         } else {
-          res.status(400).json({
-            'message': 'Lowongan gagal di publish',
-            'data': null
-          });
+            throw new BadRequest("File must be JPG/JPEG/PNG FORMAT");
         }
-      } else {
-        return res.status(404).send({
-          errors: "user tidak terdaftar."
-        });
-      }
+      } 
     } catch(e) {
       console.log(e)
     }
@@ -62,8 +116,13 @@ const jobController = {
     try {
       const jobs = await models.job.findAll({
         attributes: ['content','image_content','title','city','expiredAt', 'createdAt'],
-        include: [{model: models.user, attributes:['name', 'photo', 'gender']}]
+        include: [{model: models.user, attributes:['name', 'photo', 'gender']}],
+        order: [
+          ['id', 'DESC'],
+        ],
       })
+
+      // socket.io.emit("FromAPI", "hello from controller");
 
       // const filterJobs = jobs.map((item) => {
       //   return {
@@ -101,7 +160,10 @@ const jobController = {
       const jobs = await models.job.findAll({
         where: {userId: hashids.decode(decoded.id)},
         attributes: ['content','image_content','title','city','expiredAt', 'createdAt'],
-        include: [{model: models.user, attributes:['name', 'photo', 'gender']}]
+        include: [{model: models.user, attributes:['name', 'photo', 'gender']}],
+        order: [
+          ['id', 'DESC'],
+        ],
       })
 
       res.status(200).json({

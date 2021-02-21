@@ -14,6 +14,7 @@ import { setPageActive } from '../store/pageActive'
 import { Slide, toast } from 'react-toastify'
 import Cookies from 'js-cookie'
 import { expiredToken } from '../store/user'
+import socket from '../utils/socket'
 
 interface ITypeHeader {
   sudahDiPage?: string;
@@ -31,7 +32,7 @@ const Header = (props: ITypeHeader) => {
 
   // const handleScroll = () => {
   //   const header = document.getElementById('myHeader')
-  //   const offset = window.pageYOffset;
+  //   const offset = window.location.pageYOffset;
   //   if (offset > 0) {
   //     header?.classList.add('sticky')
   //     header?.classList.add('top-0')
@@ -55,7 +56,7 @@ const Header = (props: ITypeHeader) => {
   // }, [dispatch, userRedux.token])
 
   useEffect(() => {
-    // window.addEventListener('scroll', handleScroll)
+    // window.location.addEventListener('scroll', handleScroll)
   }, [])
 
   useEffect(() => {
@@ -69,7 +70,7 @@ const Header = (props: ITypeHeader) => {
       md:grid md:grid-cols-lg-3cols-content md:justify-between
       flex justify-between
       fixed top-0
-      bg-white shadow z-120 p-4  w-full
+      bg-white shadow-md z-120 p-4  w-full
       "
       id="myHeader"
     >
@@ -318,10 +319,6 @@ const Header = (props: ITypeHeader) => {
                         show: true,
                         timeout: 300000
                       }))
-                      
-                      // dispatch(setPageActive({
-                      //   ispage: 'beranda'
-                      // }))
 
                       setTimeout(() => {
                         toast('Anda telah keluar', {
@@ -334,8 +331,16 @@ const Header = (props: ITypeHeader) => {
                           transition: Slide
                         })
                         
+                        // socket.emit('disconnect', )
                         expiredToken(dispatch)
-                        history.push('/login')
+                        
+                        // history.push('/login')
+                        // pakai cara ini agar ngemmit disconnect ke server
+                        window.location.replace('/login')
+
+                        dispatch(setPageActive({
+                          ispage: 'beranda'
+                        }))
                         dispatch(setLoading({
                           show: false,
                           timeout: 0
