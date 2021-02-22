@@ -10,11 +10,8 @@ const {
   userLeave,
   getRoomUsers
 } = require('./utils/user');
-
 const models = require('./models');
-
 const app = express();
-
 const PORT = 8000;
 
 app.use(cors());
@@ -22,8 +19,8 @@ app.use(cors());
 app.set('view engine', 'ejs');
 
 // limit 50mb, kalo gak di set akan error kalo data api yang dikirim besar.
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true}));
 
 const server = app.listen(PORT,() => {
     console.log(`Server is listening to port ${PORT}`)
