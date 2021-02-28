@@ -146,7 +146,7 @@ const ModalDetail = (props: {visibleModal: any, closeModal: any}) => {
           timeout: 0
         }))
         // console.log(responseUploadFotoProfil)
-        toast('sukses', {
+        toast('sukses update foto profil', {
           position: "bottom-right",
           autoClose: 5000,
           type: 'success',
@@ -216,9 +216,20 @@ const ModalDetail = (props: {visibleModal: any, closeModal: any}) => {
   );
 }
 
-const AllPost = ({ dataJob, isLoading }: any): any => {
+const AllPost = ({ dataJob, isLoading, fotoProfil }: any): any => {
   const userRedux = useSelector((state: RootState) => state.user)
-  // console.log(dataJob) 
+  const [foto, setFoto] = useState('')
+  const [gender, setGender] = useState<any>('')
+  
+  useEffect(() => {
+    if (userRedux.profile.photo !== '') {
+      setFoto(fotoProfil)
+      setGender(userRedux.profile.gender)
+    } else {
+      setGender(userRedux.profile.gender)
+    }
+  }, [userRedux])
+  
   return (
     <div>
       {
@@ -300,9 +311,9 @@ const AllPost = ({ dataJob, isLoading }: any): any => {
                         mb-2
                       ">
                             {
-                              item.user.photo === ''
-                                ?
-                                item.user.gender === 'L'
+                              foto === ''
+                              ?
+                                gender === 'L'
                                   ?
                                   <img
                                     src={profilAccountDefault}
@@ -317,7 +328,7 @@ const AllPost = ({ dataJob, isLoading }: any): any => {
                                   />
                                 :
                                 <img
-                                  src={`${DevUrl}/profile/${userRedux.profile.photo}`}
+                                  src={`${DevUrl}/profile/${foto}`}
                                   alt="foto-profil"
                                   className="h-10 w-10 mr-1 rounded-full shadow-md object-cover"
                                 />
@@ -416,6 +427,7 @@ const Profil = () => {
   const userRedux = useSelector((state: RootState) => state.user)
   const dispatch: AppDispatch = useDispatch()
   const history = useHistory();
+
   const [visibleModal, setVisibleModal] = React.useState(false)
   const onOpenModalEditPhoto = () => setVisibleModal(true);
   const onCloseModalEditFoto = () => setVisibleModal(false);
@@ -618,7 +630,7 @@ const Profil = () => {
         <div className="flex justify-center items-center my-4 mt-20 font-bold ">
           <h1 className=" p-1 border-b-4 border-blue-400">Semua Postingan</h1>
         </div>
-        <AllPost dataJob={allPostJob} isLoading={isLoading} />
+        <AllPost dataJob={allPostJob} isLoading={isLoading} fotoProfil={userRedux.profile.photo} />
 
         <Footer />
       </>
