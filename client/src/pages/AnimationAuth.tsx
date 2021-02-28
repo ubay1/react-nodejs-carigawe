@@ -4,7 +4,7 @@ import SearchJob from '../assets/image_login3.json';
 const AnimationAuth = () => {
     return(
         <div className="
-                hidden items-center fixed right-0 w-1/2 justify-center bg-gray-50 flex-1 h-screen
+                hidden items-center fixed right-0 w-1/2 justify-center bg-white flex-1 h-screen
                 lg:flex flex-col"
             >
                 <Lottie  animationData={SearchJob} style={{width: 500}} />

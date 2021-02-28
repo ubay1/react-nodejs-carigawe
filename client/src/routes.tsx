@@ -5,10 +5,10 @@ import { Route, Switch, BrowserRouter as Router, Redirect } from "react-router-d
 import Cookies from 'js-cookie';
 import { Slide, toast } from 'react-toastify';
 
-import Login from './pages/Login';
+import Login from './pages/login/Login';
 import Home from './pages/Home';
 import Profil from './pages/profil/profil';
-import Register from './pages/Register';
+import Register from './pages/register/Register';
 import CreateJobs from './pages/recruiter/CreateJobs';
 import PageNotFound from './pages/404/404';
 

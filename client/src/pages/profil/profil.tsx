@@ -36,6 +36,7 @@ import { Modal } from 'react-responsive-modal';
 import './custom-overlay-modal.css';
 
 import DropZone,{useDropzone} from 'react-dropzone';
+import { type } from 'os'
 
 
 interface IPreviews {
@@ -103,7 +104,7 @@ function Previews(props: IPreviews) {
 
 const MemoPreviews = React.memo(Previews)
 
-const ModalDetail = (props: {visibleModal: any, closeModal: any}) => {
+const ModalDetail = (props: {visibleModal: any, closeModal: any, typeModal: any}) => {
   const [imagePreview, setimagePreview] = useState('')
   const [imageContent, setimageContent] = useState('')
   const [isPublish, setisPublish] = useState<any>(false)
@@ -162,13 +163,20 @@ const ModalDetail = (props: {visibleModal: any, closeModal: any}) => {
     }
   }
 
+  const clearPreview = () => {
+    setisPublish(true)
+    setimageContent('')
+    setimagePreview('')
+    props.closeModal()
+  }
+
   return (
     <Modal
       open={props.visibleModal}
       onClose={() => {
-        props.closeModal()
         setimageContent('')
         setimagePreview('')
+        props.closeModal()
       }}
       center
       closeOnOverlayClick={false}
@@ -177,7 +185,12 @@ const ModalDetail = (props: {visibleModal: any, closeModal: any}) => {
         overlay: 'customOverlay'
       }}
     >
-      <MemoPreviews imagePreview={eventImagePreview} imageContent={eventImageContent} isPublish={isPublish} eventPublish={eventHandlerPublish}/>
+      <MemoPreviews 
+        imagePreview={eventImagePreview} 
+        imageContent={eventImageContent} 
+        isPublish={isPublish} 
+        eventPublish={eventHandlerPublish}
+      />
         {
           imagePreview !== ''
           ?     
@@ -200,15 +213,17 @@ const ModalDetail = (props: {visibleModal: any, closeModal: any}) => {
             w-24 focus:outline-none"
             type="submit"
             onClick={() => {
-              httpUploadFotoProfil({
-                  token: userRedux.token,
-                  photo: imagePreview,
-                  imageOld: userRedux.profile.photo === "" ? "not_found" : userRedux.profile.photo
-                }
-              )
-              props.closeModal()
-              setimageContent('')
-              setimagePreview('')
+              if (props.typeModal === 'foto') {
+                httpUploadFotoProfil({
+                    token: userRedux.token,
+                    photo: imagePreview,
+                    imageOld: userRedux.profile.photo === "" ? "not_found" : userRedux.profile.photo
+                  }
+                )              
+              }
+
+              clearPreview()
+              
             }}
           >Kirim</button>
         </div>
@@ -428,12 +443,13 @@ const Profil = () => {
   const dispatch: AppDispatch = useDispatch()
   const history = useHistory();
 
+  const [typeModal, setTypeModal] = React.useState('')
   const [visibleModal, setVisibleModal] = React.useState(false)
-  const onOpenModalEditPhoto = () => setVisibleModal(true);
-  const onCloseModalEditFoto = () => setVisibleModal(false);
+  const onOpenModal = () => setVisibleModal(true);
+  const onCloseModal = () => setVisibleModal(false);
 
-  function eventCloseModalEditFoto() {
-    onCloseModalEditFoto()
+  function eventCloseModal() {
+    onCloseModal()
   }
 
   const [allPostJob, setallPostJob] = useState<any[]>([])
@@ -521,7 +537,7 @@ const Profil = () => {
     return (
       <>
         <Header sudahDiPage="profil" />
-        <ModalDetail visibleModal={visibleModal} closeModal={eventCloseModalEditFoto}/>
+        <ModalDetail visibleModal={visibleModal} closeModal={eventCloseModal} typeModal={typeModal}/>
 
         <div className="relative top-16 h-56">
           {
@@ -536,6 +552,10 @@ const Profil = () => {
                 {/* button ganti foto */}
                 <div className="absolute top-5 right-5 z-20">
                   <button className="bg-gradient-to-tr from-blue-500 to-blue-400 hover:from-blue-400 hover:to-blue-500 shadow-blue focus:outline-none p-2  rounded-full"
+                  onClick={() => {
+                    setTypeModal('bg_foto')
+                    onOpenModal()
+                  }}
                   >
                     <RiPencilFill color="white" size="14" />
                   </button>
@@ -585,7 +605,8 @@ const Profil = () => {
                   <div className="absolute bottom-0 right-0 z-20">
                     <button className="bg-gradient-to-tr from-blue-500 to-blue-400 hover:from-blue-400 hover:to-blue-500 shadow-blue focus:outline-none p-2  rounded-full"
                     onClick={() => {
-                      onOpenModalEditPhoto()
+                      setTypeModal('foto')
+                      onOpenModal()
                     }}
                     >
                       <RiPencilFill color="white" size="14" />

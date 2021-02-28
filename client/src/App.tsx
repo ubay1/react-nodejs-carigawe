@@ -10,8 +10,8 @@ import {
   useHistory,
 } from "react-router-dom";
 
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './pages/login/Login';
+import Register from './pages/register/Register';
 import Home from './pages/Home';
 import Loading from './components/Loading';
 import CreateJob from './pages/recruiter/CreateJobs';

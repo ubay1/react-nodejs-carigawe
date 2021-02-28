@@ -6,19 +6,19 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import { toast, Slide } from 'react-toastify';
-import { AppDispatch } from '../store';
-import {setLoading} from '../store/loading'
-import { setLoadingScreenHome } from '../store/loadingScreenHome';
-import {HTTPRegisterUser} from '../utils/http';
-import { registerUser } from '../utils/interface';
-import AnimationAuth from './AnimationAuth';
+import { AppDispatch } from '../../store';
+import {setLoading} from '../../store/loading'
+import { setLoadingScreenHome } from '../../store/loadingScreenHome';
+import {HTTPRegisterUser} from '../../utils/http';
+import { registerUser } from '../../utils/interface';
+import AnimationAuth from '../AnimationAuth';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import { RootState } from '../store/rootReducer';
+import { RootState } from '../../store/rootReducer';
 // import { initialStateUserAuthByAsync } from '../store/user';
 import Lottie from 'lottie-react';
-import LoadingScreen from '../assets/loading_screen.json';
-import { initialStateUserAuthByAsync } from '../store/user';
+import LoadingScreen from '../../assets/loading_screen.json';
+import { initialStateUserAuthByAsync } from '../../store/user';
 
 const Register = () => {
     toast.configure()
@@ -157,9 +157,11 @@ const Register = () => {
                 <div className="lg:w-1/2 xl:max-w-screen-sm">
                     <div className="
                         px-4 mb-10
+                        bg-white
                         sm:px-24 
                         md:px-48 
-                        lg:px-12 lg:mt-0 lg:mb-0 lg:flex lg:flex-col lg:justify-start lg:shadow-lg lg:pb-4 lg:ml-3
+                        lg:px-12 lg:mt-0 lg:mb-0 lg:flex lg:flex-col lg:justify-start lg:shadow-lg lg:pb-4
+                        
                         xl:px-12 xl:max-w-2xl
                         "
                     >

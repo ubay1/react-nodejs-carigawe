@@ -111,23 +111,28 @@ const Header = (props: ITypeHeader) => {
             {
               userRedux.profile.recruiter
               ?
-                props.sudahDiPage === 'createjob' ?
-                <div></div>
-                : <Link
-                to="/recruiter/create-job"
-                className="flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-blue py-2 px-4 no-underline"
-                onClick={() => {
-                  dispatch(setPageActive({
-                    ispage: 'createjobs'
-                  }))
-                }}
-              >
-                <RiSuitcaseLine className="text-lg mr-3" /> Buat Lowongan
-              </Link>
-                :
-                <button className="flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-blue py-2 px-4 no-underline" >
+                props.sudahDiPage === 'createjob' ? <div></div>
+                : 
+                  <Link
+                    to="/recruiter/create-job"
+                    className="flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-blue py-2 px-4 no-underline"
+                    onClick={() => {
+                      dispatch(setPageActive({
+                        ispage: 'createjobs'
+                      }))
+                    }}
+                  >
+                    <RiSuitcaseLine className="text-lg mr-3" /> Buat Lowongan
+                  </Link>
+              :
+              userRedux.profile.job_seeker
+              ?
+                <button className="
+                  flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-blue py-2 px-4 no-underline" >
                   <RiSuitcaseLine className="text-lg mr-3" /> Lowongan Terbaru
                 </button>
+                : 
+                <div></div>
             }
           </li>
         </ul>
@@ -196,13 +201,14 @@ const Header = (props: ITypeHeader) => {
                   <RiSuitcaseLine className="text-lg mr-3" /> Buat Lowongan
                 </Link>
                 :
-                <button
-                  className="
-                    flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-blue py-2 px-4 no-underline
-                  "
-                >
-                  <RiSuitcaseLine className="text-lg mr-3" /> Lowongan Terbaru
-                </button>
+                userRedux.profile.job_seeker
+                ?
+                  <button className="
+                    flex items-center justify-center bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 hover:bg-blue-600 text-sm rounded-lg text-white shadow-blue py-2 px-4 no-underline" >
+                    <RiSuitcaseLine className="text-lg mr-3" /> Lowongan Terbaru
+                  </button>
+                  : 
+                  <div></div>
             }
           </li>
         </ul>

@@ -485,15 +485,16 @@ const Home = (props: any) => {
 
   // get new data job
   socket.on('getNewDataJob', (data: any) => {
-    toast('ada lowongan terbaru nih', {
-      position: "bottom-right",
-      autoClose: 5000,
-      type: 'info',
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      transition: Slide
-    })
+    // toast('ada lowongan terbaru nih', {
+    //   position: "bottom-right",
+    //   autoClose: 5000,
+    //   type: 'info',
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   transition: Slide
+    // })
+    console.log('ada lowongan terbaru nih')
     setdataJob(data)
   })
 

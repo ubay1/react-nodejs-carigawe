@@ -6,22 +6,22 @@
 import React, { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import image_login from '../assets/image_login.png';
-import AnimationAuth from './AnimationAuth';
+import AnimationAuth from '../AnimationAuth';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { Slide, toast } from 'react-toastify';
-import { setLoading } from '../store/loading';
+import { setLoading } from '../../store/loading';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '../store';
-import { HTTPGetUser, HTTPLoginUser } from '../utils/http';
+import { AppDispatch } from '../../store';
+import { HTTPGetUser, HTTPLoginUser } from '../../utils/http';
 import Cookies from 'js-cookie';
 // initialStateUserAuthByAsync
-import { initialStateUserAuthByAsync, setAuthStatus, setReduxUsersProfile } from '../store/user';
-import { RootState } from '../store/rootReducer';
-import { setLoadingScreenHome } from '../store/loadingScreenHome';
+import { initialStateUserAuthByAsync, setAuthStatus, setReduxUsersProfile } from '../../store/user';
+import { RootState } from '../../store/rootReducer';
+import { setLoadingScreenHome } from '../../store/loadingScreenHome';
 import Lottie from 'lottie-react';
-import LoadingScreen from '../assets/loading_screen.json';
-import socket from '../utils/socket'
+import LoadingScreen from '../../assets/loading_screen.json';
+import socket from '../../utils/socket'
 
 const Login = () => {
   toast.configure()
@@ -172,9 +172,10 @@ const Login = () => {
             px-10
             h-screen 
             flex flex-col justify-center
+            bg-white
             sm:px-24 
             md:px-48 
-            lg:px-12 lg:mt-0 lg:h-screen lg:flex lg:shadow-lg lg:ml-3 lg:mr-3 
+            lg:px-12 lg:mt-0 lg:h-screen lg:flex lg:shadow-lg  
             xl:px-12 xl:max-w-2xl
             "
           >
