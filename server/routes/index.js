@@ -26,6 +26,7 @@ router.post('/user/signout', userController.signout);
 router.post('/user/check_token', userController.checkToken);
 router.post('/user/get_user',authMiddleware, userController.getUser);
 router.put('/user/:userId',userController.update);
+router.post('/user/change_photo', userController.changePhoto);
 router.get('/coba_asosiation', userController.cobaAssociation);
 
 router.post('/recruiter/post_job', authMiddleware, jobController.postJob);

@@ -11,12 +11,15 @@ const {
   getRoomUsers
 } = require('./utils/user');
 const models = require('./models');
+const rootDir = process.cwd();
 const app = express();
 const PORT = 8000;
 
 app.use(cors());
 // set the view engine to ejs
 app.set('view engine', 'ejs');
+app.use("/jobs", express.static(rootDir + "/uploads/jobs"))
+app.use("/profile", express.static(rootDir + "/uploads/profile"))
 
 // limit 50mb, kalo gak di set akan error kalo data api yang dikirim besar.
 app.use(express.json({limit: '50mb'}));

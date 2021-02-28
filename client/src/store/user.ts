@@ -183,62 +183,10 @@ const userSlice = createSlice({
       state.profile.gender = action.payload.gender
     },
 
-    // updateReduxDeviceRoom: (state, action: PayloadAction<any>) => {
-    //     console.log(action.payload)
-    //     return {...state,
-    //         devices: state.devices.map((item: any) => 
-    //             item.tuya.device_id === action.payload[0].tuya.device_id
-    //             ? 
-    //             {...item,
-    //                 room_index: action.payload[0].room_index,
-    //                 _id: action.payload[0]._id,
-    //                 user_id: action.payload[0].user_id,
-    //                 room_id: action.payload[0].room_id,
-    //                 device_name: action.payload[0].device_name,
-    //                 tuya: action.payload[0].tuya,
-    //                 device_id: action.payload[0].device_id,
-    //                 product_name: action.payload[0].product_name,
-    //                 product_id: action.payload[0].product_id,
-    //                 device_type: action.payload[0].device_type,
-    //                 online: action.payload[0].online,
-    //                 last_switch: 
-    //                 action.payload[1] === 'power' ?
-    //                     action.payload[0].last_switch === true ? false : true
-    //                 : action.payload[0].last_switch,
-    //                 paired_at: action.payload[0].paired_at,
-    //                 config: typeof action.payload.config === 'undefined' && typeof action.payload[1] === 'undefined'
-    //                 ? '' 
-    //                 : {
-    //                     bright: action.payload[1] === 'brightness' 
-    //                     ? action.payload[2].value
-    //                     : action.payload[0].config.bright,
-
-    //                     color: action.payload[1] === 'color'
-    //                     ? {
-    //                         h: action.payload[2].value.h,
-    //                         s: action.payload[2].value.s,
-    //                         v: action.payload[2].value.v,
-    //                     }
-    //                     : action.payload[0].config.color,
-
-    //                     mode: action.payload[1] === 'mode'
-    //                     ? action.payload[2].key === 'M0'
-    //                     ? 'cool' : action.payload[2].key === 'M1'
-    //                         ? 'heat' : action.payload[2].key === 'M2'
-    //                             ? 'auto' : action.payload[2].key === 'M3'
-    //                                 ? 'fan' : action.payload[2].key === 'M4'
-    //                                     ? 'dry' : ''
-    //                     : action.payload[0].config.mode,
-
-    //                     temperature: action.payload[1] === 'temperature' 
-    //                     ? action.payload[2].value
-    //                     : action.payload[0].config.temperature,
-    //                 },
-    //             }
-    //             : item
-    //         )
-    //     }
-    // },
+    updateProfile: (state, action: PayloadAction<any>) => {
+        // console.log(action)
+        state.profile.photo = action.payload.photo
+    },
 
     setAuthStatus(state, action: PayloadAction<{ token: string }>) {
       state.token = action.payload.token
@@ -249,5 +197,6 @@ const userSlice = createSlice({
 export const {
   setReduxUsersProfile,
   setAuthStatus,
+  updateProfile
 } = userSlice.actions
 export default userSlice.reducer

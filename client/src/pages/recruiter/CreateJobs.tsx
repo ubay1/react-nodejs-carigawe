@@ -247,7 +247,7 @@ const CreateJobs = () => {
         socket.emit('postJob', {msg: 'woyyy'});
         
         const responseGetAllJobSocket = await HTTPGetAllJobSocket()
-        console.log(responseGetAllJobSocket)
+        // console.log(responseGetAllJobSocket)
 
       }
     } catch (error) {

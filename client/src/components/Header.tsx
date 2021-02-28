@@ -30,39 +30,6 @@ const Header = (props: ITypeHeader) => {
   const pageActive = useSelector((state: RootState) => state.pageActive)
   const dispatch: AppDispatch = useDispatch()
 
-  // const handleScroll = () => {
-  //   const header = document.getElementById('myHeader')
-  //   const offset = window.location.pageYOffset;
-  //   if (offset > 0) {
-  //     header?.classList.add('sticky')
-  //     header?.classList.add('top-0')
-  //     dispatch(setHeaderScroll({isScroll: true}))
-  //   }
-  //   else {
-  //     header?.classList.remove('sticky')
-  //     header?.classList.remove('top-0')
-  //     dispatch(setHeaderScroll({isScroll: false}))
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (userRedux.token === '') {
-  //     dispatch(setLoading({
-  //       show: true,
-  //       timeout: 0
-  //     }))
-  //     history.push('/login')
-  //   }
-  // }, [dispatch, userRedux.token])
-
-  useEffect(() => {
-    // window.location.addEventListener('scroll', handleScroll)
-  }, [])
-
-  useEffect(() => {
-    // console.log('sudah dimana halamannya ? ', props.sudahDiPage)
-  }, [diPageMana])
-
 
   return (
     <div className="
@@ -75,7 +42,7 @@ const Header = (props: ITypeHeader) => {
       id="myHeader"
     >
       {/* logo */}
-      <div className="flex items-center flex-no-shrink text-black "
+      <div className="flex items-center flex-no-shrink text-black line-clamp-1"
       >
         <Link 
           className="text-4xl text-blue-600 tracking-wide font-semibold font_damion md:text-3xl" 
@@ -90,7 +57,7 @@ const Header = (props: ITypeHeader) => {
         </Link>
       </div>
 
-      {/* ketika lebar small/hp */}
+      {/* button menu responsive untuk hp */}
       <div
         className="
             md:hidden 
@@ -101,7 +68,7 @@ const Header = (props: ITypeHeader) => {
           className={`items-center p-2 border rounded-full mr-2 text-white 
           bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl 
           hover:from-blue-500 
-          hover:to-blue-400 shadow-blue border-transparent hover:border-transparent focus:outline-none
+          hover:to-blue-400 shadow-blue border-transparent hover:border-transparent 
           ${userRedux.profile.recruiter ? 'hidden' : 'flex '}
           `}
           onClick={() => {
@@ -125,7 +92,7 @@ const Header = (props: ITypeHeader) => {
         </button>
       </div>
 
-      {/* button buat lowongan ketika lebar medium/tablet */}
+      {/* button buat lowongan / lowongan terbaru untuk tablet */}
       <div
         className="
           hidden
@@ -188,7 +155,7 @@ const Header = (props: ITypeHeader) => {
         </button>
       </div>
 
-      {/* button responsive untuk nampilin list menu */}
+      {/* menu responsive untuk nampilin list menu */}
       <div
         className={`
           lg:flex lg:flex-row lg:items-center lg:justify-between lg:w-full lg:static lg:bg-transparent lg:shadow-none lg:p-0 lg:top-0
@@ -259,8 +226,9 @@ const Header = (props: ITypeHeader) => {
                     hidden
                     py-2 
                     w-full
-                    hover:bg-gray-100 rounded-md
-                    ${pageActive.ispage === 'beranda' ? 'bg-blue-50' : 'bg-transparent'}
+                    rounded-md
+                    hover:bg-gray-100
+                    ${pageActive.ispage === 'beranda' ? 'bg-blue-50 text-blue-500 shadow-inner font-semibold hover:bg-blue-50' : 'bg-transparent'}
                     `}
                     onClick={() => {
                       dispatch(setPageActive({
@@ -271,6 +239,7 @@ const Header = (props: ITypeHeader) => {
                     <RiHome3Line
                       className={`
                       text-xl mx-4 lg:text-2xl lg:mx-0
+                      
                       `} />
                     <span className={`text-sm 
                     ${pageActive.ispage !== 'beranda' ? 'lg:hidden': ''} pl-2`
@@ -285,8 +254,9 @@ const Header = (props: ITypeHeader) => {
                     hidden
                     py-2 
                     w-full
-                    hover:bg-gray-100 rounded-md
-                    ${pageActive.ispage === 'profil' ? 'bg-blue-50' : 'bg-transparent'}
+                    rounded-md
+                    hover:bg-gray-100
+                    ${pageActive.ispage === 'profil' ? 'bg-blue-50 text-blue-500 shadow-inner font-semibold hover:bg-blue-50' : 'bg-transparent'}
                     `}
                     onClick={() => {
                       dispatch(setPageActive({
@@ -297,6 +267,7 @@ const Header = (props: ITypeHeader) => {
                     <RiUserLine
                       className={`
                       text-xl mx-4 lg:text-2xl lg:mx-0
+                      
                       `} />
                     <span className={`text-sm 
                     ${pageActive.ispage !== 'profil' ? 'lg:hidden': ''} pl-2`
@@ -310,7 +281,9 @@ const Header = (props: ITypeHeader) => {
                     flex flex-row justify-start items-center 
                     py-2 
                     w-full
-                    hover:bg-gray-100 rounded-md
+                    rounded-md
+                    hover:bg-gray-100
+                    focus:outline-none
                     `}
 
                     onClick={() => {
@@ -331,16 +304,17 @@ const Header = (props: ITypeHeader) => {
                           transition: Slide
                         })
                         
+                        window.location.replace('/login')
+                        
                         // socket.emit('disconnect', )
-                        expiredToken(dispatch)
                         
                         // history.push('/login')
                         // pakai cara ini agar ngemmit disconnect ke server
-                        window.location.replace('/login')
 
                         dispatch(setPageActive({
                           ispage: 'beranda'
                         }))
+                        expiredToken(dispatch)
                         dispatch(setLoading({
                           show: false,
                           timeout: 0
@@ -351,6 +325,7 @@ const Header = (props: ITypeHeader) => {
                     <RiLogoutCircleRLine
                       className={`
                       text-xl mx-4 lg:text-2xl lg:mx-0
+                      
                       `} />
                     <span className="text-sm lg:hidden" title="keluar"> Keluar </span>
                   </button>
@@ -365,10 +340,12 @@ const Header = (props: ITypeHeader) => {
                       flex flex-row justify-start items-center 
                       py-2 
                       w-full
-                    hover:bg-gray-100 rounded-md
+                      rounded-md
+                    hover:bg-gray-100
                     "
                   >
-                    <RiLoginCircleLine className="text-xl mx-4 lg:text-2xl lg:mx-0" />
+                    <RiLoginCircleLine className="text-xl mx-4 lg:text-2xl lg:mx-0
+                    " />
                     <span className="text-sm lg:hidden"> Masuk </span>
                   </Link>
                 </li>
@@ -379,10 +356,12 @@ const Header = (props: ITypeHeader) => {
                       flex flex-row justify-start items-center 
                       py-2 
                       w-full
-                    hover:bg-gray-100 rounded-md
+                      rounded-md
+                    hover:bg-gray-100
                     "
                   >
-                    <RiEdit2Line className="text-xl mx-4 lg:text-2xl lg:mx-0" />
+                    <RiEdit2Line className="text-xl mx-4 lg:text-2xl lg:mx-0
+                    " />
                     <span className="text-sm lg:hidden"> Daftar </span>
                   </Link>
                 </li>

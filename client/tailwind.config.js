@@ -58,7 +58,8 @@ module.exports = {
       },
       boxShadow: {
         blue: '0 2px 10px 0 rgba(59, 130, 246, .4)',
-        red: '0 2px 10px 0 rgba(248, 113, 113, .4)'
+        red: '0 2px 10px 0 rgba(248, 113, 113, .4)',
+        inner_blue: 'inset 0 2px 6px 0 rgba(59, 130, 246, 0.4)'
       },
     },
     screens: {

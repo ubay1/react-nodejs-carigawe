@@ -34,11 +34,11 @@ const iv = crypto.randomBytes(16);
 function decrypt(text) {
   let iv = Buffer.from(text.iv, 'hex');
   let encryptedText = Buffer.from(text.encryptedData, 'hex');
-  
+
   let decipher = crypto.createDecipheriv(algorithm, key, iv);
   let decrypted = decipher.update(encryptedText);
   decrypted = Buffer.concat([decrypted, decipher.final()]);
-  
+
   return decrypted.toString();
 }
 
@@ -69,54 +69,54 @@ const userController = {
   async signup(req, res) {
 
     try {
-        const cekEmailIsExist = await models.user.findOne({
-          where: {
-            email: req.body.email
-          }
-        });
-
-        const cekPhoneIsExist = await models.user.findOne({
-          where: {
-            phone: req.body.phone
-          }
+      const cekEmailIsExist = await models.user.findOne({
+        where: {
+          email: req.body.email
         }
-        );
+      });
 
-        if (cekEmailIsExist) {
-          return res.status(404).json({
-            email: req.body.email,
+      const cekPhoneIsExist = await models.user.findOne({
+        where: {
+          phone: req.body.phone
+        }
+      }
+      );
+
+      if (cekEmailIsExist) {
+        return res.status(404).json({
+          email: req.body.email,
+          message: "Error",
+          errors: "email telah digunakan oleh user lain."
+        });
+      } else {
+        if (cekPhoneIsExist) {
+          return res.status(422).json({
+            phone: req.body.phone,
             message: "Error",
-            errors: "email telah digunakan oleh user lain."
+            errors: "nomor telepon telah digunakan oleh user lain."
           });
         } else {
-          if (cekPhoneIsExist) {
-            return res.status(422).json({
+          const user = await models.user.create(
+            {
+              name: req.body.name,
               phone: req.body.phone,
-              message: "Error",
-              errors: "nomor telepon telah digunakan oleh user lain."
-            });
-          } else {
-            const user = await models.user.create(
-              {
-                name: req.body.name,
-                phone: req.body.phone,
-                email: req.body.email,
-                email_verif: false,
-                password: bcrypt.hashSync(req.body.password, saltBcrypt),
-                photo: '',
-                recruiter: req.body.recruiter,
-                job_seeker: req.body.job_seeker,
-                gender: req.body.gender,
-              }
-            );
+              email: req.body.email,
+              email_verif: false,
+              password: bcrypt.hashSync(req.body.password, saltBcrypt),
+              photo: '',
+              recruiter: req.body.recruiter,
+              job_seeker: req.body.job_seeker,
+              gender: req.body.gender,
+            }
+          );
 
-            res.status(200).json({
-              message: 'pendaftaran berhasil.',
-              data: user
-            });
-          }
-
+          res.status(200).json({
+            message: 'pendaftaran berhasil.',
+            data: user
+          });
         }
+
+      }
     }
     catch (e) {
       console.log(e);
@@ -191,10 +191,10 @@ const userController = {
     }
   },
 
-  async sendVerifyEmail(req,res) {
+  async sendVerifyEmail(req, res) {
     const replaceToken = req.headers.authorization.replace('Bearer ', '')
     const decoded = decodeToken(replaceToken)
-    const payload = {...req}
+    const payload = { ...req }
 
     try {
 
@@ -209,8 +209,8 @@ const userController = {
     }
   },
 
-  async verifyEmail(req, res){
-    
+  async verifyEmail(req, res) {
+
     const email = req.query.email;
     const token = req.query.token;
     const users = await models.user.findOne({
@@ -220,8 +220,8 @@ const userController = {
     })
 
     // jika email telah diverifikasi
-    if(users.email_verif === true) {
-      res.render('../views/sudah_verif',{
+    if (users.email_verif === true) {
+      res.render('../views/sudah_verif', {
         message: 'email sudah diverifikasi sebelumnya'
       });
     } else {
@@ -229,16 +229,16 @@ const userController = {
       const decryptedToken = decrypt(parseToken)
       console.log(decryptedToken)
 
-      console.log('sudah expired = ',moment().isAfter(decryptedToken))
+      console.log('sudah expired = ', moment().isAfter(decryptedToken))
       // jika token tidak sesuai sama token yang ada di db
-      if (users.email_verification_token !== parseToken.encryptedData){
-        res.render('../views/token_salah',{
+      if (users.email_verification_token !== parseToken.encryptedData) {
+        res.render('../views/token_salah', {
           message: 'token tidak sesuai'
         });
       } else {
         // jika token telah kadaluarsa
         if (moment().isAfter(decryptedToken) === true) {
-          res.render('../views/verif_gagal',{
+          res.render('../views/verif_gagal', {
             message: 'verifikasi email gagal, karna token telah kadaluarsa. silahkan lakukan verifikasi ulang'
           });
         }
@@ -247,8 +247,8 @@ const userController = {
             email_verif: true,
             email_verification_token: null
           })
-  
-          res.render('../views/verif_sukses',{
+
+          res.render('../views/verif_sukses', {
             message: 'verifikasi email sukses'
           });
         }
@@ -304,9 +304,9 @@ const userController = {
           id: hashids.decode(decoded.id)
         },
         attributes: [
-          "name", "phone", "email", "email_verif", "photo", "background_image", "gender","recruiter","job_seeker",
+          "name", "phone", "email", "email_verif", "photo", "background_image", "gender", "recruiter", "job_seeker",
         ],
-        include: [{model: models.job, attributes: ['content', 'expiredAt', ]}]
+        include: [{ model: models.job, attributes: ['content', 'expiredAt',] }]
       })
 
       res.status(200).json({
@@ -317,6 +317,74 @@ const userController = {
       res.status(500).json({
         error: error
       })
+    }
+  },
+
+  async changePhoto(req, res) {
+    try {
+      const replaceToken = req.headers.authorization.replace('Bearer ', '')
+      const decoded = jwt.verify(replaceToken, process.env.TOKEN_SECRET);
+
+      const decodeId = hashids.decode(decoded.id)
+      console.log(decoded.id)
+      const users = await models.user.findOne({
+        attributes: ['id'],
+        where: { id: decodeId },
+      })
+
+      let photo_file = "profile_" + moment().format('YYYY_MM_DD_HH_mm_ss') + ".png";
+      const rootDir = process.cwd();
+      let next_path = "/uploads/profile/";
+
+      if (users) {
+        if (req.body.imageOld !== 'not_found') {
+          try {
+            //removed image old
+            fs.unlinkSync(rootDir + next_path + req.body.imageOld)
+          } catch (err) {
+            console.error(err)
+          }
+        }
+
+        // Base64 to Img
+        let base64Image = req.body.photo.split(";base64,").pop();
+        let base64Type = req.body.photo.split(";base64,", 1).pop();
+
+        if (base64Type === "data:image/jpeg" || base64Type === "data:image/jpg"
+          || base64Type === "data:image/png"
+        ) {
+          try {
+            fs.writeFile(
+              rootDir + next_path + photo_file, base64Image, { encoding: "base64" },
+              function (err) {
+                console.log("File created " + photo_file);
+              }
+            );
+
+            const updatePhoto = users.update({
+              photo: photo_file
+            })
+
+            if (updatePhoto) {
+              res.status(200).json({
+                'message': 'Foto profil berhasil di perbaharui',
+                'user': users
+              });
+            } else {
+              res.status(400).json({
+                'message': 'Foto profil gagal di perbaharui',
+                'user': users
+              });
+            }
+          } catch (error) {
+            throw new Error("Failed Create File");
+          }
+        } else {
+          throw new BadRequest("File must be JPG/JPEG/PNG FORMAT");
+        }
+      }
+    } catch (e) {
+      console.log(e)
     }
   },
 
@@ -352,7 +420,7 @@ const userController = {
       })
       console.log(job)
       return res.status(200).json(job)
-    } catch(err) {
+    } catch (err) {
       console.log(err)
     }
   }

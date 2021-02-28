@@ -182,7 +182,7 @@ const Login = () => {
               <div className="py-6 flex justify-center">
                 <div className="cursor-pointer flex items-center">
                   <div className="text-5xl text-blue-600 tracking-wide ml-2 font-semibold font_damion">
-                    <Link to="/">Cari Gawe</Link>
+                    <Link to="/" className="focus:outline-none">Cari Gawe</Link>
                   </div>
                 </div>
               </div>

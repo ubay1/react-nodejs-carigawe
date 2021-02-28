@@ -40,6 +40,7 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Cookies from 'js-cookie';
 import socket from '../utils/socket'
 import { Slide, toast } from 'react-toastify';
+import { DevUrl } from '../utils/helper';
 
 const Recruiter = ({dataJob, isLoading}: any): any => {
   return(
@@ -70,12 +71,13 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
         :
         <div className=" 
           lg:grid-cols-lg-4cols-content
-          md:grid-cols-md-3cols-content md:my-4 md:mb-24
+          md:grid-cols-md-3cols-content md:my-6 md:mb-24
           xs:grid-cols-2
           xs:grid sm:grid-cols-2
-          sm:mt-4
+          sm:mt-6
           gap-y-4
           mb-40 mt-6
+          h-full
         ">
           {
             dataJob.map((item: any, index: number) => {
@@ -84,9 +86,13 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                 <div
                   key={`indexPost-${index}`}
                   className="
-                  sm:my-2 
-                  mx-2 mb-4 
-                  bg-white shadow-md rounded-lg
+                  md:my-0
+                  sm:my-0 
+                  mx-2 
+                  mb-4 
+                  bg-white 
+                  shadow-md 
+                  rounded-lg
                   h-full
                   "
                 >
@@ -98,7 +104,7 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                       ? 
                       <div className="bg-black h-full w-full rounded-t-lg">
                         <img 
-                          src={item.image_content} 
+                          src={`${DevUrl}/jobs/${item.image_content}`} 
                           alt=""
                           className="h-full w-full object-cover rounded-t-lg opacity-60"
                         />
@@ -139,9 +145,9 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                               />
                           :
                             <img 
-                              src={item.user.photo} 
+                              src={`${DevUrl}/profile/${item.user.photo}`} 
                               alt="foto-profil" 
-                              className="h-10 w-10 mr-1 rounded-full shadow-md"
+                              className="h-10 w-10 mr-1 rounded-full shadow-md object-cover"
                             />
                         }
                         <div className="ml-2 mt-0.5">
@@ -181,9 +187,9 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                     <hr/>
                     
                     {/* isi postingan */}
-                    <div className="mt-3 overflow-hidden w-full">
+                    <div className="mt-2 overflow-hidden w-full">
                       <div id={`text-loker-${index}`} 
-                      className="text-xs line-clamp-3
+                      className="text-base line-clamp-3
                       ">
                         {
                           parse(item.content)
@@ -194,7 +200,11 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                     {/* button read more*/}
                     <div className="">
                       <button id={`btn-readmore-${index}`} className="
-                        text-blue-500 text-xs underline
+                        text-xs p-1 rounded
+                        text-blue-500 
+                        bg-blue-100
+                        focus:outline-none
+                        hover:shadow-inner
                         "
                         onClick={() => {
                         }}
@@ -245,13 +255,17 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
         :
         <div className="md:flex md:justify-between md:items-start">
           {/* search job */}
-          <div className="md:w-3/12 hidden md:block" id="searchJobId">
-            <div className="relative h-auto my-8 mx-2">
-              {/* <div className=" text-xs text-gray-500 mb-1">
-                Posisi Pekerjaan
-              </div> */}
-              <input className="w-full h-12 py-2 
-            border-b border-gray-300 focus:outline-none focus:border-blue-500" type="" placeholder="Posisi pekerjaan.." />
+          <div className="md:w-3/12 md:block hidden" id="searchJobId">
+            <div className="relative h-auto bg-white shadow-md rounded-lg p-2 my-8 ml-2">
+              <div className="bg-blue-100 text-blue-500 font-bold rounded text-center p-2 shadow-inner">
+                Cari loker
+              </div>
+              <input className="
+                mt-4
+                w-full h-12 py-2 bg-transparent
+                border-b border-gray-300 focus:outline-none focus:border-blue-500" 
+                type="" placeholder="Posisi pekerjaan.." 
+              />
 
               {/* <div className=" text-xs text-gray-500 mb-1">Kota</div> */}
 
@@ -269,20 +283,24 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
               </div>
 
               <button className=" bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 relative z-0 text-sm 
-              rounded-lg text-white shadow mt-2 w-full py-2 px-4 no-underline">
+              rounded-lg text-white shadow-blue mt-4 w-full py-2 px-4 mb-2 no-underline focus:outline-none">
                 <AiOutlineSearch className="absolute left-8 text-lg" />   Cari
               </button>
             </div>
           </div>
           
           {/* list job */}
+          {/* border-gray-100  bg-gray-100 
+          border-l-2 border-r-2  */}
           <div className={`
-            px-6 py-8
-            border-l-2 border-r-2 border-gray-100 
-            bg-gray-50 
-            h-full
             md:w-3/6
+            md:py-8
+            md:px-6 
             sm:mt-0
+            px-4
+            pt-8
+            pb-20
+            h-full
           `}>
             {
               dataJob.map((item: any, index: number) => {
@@ -290,7 +308,12 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                 return (
                   <div
                     key={`indexPostJobSeeker-${index}`}
-                    className="mb-6 bg-white dark:bg-gray-800 shadow rounded-lg w-full h-auto
+                    className="
+                    mb-6 
+                    bg-white 
+                    shadow-md 
+                    rounded-lg 
+                    w-full h-auto
                     "
                   >
                     {/* image content */}
@@ -299,7 +322,7 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                         item.image_content !== ''
                         ? 
                         <img 
-                          src={item.image_content} 
+                          src={`${DevUrl}/jobs/${item.image_content}`} 
                           alt=""
                           className="h-full w-full object-cover rounded-t-lg opacity-60"
                         />
@@ -334,9 +357,9 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                                   />
                               :
                                 <img 
-                                  src={item.user.photo} 
+                                  src={`${DevUrl}/profile/${item.user.photo}`} 
                                   alt="foto-profil" 
-                                  className="h-12 w-12 mr-1 rounded-full shadow-md"
+                                  className="h-12 w-12 mr-1 rounded-full shadow-md object-cover"
                                 />
                             }
                             <div className="ml-2 mt-0.5">
@@ -362,54 +385,58 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                       }
                     </div>
 
-                    <div className="mt-0 p-2">
-                    <div className="flex flex-col justify-start mb-2">
-                      <div className="text-md uppercase font-bold line-clamp-1">
-                        {item.title}
-                      </div> 
-                      <div className="text-sm flex flex-row items-center">
-                        <RiMapPin2Line /> {item.city}
+                    <div className="mt-0 ">
+                      <div className="flex flex-col justify-start p-2">
+                        <div className="text-md uppercase font-bold line-clamp-1">
+                          {item.title}
+                        </div> 
+                        <div className="text-sm flex flex-row items-center mb-2">
+                          <RiMapPin2Line /> {item.city}
+                        </div>
+                        <hr/>
                       </div>
-                    </div>
-                    <hr/>
                     
-                    {/* isi postingan */}
-                    <div className="mt-3 overflow-hidden w-full">
-                      <div id={`text-loker-${index}`} 
-                      className="text-xs line-clamp-3
-                      ">
-                        {
-                          parse(item.content)
-                        }
+                      {/* isi postingan */}
+                      <div className="overflow-hidden w-full px-2">
+                        <div id={`text-loker-${index}`} 
+                        className="text-base line-clamp-3
+                        ">
+                          {
+                            parse(item.content)
+                          }
+                        </div>
                       </div>
-                    </div>
-                    
-                    {/* button read more*/}
-                    <div className="">
-                      <button id={`btn-readmore-${index}`} className="
-                        text-blue-500 text-xs underline
-                        "
-                        onClick={() => {
-                        }}
-                        >
-                          Lihat selengkapnya
-                      </button>
-                    </div>
+                      
+                      {/* button read more*/}
+                      <div className="px-2">
+                        <button id={`btn-readmore-${index}`} className="
+                          text-xs p-1 rounded
+                          text-blue-500 
+                          bg-blue-100
+                          focus:outline-none
+                          hover:shadow-inner
+                          "
+                          onClick={() => {
+                          }}
+                          >
+                            Lihat selengkapnya
+                        </button>
+                      </div>
 
                       {/* button like & comment*/}
-                      <div className="flex justify-between items-center mt-5 mb-2 ">
-                        <div className="flex flex-row items-center">
-                          <AiFillLike className="text-blue-500 text-md cursor-pointer" />
-                          <div className="ml-1 text-sm text-gray-500  font-light">
-                            0
+                      <div className="grid grid-cols-2 border-t border-gray-200 mt-6 bg-transparent">
+                        <button className="flex flex-row justify-center items-center py-2 bg-gray-50 hover:bg-gray-100 focus:outline-none rounded-bl-lg">
+                          <AiFillLike className="text-blue-500 text-md" />
+                          <div className="ml-1 text-sm text-gray-500  font-semibold">
+                            20 suka
                           </div>
-                        </div>
-                        <div className="flex flex-row items-center">
-                          <RiQuestionAnswerFill className="text-blue-500 text-md cursor-pointer" />
-                          <div className="ml-1 text-sm text-gray-500 dark:text-gray-400 font-light ">
-                            0
+                        </button>
+                        <button className="flex flex-row justify-center items-center py-2 bg-gray-50 hover:bg-gray-100 focus:outline-none rounded-br-lg">
+                          <RiQuestionAnswerFill className="text-blue-500 text-md"/>
+                          <div className="ml-1 text-sm text-gray-500 font-semibold ">
+                            20 komentar
                           </div>
-                        </div>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -419,9 +446,11 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
           </div>
 
           {/* job terpopuler */}
-          <div className="md:w-3/12">
-            <div className="relative h-auto my-8 mx-2">
-              ini populer job
+          <div className="md:w-3/12 md:block hidden" id="searchJobId">
+            <div className="relative h-auto bg-white shadow-md rounded-lg p-2 my-8 mr-2">
+              <div className="bg-blue-100 text-blue-500 font-bold rounded text-center p-2 shadow-inner line-clamp-1">
+                Lowongan terpopuler
+              </div>
             </div>
           </div>
         </div>
@@ -444,29 +473,29 @@ const Home = (props: any) => {
   const [dataJob, setdataJob] = useState<any[]>([]);
 
   useEffect(() => {
-    // Get room and users
-    socket.on('roomUsers', ({ room, users }: any) => {
-      console.log(users)
-    });
-  
-    // get new data job
-    socket.on('getNewDataJob', (data: any) => {
-      toast('ada lowongan terbaru nih', {
-        position: "bottom-right",
-        autoClose: 5000,
-        type: 'info',
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        transition: Slide
-      })
-      setdataJob(data)
-    })
-
+    
     document.title = 'Cari Gawe - Beranda'
     httpGetAllJob()
   }, [])
   
+  // Get room and users
+  socket.on('roomUsers', ({ room, users }: any) => {
+    console.log(users)
+  });
+
+  // get new data job
+  socket.on('getNewDataJob', (data: any) => {
+    toast('ada lowongan terbaru nih', {
+      position: "bottom-right",
+      autoClose: 5000,
+      type: 'info',
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      transition: Slide
+    })
+    setdataJob(data)
+  })
 
   const httpGetAllJob = async () => {
     try {
@@ -480,8 +509,10 @@ const Home = (props: any) => {
     }
   }
 
-  // function berjalan ketika di smartphone,
-  // akan menampilkan pencarian pekerjaan
+  /**********************************************
+   *  function berjalan ketika di smartphone, *
+   *  akan menampilkan pencarian pekerjaan    *
+   **********************************************/
   function eventSearchJob(data: any) {
     var el = document.getElementById('searchJobId')
     el?.classList.toggle('hidden')

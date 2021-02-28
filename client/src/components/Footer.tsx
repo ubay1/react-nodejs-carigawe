@@ -36,7 +36,7 @@ const Footer = () => {
     >
       <Link
         className={`flex flex-col items-center p-1 rounded-md 
-          ${pageActive.ispage === 'beranda' ? 'bg-blue-50' : 'bg-transparent'}
+          ${pageActive.ispage === 'beranda' ? 'bg-blue-50 text-blue-500 shadow-inner font-semibold hover:bg-blue-50' : 'bg-transparent'}
         `}
         to="/"
         onClick={() => {
@@ -81,7 +81,7 @@ const Footer = () => {
         ?
           <Link to="/profil" 
             className={`flex flex-col items-center p-1 rounded-md
-              ${pageActive.ispage === 'profil' ? 'bg-blue-50' : 'bg-transparent'}
+              ${pageActive.ispage === 'profil' ? 'bg-blue-50 text-blue-500 shadow-inner font-semibold hover:bg-blue-50' : 'bg-transparent'}
             `}
             onClick={() => {
               dispatch(setPageActive({

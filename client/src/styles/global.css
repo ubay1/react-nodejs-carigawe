@@ -1,3 +1,16 @@
+img {
+    pointer-events: none;
+}
+
+body{
+    --tw-bg-opacity: 1;
+    background-color: rgba(249, 250, 251, var(--tw-bg-opacity));
+}
+
+input{
+    background-color: transparent;
+}
+
 /* suggestion pencarian domisili dihalaman home */
 ul.react-autosuggest__suggestions-list {
     overflow-y: scroll;

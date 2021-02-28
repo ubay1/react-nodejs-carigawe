@@ -2,10 +2,6 @@
     width: 100% !important;
 }
 
-img {
-    pointer-events: none;
-}
-
 #domisili {
     width: 100% !important;
     display: flex !important;

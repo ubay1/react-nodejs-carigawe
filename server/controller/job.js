@@ -5,49 +5,13 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const salt = bcrypt.genSaltSync(10);
 const jwt = require('jsonwebtoken');
-const dotenv = require("dotenv");
-const multer = require("multer") 
+const dotenv = require("dotenv"); 
 const path = require("path") 
 const fs = require('fs-extra')
 // get config vars
 dotenv.config();
 const moment = require('moment')
 const hashids = require('../utils/helper')
-
-var storage = multer.diskStorage({ 
-  destination: function (req, file, cb) { 
-
-      // Uploads is the Upload_folder_name 
-      cb(null, "uploads") 
-  }, 
-  filename: function (req, file, cb) { 
-    cb(null, file.fieldname + "-" + Date.now()+".jpg") 
-  } 
-}) 
-
-// Define the maximum size for uploading 
-// picture i.e. 1 MB. it is optional 
-const maxSize = 1 * 1000 * 1000;
-
-var upload = multer({  
-  storage: storage, 
-  limits: { fileSize: maxSize }, 
-  fileFilter: function (req, file, cb){ 
-  
-      // Set the filetypes, it is optional 
-      var filetypes = /jpeg|jpg|png|gif|webp/; 
-      var mimetype = filetypes.test(file.mimetype); 
-
-      var extname = filetypes.test(path.extname(file.originalname).toLowerCase()); 
-      
-      if (mimetype && extname) { 
-          return cb(null, true); 
-      } 
-    
-      cb("Error: file hanya support - " + filetypes); 
-    }  
-// mypic is the name of file attribute 
-}).any("photo");
 
 const jobController = {
   async postJob(req, res) {

@@ -81,6 +81,22 @@ export async function HTTPVerifyEmail(param: { token: string, email: any }): Pro
   })
 }
 
+export async function HTTPUploadFotoProfil(param: {token: string, photo: string, imageOld?: string}): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+      try {
+          const data = {
+              token: param.token,
+              photo: param.photo,
+              imageOld: param.imageOld
+          }
+          const responseUploadFotoProfil = await AxiosNormal(2000).post(`${DevApiUrl}/user/change_photo`, data)
+          return resolve(responseUploadFotoProfil)
+      } catch (error) {
+          return reject(error)
+      }
+  })
+}
+
 //################################ Recruiter ################################//
 export async function HTTPGetAllJob(): Promise<any> {
   return new Promise(async (resolve, reject) => {
@@ -143,31 +159,5 @@ export async function HTTPPostJob(
           return reject(error)
       }
   })
-
-  // const formData = new FormData();
-  // const data = {
-  //   token: param.token,
-  //   title: param.title,
-  //   city: param.city,
-  //   content: param.content,
-  //   expiredAt: param.expiredAt,
-  // }
-  // formData.append('file', param.image_content);
-  // formData.append("document", JSON.stringify(data));
-  
-  // Axios.post(`${DevApiUrl}/recruiter/post_job`, formData,
-  //   {
-  //     headers: {
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'multipart/form-data',
-  //       'Authorization': `Bearer ${param.token}`
-  //     }
-  //   }
-  // ).then(function (res) {
-  //   console.log(res)
-  // })
-  //   .catch(function (err) {
-  //     console.log(err);
-  //   });
 }
 //################################ Recruiter ################################//
