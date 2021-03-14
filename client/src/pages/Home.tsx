@@ -5,7 +5,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/pulse.css';
 import Moment from 'moment'
@@ -25,8 +25,8 @@ import { TitleComponent } from '../components/TitleComponent';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { AiOutlineSearch, AiFillHeart,AiFillLike, } from "react-icons/ai";
-import { RiQuestionAnswerFill, RiMapPin2Line } from "react-icons/ri";
-import { HTTPGetAllJob } from '../utils/http';
+import { RiQuestionAnswerFill, RiMapPin2Line, RiHeartLine, RiHeartFill } from "react-icons/ri";
+import { HTTPGetAllJob, HTTPGetAllJobSocket, HTTPLikeJob, HTTPUnlikeJob } from '../utils/http';
 import parse from 'html-react-parser';
 import EmptyData from '../components/EmptyData'
 import './home.css'
@@ -41,6 +41,9 @@ import Cookies from 'js-cookie';
 import socket from '../utils/socket'
 import { Slide, toast } from 'react-toastify';
 import { DevUrl } from '../utils/helper';
+import { CobaContext } from '../components/CobaContext';
+import { initState, reducer } from '../components/CobaReducer';
+
 
 const Recruiter = ({dataJob, isLoading}: any): any => {
   return(
@@ -189,7 +192,7 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
                     {/* isi postingan */}
                     <div className="mt-2 overflow-hidden w-full">
                       <div id={`text-loker-${index}`} 
-                      className="text-base line-clamp-3
+                      className="text-sm line-clamp-3
                       ">
                         {
                           parse(item.content)
@@ -226,7 +229,34 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
   )
 }
 
-const JobSeeker = ({dataJob, isLoading}: any) => {
+const JobSeeker = ({dataJob, isLoading, token, profile}: any) => {
+  const {totalLike, setTotalLike}= useContext(CobaContext)
+  const [count, dispatch]= useReducer(reducer, initState)
+
+  const httpLikeJob = async (job_id: any) => {
+    try {
+      const responseLikeJob = await HTTPLikeJob({
+        token: token,
+        job_id: job_id
+      })
+      const responseGetAllJobSocket = await HTTPGetAllJobSocket()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const httpUnlikeJob = async (like_id: any) => {
+    try {
+      const responseLikeJob = await HTTPUnlikeJob({
+        token: token,
+        like_id: like_id
+      })
+      const responseGetAllJobSocket = await HTTPGetAllJobSocket()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return( 
     <div className="relative top-16">
       {
@@ -387,8 +417,31 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
 
                     <div className="mt-0 ">
                       <div className="flex flex-col justify-start p-2">
-                        <div className="text-md uppercase font-bold line-clamp-1">
-                          {item.title}
+                        <div className="text-md uppercase font-bold flex justify-between items-center">
+                          <div>{item.title}</div>
+                          {
+                            item.likes.length !== 0 ?
+                              item.likes.map((itemLike: any, index: number) => {
+                                if (itemLike.user.name === profile.name) {
+                                  return(
+                                    <button key={index} onClick={()=>{
+                                      httpUnlikeJob(itemLike.like_id)
+                                    }}>
+                                      <RiHeartFill color="red"/>
+                                    </button>
+                                  )
+                                } else {
+                                  return(
+                                    <button onClick={() => {httpLikeJob(item.id)}}>
+                                      <RiHeartLine/>
+                                    </button>
+                                  )
+                                }
+                              }) :
+                            <button onClick={() => {httpLikeJob(item.id)}}>
+                              <RiHeartLine/>
+                            </button>
+                          }
                         </div> 
                         <div className="text-sm flex flex-row items-center mb-2">
                           <RiMapPin2Line /> {item.city}
@@ -399,7 +452,7 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
                       {/* isi postingan */}
                       <div className="overflow-hidden w-full px-2">
                         <div id={`text-loker-${index}`} 
-                        className="text-base line-clamp-3
+                        className="text-sm line-clamp-3
                         ">
                           {
                             parse(item.content)
@@ -425,18 +478,20 @@ const JobSeeker = ({dataJob, isLoading}: any) => {
 
                       {/* button like & comment*/}
                       <div className="grid grid-cols-2 border-t border-gray-200 mt-6 bg-transparent">
-                        <button className="flex flex-row justify-center items-center py-2 bg-gray-50 hover:bg-gray-100 focus:outline-none rounded-bl-lg">
+                        <div className="flex flex-row justify-center items-center py-2 focus:outline-none rounded-bl-lg"
+                        >
                           <AiFillLike className="text-blue-500 text-md" />
                           <div className="ml-1 text-sm text-gray-500  font-semibold">
-                            20 suka
+                            {item.likes.length} suka
                           </div>
-                        </button>
-                        <button className="flex flex-row justify-center items-center py-2 bg-gray-50 hover:bg-gray-100 focus:outline-none rounded-br-lg">
+                        </div>
+                        <div className="flex flex-row justify-center items-center py-2 focus:outline-none rounded-br-lg"
+                        >
                           <RiQuestionAnswerFill className="text-blue-500 text-md"/>
                           <div className="ml-1 text-sm text-gray-500 font-semibold ">
-                            20 komentar
+                            {item.likes.length} komentar
                           </div>
-                        </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -472,31 +527,28 @@ const Home = (props: any) => {
   const [dataRecruiter, setdataRecruiter] = useState<any[]>([]);
   const [dataJob, setdataJob] = useState<any[]>([]);
 
+  const {totalLike, setTotalLike}= useContext(CobaContext)
+  
   useEffect(() => {
-    
     document.title = 'Cari Gawe - Beranda'
     httpGetAllJob()
   }, [])
-  
-  // Get room and users
-  socket.on('roomUsers', ({ room, users }: any) => {
-    console.log(users)
-  });
 
-  // get new data job
-  socket.on('getNewDataJob', (data: any) => {
-    // toast('ada lowongan terbaru nih', {
-    //   position: "bottom-right",
-    //   autoClose: 5000,
-    //   type: 'info',
-    //   hideProgressBar: false,
-    //   closeOnClick: true,
-    //   pauseOnHover: true,
-    //   transition: Slide
-    // })
-    console.log('ada lowongan terbaru nih')
-    setdataJob(data)
-  })
+  useEffect(() => {
+    // get new data job
+    socket.on('getNewDataJob', (data: any) => {
+      console.log('ada lowongan terbaru nih')
+      setdataJob(data)
+    })
+    // Get room and users
+    socket.on('roomUsers', ({ room, users }: any) => {
+      console.log(users)
+    });
+    return () => {
+      socket.off('getNewDataJob')
+      socket.off('roomUsers')
+    }
+  }, [socket])
 
   const httpGetAllJob = async () => {
     try {
@@ -557,7 +609,7 @@ const Home = (props: any) => {
         {
           userRedux.profile.recruiter
           ? <Recruiter dataJob={dataJob} isLoading={isLoading}/>
-          : <JobSeeker dataJob={dataJob} isLoading={isLoading} />
+          : <JobSeeker dataJob={dataJob} isLoading={isLoading} profile={userRedux.profile} token={userRedux.token}/>
         }
 
         <Footer />

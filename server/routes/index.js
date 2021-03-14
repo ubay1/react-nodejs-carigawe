@@ -24,13 +24,17 @@ router.post('/user/send_verify_email', authMiddleware, userController.sendVerify
 router.get('/user/verify', userController.verifyEmail);
 router.post('/user/signout', userController.signout);
 router.post('/user/check_token', userController.checkToken);
-router.post('/user/get_user',authMiddleware, userController.getUser);
-router.put('/user/:userId',userController.update);
-router.post('/user/change_photo', userController.changePhoto);
+router.post('/user/get_user', authMiddleware, userController.getUser);
+router.post('/user/change_photo',  userController.changePhoto);
+router.post('/user/change_bg_photo', userController.changeBackgroundPhoto);
 router.get('/coba_asosiation', userController.cobaAssociation);
+// router.post('/user/get_like', userController.changeBackgroundPhoto);
 
 router.post('/recruiter/post_job', authMiddleware, jobController.postJob);
 router.get('/recruiter/get_all_post_job', jobController.getAllJob);
 router.post('/recruiter/get_all_post_job_user', authMiddleware, jobController.getJobUser);
+
+router.post('/job_seeker/like_job', authMiddleware, jobController.likeJob);
+router.post('/job_seeker/unlike_job', authMiddleware, jobController.unlikeJob);
 
 module.exports = router

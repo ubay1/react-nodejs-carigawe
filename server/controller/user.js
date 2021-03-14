@@ -15,7 +15,7 @@ const moment = require('moment')
 const hashids = require('../utils/helper')
 
 var nodemailer = require('nodemailer');
-const send = require('../helper/sendEmail');
+const sendVerifEmail = require('../helper/sendEmail');
 
 const fs = require('fs');
 const mustache = require('mustache');
@@ -104,6 +104,7 @@ const userController = {
               email_verif: false,
               password: bcrypt.hashSync(req.body.password, saltBcrypt),
               photo: '',
+              background_image: '',
               recruiter: req.body.recruiter,
               job_seeker: req.body.job_seeker,
               gender: req.body.gender,
@@ -197,8 +198,7 @@ const userController = {
     const payload = { ...req }
 
     try {
-
-      await send.sendVerifyEmail(decoded, payload, replaceToken);
+      await sendVerifEmail.sendVerifyEmail(decoded, payload, replaceToken);
       res.status(200).json({
         message: `email verifikasi telah dikirim ke email ${req.body.email}`,
       })
@@ -325,12 +325,14 @@ const userController = {
       const replaceToken = req.headers.authorization.replace('Bearer ', '')
       const decoded = jwt.verify(replaceToken, process.env.TOKEN_SECRET);
 
-      const decodeId = hashids.decode(decoded.id)
       console.log(decoded.id)
+      const decodeId = hashids.decode(decoded.id)
       const users = await models.user.findOne({
         attributes: ['id'],
         where: { id: decodeId },
       })
+
+      console.log(users)
 
       let photo_file = "profile_" + moment().format('YYYY_MM_DD_HH_mm_ss') + ".png";
       const rootDir = process.cwd();
@@ -388,28 +390,72 @@ const userController = {
     }
   },
 
-  async update(req, res) {
+  async changeBackgroundPhoto(req, res) {
     try {
-      const userCollection = await models.user.find({
-        id: req.params.userId
-      });
+      const replaceToken = req.headers.authorization.replace('Bearer ', '')
+      const decoded = jwt.verify(replaceToken, process.env.TOKEN_SECRET);
 
-      if (userCollection) {
-        const updatedUser = await models.user.update({
-          id: req.body.email
-        });
+      const decodeId = hashids.decode(decoded.id)
+      console.log(decoded.id)
+      
+      const users = await models.user.findOne({
+        attributes: ['id'],
+        where: { id: decodeId },
+      })
 
-        res.status(201).send(updatedUser)
+      let photo_file = "bg_profile_" + moment().format('YYYY_MM_DD_HH_mm_ss') + ".png";
+      const rootDir = process.cwd();
+      let next_path = "/uploads/bg_profile/";
 
+      if (users) {
+        if (req.body.imageOld !== 'not_found') {
+          try {
+            //removed image old
+            fs.unlinkSync(rootDir + next_path + req.body.imageOld)
+          } catch (err) {
+            console.error(err)
+          }
+        }
+
+        // Base64 to Img
+        let base64Image = req.body.photo.split(";base64,").pop();
+        let base64Type = req.body.photo.split(";base64,", 1).pop();
+
+        if (base64Type === "data:image/jpeg" || base64Type === "data:image/jpg"
+          || base64Type === "data:image/png"
+        ) {
+          try {
+            fs.writeFile(
+              rootDir + next_path + photo_file, base64Image, { encoding: "base64" },
+              function (err) {
+                console.log("File created " + photo_file);
+              }
+            );
+
+            const updatePhoto = users.update({
+              background_image: photo_file
+            })
+
+            if (updatePhoto) {
+              res.status(200).json({
+                'message': 'Background foto profil berhasil di perbaharui',
+                'user': users
+              });
+            } else {
+              res.status(400).json({
+                'message': 'Background foto profil gagal di perbaharui',
+                'user': users
+              });
+            }
+          } catch (error) {
+            throw new Error("Failed Create File");
+          }
+        } else {
+          throw new BadRequest("File must be JPG/JPEG/PNG FORMAT");
+        }
       }
-      else {
-        res.status(404).send("User Not Found");
-      }
-
-    }
-    catch (e) {
-      console.log(e);
-      res.status(500).send(e);
+    } catch (e) {
+      console.log(e)
     }
   },
 

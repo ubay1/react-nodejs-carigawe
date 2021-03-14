@@ -48,12 +48,28 @@ const ROUTES = [
   { path: "/profil", 
     key: "APP_PROFIL", 
     exact: true, 
-    component: Profil
+    component: (props: any) => {
+      if (!Cookies.get("token")) {
+        alert('anda tidak memiliki akses.')
+        return <Redirect to={"/login"} />;
+      } else {
+        // alert('anda masih memiliki akses.')
+        return <Profil />;;
+      }
+    }
   },
   { path: "/recruiter/create-job", 
     key: "APP_RECRUITER_CREATEJOB", 
     exact: true, 
-    component: CreateJobs
+    component: (props: any) => {
+      if (!Cookies.get("token")) {
+        alert('anda tidak memiliki akses.')
+        return <Redirect to={"/login"} />;
+      } else {
+        // alert('anda masih memiliki akses.')
+        return <CreateJobs />;;
+      }
+    }
   },
     // component: (props: any) => {
       //   if (!Cookies.get("token")) {

@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   comment.associate = function(models) {
-    comment.belongsTo(models.job, {foreignKey: 'job_id'})
-    comment.belongsTo(models.user, {foreignKey: 'user_id'})
+    comment.belongsTo(models.job, {foreignKey: 'jobId'})
+    comment.belongsTo(models.user, {foreignKey: 'userId'})
   }
 
   return comment;

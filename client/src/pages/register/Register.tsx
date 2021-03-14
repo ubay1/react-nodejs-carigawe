@@ -11,7 +11,7 @@ import {setLoading} from '../../store/loading'
 import { setLoadingScreenHome } from '../../store/loadingScreenHome';
 import {HTTPRegisterUser} from '../../utils/http';
 import { registerUser } from '../../utils/interface';
-import AnimationAuth from '../AnimationAuth';
+import AnimationAuth from '../../components/AnimationAuth';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { RootState } from '../../store/rootReducer';
@@ -156,12 +156,11 @@ const Register = () => {
             <div className="lg:flex">
                 <div className="lg:w-1/2 xl:max-w-screen-sm">
                     <div className="
-                        px-4 mb-10
+                        px-4 pb-10
                         bg-white
                         sm:px-24 
                         md:px-48 
                         lg:px-12 lg:mt-0 lg:mb-0 lg:flex lg:flex-col lg:justify-start lg:shadow-lg lg:pb-4
-                        
                         xl:px-12 xl:max-w-2xl
                         "
                     >

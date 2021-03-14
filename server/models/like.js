@@ -7,14 +7,14 @@ module.exports = (sequelize, DataTypes) => {
   // class like extends Model {};
 
   const like = sequelize.define('like', {
-    job_id: DataTypes.NUMBER,
-    user_id: DataTypes.NUMBER,
+    // jobId: DataTypes.INTEGER,
+    // userId: DataTypes.INTEGER,
     like: DataTypes.BOOLEAN
   }, {});
 
   like.associate = function(models) {
-    like.belongsTo(models.job, {foreignKey: 'job_id'})
-    like.belongsTo(models.user, {foreignKey: 'user_id'})
+    like.belongsTo(models.job, {foreignKey: 'jobId'})
+    like.belongsTo(models.user, {foreignKey: 'userId'})
   }
 
   return like;

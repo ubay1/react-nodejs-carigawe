@@ -27,6 +27,8 @@ module.exports = {
         'lg-3rows-home-list-job': '80% 10% 10%',
         'lg-4rows-home-list-job': '10% 70% 10% 10%',
         'lg-7rows-home-list-job': '10% 30% 20% 10% 10% 10% 10%',
+        'md-3rows-list-job': '120px 170px 40px',
+        'sm-3rows-list-job': '120px 170px 40px',
       },
       zIndex: {
         '60': '60',

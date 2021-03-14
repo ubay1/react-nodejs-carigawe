@@ -16,12 +16,18 @@ module.exports = function(io) {
         // res.send(req.body.email)
         try {
             const jobs = await models.job.findAll({
-                attributes: ['content','image_content','title','city','expiredAt', 'createdAt'],
-                include: [{model: models.user, attributes:['name', 'photo', 'gender']}],
-                order: [
-                    ['id', 'DESC'],
+                attributes: ['id','content','image_content','title','city','expiredAt', 'createdAt'],
+                include: [
+                  {model:models.user, attributes:['name', 'photo', 'gender']},
+                  {model:models.like, 
+                    attributes:[['id', 'like_id'],'like' ], 
+                    include:[{model: models.user, attributes: ['name', 'photo']}]
+                  }
                 ],
-            })
+                order: [
+                  ['id', 'DESC'],
+                ],
+              })
             
             res.status(200).json({
                 message: "data tersedia",

@@ -6,7 +6,7 @@
 import React, { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import image_login from '../assets/image_login.png';
-import AnimationAuth from '../AnimationAuth';
+import AnimationAuth from '../../components/AnimationAuth';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { Slide, toast } from 'react-toastify';
@@ -140,19 +140,19 @@ const Login = () => {
 
 
     } catch (error) {
-      toast(error.data.errors, {
-        position: "bottom-right",
-        autoClose: 5000,
-        type: 'error',
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        transition: Slide
-      })
-      dispatch(setLoading({
-        show: false,
-        timeout: 0,
-      }))
+      // toast(error.data.errors, {
+      //   position: "bottom-right",
+      //   autoClose: 5000,
+      //   type: 'error',
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   transition: Slide
+      // })
+      // dispatch(setLoading({
+      //   show: false,
+      //   timeout: 0,
+      // }))
     }
   }
 

@@ -28,36 +28,29 @@ import ROUTES, { RenderRoutes } from "./routes";
 // import {io} from "socket.io-client";
 // const ENDPOINT = "http://127.0.0.1:8000";
 import socket from './utils/socket'
+import { CobaContext } from "./components/CobaContext";
 
 const App = () => {
-  
-  useEffect(() => {
-    // const socket = io(ENDPOINT);
-    // socket.on('roomUsers', ({ room, users }: any) => {
-    //   console.log(users)
-    // });
-  }, []);
-  
-  function logout() {
-    localStorage.removeItem("user");
-    window.history.go(1)
-  }
+  const [totalLike, setTotalLike] = useState(0)
+
   return (
     <Provider store={store}>
-    <Router>
-      <Loading></Loading>
-      {/* {displayRouteMenu(ROUTES)} */}
-      <RenderRoutes routes={ROUTES}/>
-      {/* <div> */}
-      {/* <Switch>
-          <Route exact path='/' />
-          <Route exact path='/login' component={Login} />
-          <Route exact path='/register' component={Register} />
-          <Route exact path='/recruiter/create-job' component={CreateJob} />
-          <Route exact path='/profil' component={Profil} />
-      </Switch> */}
-      {/* </div> */}
-    </Router>
+    <CobaContext.Provider value={{totalLike, setTotalLike}}>
+      <Router>
+        <Loading></Loading>
+        {/* {displayRouteMenu(ROUTES)} */}
+        <RenderRoutes routes={ROUTES}/>
+        {/* <div> */}
+        {/* <Switch>
+            <Route exact path='/' />
+            <Route exact path='/login' component={Login} />
+            <Route exact path='/register' component={Register} />
+            <Route exact path='/recruiter/create-job' component={CreateJob} />
+            <Route exact path='/profil' component={Profil} />
+        </Switch> */}
+        {/* </div> */}
+      </Router>
+    </CobaContext.Provider>
     </Provider>
   );
 }

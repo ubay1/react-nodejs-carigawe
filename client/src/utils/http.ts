@@ -97,6 +97,54 @@ export async function HTTPUploadFotoProfil(param: {token: string, photo: string,
   })
 }
 
+export async function HTTPUploadBgFotoProfil(param: {token: string, photo: string, imageOld?: string}): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+      try {
+          const data = {
+              token: param.token,
+              photo: param.photo,
+              imageOld: param.imageOld
+          }
+          const responseUploadBgFotoProfil = await AxiosNormal(2000).post(`${DevApiUrl}/user/change_bg_photo`, data)
+          return resolve(responseUploadBgFotoProfil)
+      } catch (error) {
+          return reject(error)
+      }
+  })
+}
+
+//################################ Like Job ################################//
+export async function HTTPLikeJob(param: { token: string, job_id: any }): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = {
+        token: param.token,
+        job_id: param.job_id
+      }
+      const responseLikeJob = await AxiosNormal(10000).post(`${DevApiUrl}/job_seeker/like_job`, data)
+      return resolve(responseLikeJob)
+    } catch (error) {
+      return reject(error)
+    }
+  })
+}
+
+export async function HTTPUnlikeJob(param: { token: string, like_id: any }): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = {
+        token: param.token,
+        like_id: param.like_id
+      }
+      const responseLikeJob = await AxiosNormal(10000).post(`${DevApiUrl}/job_seeker/unlike_job`, data)
+      return resolve(responseLikeJob)
+    } catch (error) {
+      return reject(error)
+    }
+  })
+}
+//################################ End Like ################################//
+
 //################################ Recruiter ################################//
 export async function HTTPGetAllJob(): Promise<any> {
   return new Promise(async (resolve, reject) => {

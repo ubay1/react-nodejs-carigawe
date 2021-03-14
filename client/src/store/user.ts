@@ -59,9 +59,9 @@ export const httpCheckToken = async (token: any) => {
 
 export const expiredToken = (dispatch: AppDispatch) => {
   Cookies.remove('token')
-  dispatch(setAuthStatus({
-    token: ''
-  }))
+  // dispatch(setAuthStatus({
+  //   token: ''
+  // }))
   dispatch(setReduxUsersProfile({
     // id: '',
     name: '',
@@ -102,6 +102,7 @@ export const initialStateUserAuthByAsync = async (dispatch: AppDispatch) => {
     try {
       const tokens = Cookies.get('token') === '' ? '' : Cookies.get('token')
       if (typeof Cookies.get('token') === 'undefined') {
+        // console.log('key token gaada')
         expiredToken(dispatch)
       } else {
         if (tokens === '') {
@@ -183,9 +184,14 @@ const userSlice = createSlice({
       state.profile.gender = action.payload.gender
     },
 
-    updateProfile: (state, action: PayloadAction<any>) => {
+    updatePhotoProfile: (state, action: PayloadAction<any>) => {
         // console.log(action)
         state.profile.photo = action.payload.photo
+    },
+
+    updateBgPhotoProfile: (state, action: PayloadAction<any>) => {
+      // console.log(action)
+      state.profile.background_image = action.payload.background_image
     },
 
     setAuthStatus(state, action: PayloadAction<{ token: string }>) {
@@ -197,6 +203,7 @@ const userSlice = createSlice({
 export const {
   setReduxUsersProfile,
   setAuthStatus,
-  updateProfile
+  updatePhotoProfile,
+  updateBgPhotoProfile
 } = userSlice.actions
 export default userSlice.reducer

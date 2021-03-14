@@ -44,7 +44,7 @@ function Previews(props: IPreviews) {
 
   const {getRootProps, getInputProps, isDragActive, isDragReject, fileRejections} = useDropzone({
     accept: 'image/jpeg, image/jpg, image/png',
-    maxSize: 100000,
+    maxSize: 500000,
     onDrop: (acceptedFiles: any) => {
       acceptedFiles.map((file: any) => {
         Object.assign(file, {
@@ -81,7 +81,7 @@ function Previews(props: IPreviews) {
       mt-5 mx-4 mb-1
     "> 
       <div className="text-xs text-black">
-        pilih gambar [<span className="italic font-bold">*optional dan max: 100kb</span>]
+        pilih gambar [<span className="italic font-bold">*optional dan max: 500kb</span>]
       </div>
     </div>
     <div className="mx-4 ">
@@ -142,7 +142,7 @@ const CreateJobs = () => {
   }, [])
 
   useEffect(() => {
-    console.log('isi content = ', isiContent)
+    // console.log('isi content = ', isiContent)
   }, [isiContent])
   
   useEffect(() => {

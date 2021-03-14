@@ -5,3 +5,53 @@
 .react-responsive-modal-modal {
   border-radius: 10px !important;
 }
+
+.hackernoon_design {
+  padding: 2px 0px 1px;
+  cursor: pointer;
+  background-image: linear-gradient(transparent 0%, transparent calc(50% - 9px), rgba(0, 255, 0, 0.35) calc(50% - 9px), rgba(0, 255, 0, 0.35) 100%);
+  transition: all 120ms ease-in-out 0s;
+  background-size: 100% 200%;
+  background-position: 0px 0px;
+  word-break: break-word;
+}
+
+.hackernoon_design:hover {
+  background-image: linear-gradient(transparent 0%, transparent calc(50% - 9px), rgb(0, 255, 0) calc(50% - 9px), rgb(0, 255, 0) 100%);
+  background-position: 0px 100%;
+}
+
+.profill::after {
+  content: "";
+  position: absolute;
+  top: 40%;
+  left: 0%;
+  margin-left: -20px;
+  transform: rotate(90deg);
+  border-width: 10px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+  --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+@media(max-width: 479px) {
+  .profill {
+    margin-top: 15px;
+  }
+  .profill::after {
+    content: "";
+    position: absolute;
+    top: 0%;
+    bottom: 46%;
+    left: 52%;
+    margin-left: -20px;
+    transform: rotate(180deg);
+    border-width: 10px;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+    --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
+}
+

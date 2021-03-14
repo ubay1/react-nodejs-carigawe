@@ -79,8 +79,14 @@ const jobController = {
   async getAllJob(req, res) {
     try {
       const jobs = await models.job.findAll({
-        attributes: ['content','image_content','title','city','expiredAt', 'createdAt'],
-        include: [{model: models.user, attributes:['name', 'photo', 'gender']}],
+        attributes: ['id','content','image_content','title','city','expiredAt', 'createdAt'],
+        include: [
+          {model:models.user, attributes:['name', 'photo', 'gender']},
+          {model:models.like, 
+            attributes:[['id', 'like_id'],'like' ], 
+            include:[{model: models.user, attributes: ['name', 'photo']}]
+          }
+        ],
         order: [
           ['id', 'DESC'],
         ],
@@ -123,8 +129,14 @@ const jobController = {
 
       const jobs = await models.job.findAll({
         where: {userId: hashids.decode(decoded.id)},
-        attributes: ['content','image_content','title','city','expiredAt', 'createdAt'],
-        include: [{model: models.user, attributes:['name', 'photo', 'gender']}],
+        attributes: ['id','content','image_content','title','city','expiredAt', 'createdAt'],
+        include: [
+          {model:models.user, attributes:['name', 'photo', 'gender']},
+          {model:models.like, 
+            attributes:['like' ], 
+            include:[{model: models.user, attributes: ['name', 'photo']}]
+          }
+        ],
         order: [
           ['id', 'DESC'],
         ],
@@ -139,6 +151,87 @@ const jobController = {
       res.status(500).json({
         error: error
       })
+    }
+  },
+  async likeJob(req, res) {
+    try{
+      const replaceToken = req.headers.authorization.replace('Bearer ', '')
+      const decoded = jwt.verify(replaceToken, process.env.TOKEN_SECRET);
+      const decodedId = hashids.decode(decoded.id)
+      const jobId = req.body.job_id
+      
+      const users = await models.user.findOne({
+        where: {
+          id: decodedId
+        },
+        attributes: [
+          "name", "phone", "email", "email_verif", "photo", "background_image", "gender", "recruiter", "job_seeker",
+        ]
+      })
+
+      if (users.recruiter === true) {
+        res.status(400).json({
+          message: "anda tidak mendapat akses",
+        })
+      } else {
+        console.log(jobId, decodedId)
+        const likess = await models.like.create(
+          {
+            jobId: jobId,
+            userId: decodedId,
+            like: true
+          }
+        );
+        
+        if (likess) {
+          res.status(200).json({
+            message: "anda telah memberikan like",
+          })
+        }
+      }
+      
+    } catch(error) {
+      console.log(error)
+    }
+  },
+  async unlikeJob(req, res) {
+    try{
+      const replaceToken = req.headers.authorization.replace('Bearer ', '')
+      const decoded = jwt.verify(replaceToken, process.env.TOKEN_SECRET);
+      const decodedId = hashids.decode(decoded.id)
+      const likeId = req.body.like_id
+      
+      const users = await models.user.findOne({
+        where: {
+          id: decodedId
+        },
+        attributes: [
+          "name", "phone", "email", "email_verif", "photo", "background_image", "gender", "recruiter", "job_seeker",
+        ]
+      })
+
+      if (users.recruiter === true) {
+        res.status(400).json({
+          message: "anda tidak mendapat akses",
+        })
+      } else {
+        console.log(likeId, decodedId)
+        const like = await models.like.findOne({
+          where:{
+            id: likeId
+          }
+        });
+
+        if (like) {
+          like.destroy()
+          res.status(200).json({
+            message: "anda batal memberikan like",
+          })
+        }
+      }
+      
+    } catch(error) {
+      console.log(error)
     }
   }
 }

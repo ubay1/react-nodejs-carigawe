@@ -12,18 +12,19 @@ module.exports = (sequelize, DataTypes) => {
     // disable biar gakditampilin
     email_verif: DataTypes.BOOLEAN,
     password: DataTypes.TEXT, 
-    photo: DataTypes.STRING,
+    photo: DataTypes.TEXT,
     recruiter: DataTypes.BOOLEAN,
     job_seeker: DataTypes.BOOLEAN,
-    gender: DataTypes.STRING,
+    gender: DataTypes.STRING, 
+    background_image: DataTypes.TEXT,
     email_verification_token: DataTypes.TEXT,
   },
   );
 
   user.associate = function(models) {
     user.hasMany(models.job)
-    // User.hasOne(models.like, {as: 'likes'})
-    // User.hasOne(models.comment, {as: 'comments'})
+    user.hasOne(models.like)
+    user.hasOne(models.comment)
   };
 
   return user;

@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   
   job.associate = function(models) {
-    // job.hasOne(models.like)
-    // job.hasOne(models.comment)
+    job.hasMany(models.like)
+    job.hasMany(models.comment)
     job.belongsTo(models.user, {foreignKey: "userId"})
   };
   return job;

@@ -20,6 +20,7 @@ app.use(cors());
 app.set('view engine', 'ejs');
 app.use("/jobs", express.static(rootDir + "/uploads/jobs"))
 app.use("/profile", express.static(rootDir + "/uploads/profile"))
+app.use("/bg_profile", express.static(rootDir + "/uploads/bg_profile"))
 
 // limit 50mb, kalo gak di set akan error kalo data api yang dikirim besar.
 app.use(express.json({limit: '50mb'}));

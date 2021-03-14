@@ -292,40 +292,39 @@ const Header = (props: ITypeHeader) => {
                     focus:outline-none
                     `}
 
-                    onClick={() => {
-                      Cookies.remove('token')
-                      dispatch(setLoading({
-                        show: true,
-                        timeout: 300000
-                      }))
+                    onClick={async () => {
+                      toast('Anda telah keluar', {
+                        position: "bottom-right",
+                        autoClose: 5000,
+                        type: 'info',
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        transition: Slide
+                      })
+                      await Cookies.remove('token')
 
+                      await window.location.replace('/login')
+                      
                       setTimeout(() => {
-                        toast('Anda telah keluar', {
-                          position: "bottom-right",
-                          autoClose: 5000,
-                          type: 'info',
-                          hideProgressBar: false,
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          transition: Slide
-                        })
-                        
-                        window.location.replace('/login')
-                        
-                        // socket.emit('disconnect', )
-                        
-                        // history.push('/login')
-                        // pakai cara ini agar ngemmit disconnect ke server
-
-                        dispatch(setPageActive({
-                          ispage: 'beranda'
-                        }))
-                        expiredToken(dispatch)
-                        dispatch(setLoading({
-                          show: false,
-                          timeout: 0
-                        }))
+                        // expiredToken(dispatch)
                       }, 2000)
+                      // setTimeout(() => {
+                        
+                      //   // socket.emit('disconnect', )
+                        
+                      //   // history.push('/login')
+                      //   // pakai cara ini agar ngemmit disconnect ke server
+
+                      //   // dispatch(setPageActive({
+                      //   //   ispage: 'beranda'
+                      //   // }))
+                        
+                      //   dispatch(setLoading({
+                      //     show: false,
+                      //     timeout: 0
+                      //   }))
+                      // }, 2000)
                     }}
                   >
                     <RiLogoutCircleRLine
