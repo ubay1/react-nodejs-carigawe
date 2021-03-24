@@ -19,6 +19,7 @@ import { AppBar, IconButton, makeStyles, Theme, Toolbar, createStyles, fade, Men
 import { MdEmail, MdNotifications, MdAccountCircle, MdMenu, MdSearch, MdMail, MdMoreVert, MdPerson, MdInput, MdAssignment, MdInbox, MdDrafts, MdPower, MdExitToApp, MdCopyright } from "react-icons/md";
 import moment from 'moment'
 import { VscSignOut } from "react-icons/vsc";
+import { GoSignOut } from "react-icons/go";
 
 interface ITypeHeader {
   sudahDiPage?: string;
@@ -244,12 +245,34 @@ const Header = (props: ITypeHeader) => {
             <Drawer style={{width:'250px'}} open={openDrawer} onClose={() => { setopenDrawer(false) }}>
               <div className="w-64">
                 <List component="nav" aria-label="main mailbox folders">
-                  <ListItem button>
-                    <ListItemIcon className="min-w-0 mr-2 bg-red-500 p-1 rounded-full shadow">
-                      <VscSignOut  size={18} color="#fff"/>
-                    </ListItemIcon>
-                    <ListItemText primary="Keluar" />
-                  </ListItem>
+                  <Button
+                    className="w-full focus:outline-none flex justify-start"
+                    onClick={async () => {
+                      toast('Anda telah keluar', {
+                        position: "bottom-right",
+                        autoClose: 5000,
+                        type: 'info',
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        transition: Slide
+                      })
+                      await Cookies.remove('token')
+
+                      await window.location.replace('/login')
+
+                      setTimeout(() => {
+                        // expiredToken(dispatch)
+                      }, 2000)
+                    }}
+                  >
+                    <div
+                      className="bg-red-500 rounded-full shadow focus:outline-none mr-1 p-1"  
+                    >
+                      <VscSignOut color="white" size={20}/>
+                    </div>
+                    <div>Keluar</div>
+                  </Button>
                   <Divider />
                   <ListItem className="text-center flex justify-center items-center">
                       <MdCopyright size={15} className="mr-1"/> 

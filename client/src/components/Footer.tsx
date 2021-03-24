@@ -10,7 +10,7 @@ import { AppDispatch } from '../store';
 import { setPageActive } from '../store/pageActive';
 import classes from '*.module.css';
 import { BottomNavigation, BottomNavigationAction } from '@material-ui/core';
-import { MdAccountCircle, MdAdd, MdAssignment, MdHome, MdInput, MdPerson } from 'react-icons/md';
+import { MdAccountCircle, MdAddCircleOutline, MdAssignment, MdHome, MdInput, MdPerson } from 'react-icons/md';
 import { Slide, toast } from 'react-toastify';
 
 const Footer = () => {
@@ -29,15 +29,27 @@ const Footer = () => {
     
   }
 
+  const bottomRecruiter = [
+    {label:'Buat Loker', value:'createjobs'},
+    {label: 'Profil', value: 'profil' }
+  ]
+
   return(
     <BottomNavigation value={pageActive.ispage} 
       onChange={(event, value) => {
         if (value !== 'beranda') {
           if (userRedux.token !== '') {
-            dispatch(setPageActive({
-              ispage: value
-            }))
-            history.push(`/${value}`)
+            if (value === 'createjobs') {
+              dispatch(setPageActive({
+                ispage: value
+              }))
+              history.push(`/recruiter/create-job`)
+            } else {
+              dispatch(setPageActive({
+                ispage: value
+              }))
+              history.push(`/${value}`)
+            }
           } else {
             if (value === 'login') {
               history.push('/login')
@@ -63,17 +75,13 @@ const Footer = () => {
       {
         userRedux.token !== '' && userRedux.profile.recruiter
           ?
-          <div className="flex flex-col items-center">
-            <BottomNavigationAction
-              className="py-4 text-sm focus:outline-none" label="Buat Loker" value="createjobs"
-              icon={<MdAdd className="text-2xl" />}
-            />
-
-            <BottomNavigationAction
-              className="py-4 text-sm focus:outline-none" label="Profil" value="profil"
-              icon={<MdAccountCircle className="text-2xl" />}
-            />
-          </div>
+            bottomRecruiter.map((item: any, index:number) => (
+              <BottomNavigationAction
+                key={index}
+                className="py-4 text-sm focus:outline-none" label={item.label} value={item.value}
+                icon={item.value === 'profil' ? <MdPerson className="text-2xl" /> : <MdAddCircleOutline className="text-2xl" />}
+              />
+            ))
           : 
             userRedux.token !== '' && userRedux.profile.job_seeker
             ? 

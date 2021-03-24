@@ -601,7 +601,7 @@ const Profil = () => {
         <Header sudahDiPage="profil" />
         <ModalDetail visibleModal={visibleModal} closeModal={eventCloseModal} typeModal={typeModal} />
 
-        <div className="relative top-16 h-56">
+        <div className="relative top-14 h-56">
           <div className="relative bg-gradient-to-b from-white to-blue-200
               rounded-t-lg h-full py-6 flex flex-col items-center justify-center">
             {
