@@ -1,339 +1,388 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-restricted-globals */
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, Redirect, useHistory } from 'react-router-dom';
-import { toast, Slide } from 'react-toastify';
-import { AppDispatch } from '../../store';
-import {setLoading} from '../../store/loading'
-import { setLoadingScreenHome } from '../../store/loadingScreenHome';
-import {HTTPRegisterUser} from '../../utils/http';
-import { registerUser } from '../../utils/interface';
+import { Link, useHistory } from 'react-router-dom';
+import image_login from '../assets/image_login.png';
 import AnimationAuth from '../../components/AnimationAuth';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
+import { Slide, toast } from 'react-toastify';
+import { setLoading } from '../../store/loading';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '../../store';
+import { HTTPGetUser, HTTPLoginUser, HTTPRegisterUser } from '../../utils/http';
+import Cookies from 'js-cookie';
+// initialStateUserAuthByAsync
+import { initialStateUserAuthByAsync, setAuthStatus, setReduxUsersProfile } from '../../store/user';
 import { RootState } from '../../store/rootReducer';
-// import { initialStateUserAuthByAsync } from '../store/user';
+import { setLoadingScreenHome } from '../../store/loadingScreenHome';
 import Lottie from 'lottie-react';
 import LoadingScreen from '../../assets/loading_screen.json';
-import { initialStateUserAuthByAsync } from '../../store/user';
+import socket from '../../utils/socket'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { Button, TextField, Paper, Grid, Box, Container, Hidden, Typography, FilledInput, FormControl, InputAdornment, InputLabel, OutlinedInput, IconButton, Divider, createMuiTheme, ThemeProvider, CircularProgress, FormControlLabel, Radio, FormLabel, RadioGroup, FormHelperText } from '@material-ui/core';
+import { ImEye } from "react-icons/im";
+import { RiEyeCloseLine } from "react-icons/ri";
+// import clsx from 'clsx';
+import { blue, green } from '@material-ui/core/colors';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    buttonProgress: {
+      color: blue[600],
+      position: 'absolute',
+      // top: '50%',
+      // left: '50%',
+      marginTop: -40,
+      marginLeft: 0,
+    },
+  }),
+);
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      // Purple and green play nicely together.
+      main: '#2563eb',
+    },
+    secondary: {
+      // This is green.A700 as hex.
+      main: '#42b72a',
+    },
+  },
+});
 
 const Register = () => {
-    toast.configure()
-    const [successAction, setsuccessAction] = useState(false)
-    const [failedAction, setfailedAction] = useState(false)
+  toast.configure()
+  const dispatch: AppDispatch = useDispatch()
+  const loadingScreenHomeRedux = useSelector((state: RootState) => state.loadingScreenHome)
+  const userRedux = useSelector((state: RootState) => state.user)
+  const history = useHistory();
+  const classes = useStyles();
+  const [showPassword, setshowPassword] = useState(false)
+  const [loadingCircular, setLoadingCircular] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const timer = React.useRef<number>();
 
-    const dispatch: AppDispatch = useDispatch()
-    const loadingScreenHomeRedux = useSelector((state: RootState) => state.loadingScreenHome)
-    const userRedux = useSelector((state: RootState) => state.user)
-    const history = useHistory();
+  useEffect(() => {
+    document.title = 'Cari Gawe - Daftar'
+    setTimeout(() => {
+      dispatch(setLoadingScreenHome({
+        show: false
+      }))
+    }, 2000)
+  }, [])
 
-    useEffect(() => {
-        document.title = 'Cari Gawe - Pendaftaran'
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      phone: '',
+      gender: '',
+      email: '',
+      password: '',
+      roles_jobs: ''
+    },
+    onSubmit: values => {
+      httpRegisterUser(values)
+
+    },
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .required("nama wajib diisi"),
+      phone: Yup.number()
+        .required("no.tlp wajib diisi"),
+      gender: Yup.string()
+        .required("jenis kelamin wajib diisi"),
+      email: Yup.string()
+        .email("Invalid email format")
+        .required("email wajib diisi"),
+      password: Yup.string()
+        .min(8, "Minimum 8 characters")
+        .required("password wajib diisi"),
+      roles_jobs: Yup.string()
+        .required("daftar pekerja wajib diisi"),
+    })
+  });
+
+  const httpRegisterUser = async (params: any) => {
+    try {
+      dispatch(setLoading({
+        show: true,
+        timeout: 300000
+      }))
+      setSuccess(false);
+      setLoadingCircular(true);
+
+      const responseRegisterUser = await HTTPRegisterUser({
+        name: params.name,
+        phone: params.phone,
+        gender: params.gender,
+        email: params.email,
+        password: params.password,
+        roles_jobs: params.roles_jobs
+      })
+
+      if (responseRegisterUser.status === 200) {
         setTimeout(() => {
-            dispatch(setLoadingScreenHome({
-              show: false
-            }))
+          dispatch(setLoading({
+            show: false,
+            timeout: 0
+          }))
+          setSuccess(true);
+          setLoadingCircular(false);
+          toast(responseRegisterUser.data.message, {
+            position: "bottom-right",
+            autoClose: 5000,
+            type: 'success',
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            transition: Slide
+          })
+          history.push('/login')
         }, 2000)
-    }, [])
-
-    // useEffect(() => {
-    //     if (userRedux.token !== '') {
-    //       setTimeout(() => {
-    //         dispatch(setLoadingScreenHome({
-    //           show: false
-    //         }))
-    //         history.push('/')
-    //       }, 2500)
-    //     } else {
-    //       initialStateUserAuthByAsync(dispatch)
-    //       setTimeout(() => {
-    //         dispatch(setLoadingScreenHome({
-    //           show: false
-    //         }))
-    //         history.push('/')
-    //       }, 2500)
-    //     }
-    //   }, [dispatch, history, userRedux.token])
-    
-    const formik = useFormik({
-        initialValues: {
-          name: '',
-          phone: '',
-          gender: '',
-          email: '',
-          password: '',
-          roles_jobs: ''
-        },
-        onSubmit: values => {
-            dispatch(setLoading({
-                show: true,
-                timeout: 300000,
-            }))
-
-            httpRegisterUser(values)
-
-            // console.log(JSON.stringify(values, null, 2));
-          
-        },
-        validationSchema: Yup.object({
-            name: Yup.string()
-              .required("Wajib diisi"),
-            phone: Yup.number()
-            .required("Wajib diisi"),
-            gender: Yup.string()
-            .required("Wajib diisi"),
-            email: Yup.string()
-              .email("Invalid email format")
-              .required("Wajib diisi"),
-            password: Yup.string()
-              .min(8, "Minimum 8 characters")
-              .required("Wajib diisi"),
-            roles_jobs: Yup.string()
-              .required("Wajib diisi"),
+      }
+    } catch (error) {
+      setTimeout(() => {
+        toast(error.data.errors, {
+          position: "bottom-right",
+          autoClose: 5000,
+          type: 'error',
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          transition: Slide
         })
-    });
-
-    const httpRegisterUser = async (params: any) => {
-        try {
-            const responseRegisterUser = await HTTPRegisterUser({
-                name: params.name,
-                phone: params.phone,
-                gender: params.gender,
-                email: params.email,
-                password: params.password,
-                roles_jobs: params.roles_jobs
-            })
-
-            if (responseRegisterUser.status === 200) {
-                toast(responseRegisterUser.data.message, {
-                    position: "bottom-right",
-                    autoClose: 5000,
-                    type: 'success',
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    transition: Slide
-                })
-                dispatch(setLoading({
-                    show: false,
-                    timeout: 0,
-                }))
-    
-                history.push('/login')
-            }
-
-
-        } catch (error) {
-            toast(error.data.errors, {
-                position: "bottom-right",
-                autoClose: 5000,
-                type: 'error',
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                transition: Slide
-            })
-            dispatch(setLoading({
-                show: false,
-                timeout: 0,
-            }))
-        }
+        dispatch(setLoading({
+          show: false,
+          timeout: 0
+        }))
+        setSuccess(true);
+        setLoadingCircular(false);
+      }, 2000);
     }
+  }
 
-    if (loadingScreenHomeRedux.show === true) {
-        return(
-            <div className="flex items-center justify-center flex-col h-screen">
-                {/* <img src={LoadingGif} alt="laodinggif"/> */}
-                {/* <div>Loading ..</div> */}
-                <Lottie  animationData={LoadingScreen} style={{width: 200}} />
-            </div>
-        )
-    } else {
-        return(
-            <div className="lg:flex">
-                <div className="lg:w-1/2 xl:max-w-screen-sm">
-                    <div className="
-                        px-4 pb-10
-                        bg-white
-                        sm:px-24 
-                        md:px-48 
-                        lg:px-12 lg:mt-0 lg:mb-0 lg:flex lg:flex-col lg:justify-start lg:shadow-lg lg:pb-4
-                        xl:px-12 xl:max-w-2xl
-                        "
-                    >
-                        <div className="">
-                            <div className="py-6 flex justify-center">
-                                <div className="cursor-pointer flex items-center">
-                                    <div className="text-5xl text-blue-600 tracking-wide ml-2 font-semibold font_damion">
-                                    <Link to="/">Cari Gawe</Link>
-                                    </div>
-                                </div>
-                            </div>
-                            <form onSubmit={formik.handleSubmit}>
-                                <div className="mt-6">
-                                    <div className="text-sm font-bold text-gray-700 tracking-wide">Nama Lengkap</div>
-                                    <input 
-                                        name="name"
-                                        className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
-                                        type="text" 
-                                        placeholder="jhon doe" 
-                                        // defaultValue={dataRegister.name}
-                                        // onChange={handleInputChange }
-                                        onChange={formik.handleChange}
-                                        value={formik.values.name}
-                                    />
-                                    {formik.errors.name && formik.touched.name && (
-                                        <p className="text-red-400">{formik.errors.name}</p>
-                                    )}
-                                </div>
-                                <div className="mt-8">
-                                    <div className="text-sm font-bold text-gray-700 tracking-wide">Nomor Telepon</div>
-                                    <input 
-                                        name="phone"
-                                        className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
-                                        type="text" placeholder="0812xxxxxxxx" 
-                                        // defaultValue={dataRegister.phone}    
-                                        // onChange={handleInputChange }
-                                        onChange={formik.handleChange}
-                                        value={formik.values.phone}
-                                    />
-                                    {formik.errors.phone && formik.touched.phone && (
-                                        <p className="text-red-400">{formik.errors.phone}</p>
-                                    )}
-                                </div>
-                                <div className="mt-8">
-                                    <div className="flex justify-between items-center">
-                                        <div className="text-sm font-bold text-gray-700 tracking-wide">
-                                            Jenis Kelamin
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-row">
-                                        <div className="inline-flex items-center mt-3 w-1/2">
-                                            <input 
-                                                type="radio" 
-                                                id="Laki" 
-                                                name="gender" 
-                                                className="h-5 w-5 text-gray-600" 
-                                                value="L"
-                                                onChange={formik.handleChange}
-                                            />
-                                            <label htmlFor="Laki" className="ml-2 text-gray-700">Laki-Laki
-                                            </label>
-                                        </div>
-                                        <div className="inline-flex items-center mt-3 w-1/2">
-                                            <input 
-                                                type="radio" 
-                                                id="Perempuan" 
-                                                name="gender" 
-                                                className="h-5 w-5 text-gray-600" 
-                                                value="P"
-                                                onChange={formik.handleChange}
-                                            />
-                                            <label htmlFor="Perempuan" className="ml-2 text-gray-700">Perempuan</label>
-                                        </div>
-                                    </div>
-                                    {formik.errors.gender && (
-                                        <p className="text-red-400">{formik.errors.gender}</p>
-                                    )}
-                                </div>
-                                <div className="mt-8">
-                                    <div className="text-sm font-bold text-gray-700 tracking-wide">Email</div>
-                                    <input 
-                                        name="email"
-                                        className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
-                                        type="email" placeholder="jhon@mail.com" 
-                                        // defaultValue={dataRegister.email}    
-                                        // onChange={handleInputChange }
-                                        onChange={formik.handleChange}
-                                        value={formik.values.email}
-                                    />
-                                    {formik.errors.email && formik.touched.email && (
-                                        <p className="text-red-400">{formik.errors.email}</p>
-                                    )}
-                                </div>
-                                <div className="mt-8">
-                                    <div className="flex justify-between items-center">
-                                        <div className="text-sm font-bold text-gray-700 tracking-wide">
-                                            Password
-                                        </div>
-                                    </div>
-                                    <input 
-                                        name="password"
-                                        className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500" 
-                                        type="password" placeholder="Enter your password" 
-                                        // defaultValue={dataRegister.password}    
-                                        // onChange={handleInputChange }
-                                        onChange={formik.handleChange}
-                                        value={formik.values.password}
-                                    />
-                                    {formik.errors.password && formik.touched.password && (
-                                        <p className="text-red-400">{formik.errors.password}</p>
-                                    )}
-                                </div>
-                                <div className="mt-8">
-                                    <div className="flex justify-between items-center">
-                                        <div className="text-sm font-bold text-gray-700 tracking-wide">
-                                            Daftar Untuk
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-row">
-                                        <div className="inline-flex items-center mt-3 w-1/2">
-                                            <input 
-                                                type="radio" 
-                                                id="recruiter" 
-                                                name="roles_jobs" 
-                                                className="h-5 w-5 text-gray-600" 
-                                                value="recruiter"
-                                                onChange={formik.handleChange}
-                                            />
-                                            <label htmlFor="recruiter" className="ml-2 text-gray-700">Perekrut
-                                            </label>
-                                        </div>
-                                        <div className="inline-flex items-center mt-3 w-1/2">
-                                            <input 
-                                                type="radio" 
-                                                id="job_seeker" 
-                                                name="roles_jobs" 
-                                                className="h-5 w-5 text-gray-600" 
-                                                value="job_seeker"
-                                                onChange={formik.handleChange}
-                                            />
-                                            <label htmlFor="job_seeker" className="ml-2 text-gray-700">Pencari Kerja</label>
-                                        </div>
-                                    </div>
-                                    {formik.errors.roles_jobs && (
-                                        <p className="text-red-400">{formik.errors.roles_jobs}</p>
-                                    )}
-                                </div>
-                                <div className="mt-10">
-                                <button 
-                                    className="bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 text-gray-100 p-4 w-full rounded-full tracking-wide font-semibold font-display focus:outline-none focus:shadow-outline shadow-lg"
-                                    type="submit"
-                                    onClick={() => {
-                                        // dispatch(setLoading({
-                                        //     show: true,
-                                        //     timeout: 300000,
-                                        // }))
-                                        // httpRegisterUser(dataRegister)
-                                    }}
-                                >
-                                    Daftar
-                                </button>
-                            </div>
-                            </form>
-                            <div className="my-6 text-sm font-display font-semibold text-gray-700 text-center">
-                                Sudah punya akun ? <Link to="/login" className="cursor-pointer text-blue-600 hover:text-blue-800">Masuk</Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <AnimationAuth />
-            </div>
-        )
-    }
+  const handleClickShowPassword = () => {
+    setshowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
+  if (loadingScreenHomeRedux.show === true) {
+    return (
+      <div className="flex items-center justify-center flex-col h-screen">
+        {/* <img src={LoadingGif} alt="laodinggif"/> */}
+        {/* <div>Loading ..</div> */}
+        <Lottie animationData={LoadingScreen} style={{ width: 200 }} />
+      </div>
+    )
+  } else {
+    return (
+      <ThemeProvider theme={theme}>
+        <div className={classes.root}>
+          <Box height="100vh" className="flex flex-col justify-start sm:justify-center">
+            <Container>
+              <Grid container spacing={2}
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <Hidden xsDown only="sm">
+                  <Grid item xs={12} sm={4} md={6} lg={6}>
+                    {/* <Paper className={classes.paper}> */}
+                    <AnimationAuth />
+                    {/* </Paper> */}
+                  </Grid>
+                </Hidden>
+                <Grid item xs={12} sm={12} md={6} lg={4} className={`
+                  ${formik.errors.name || formik.errors.phone || formik.errors.gender || formik.errors.email || formik.errors.password || formik.errors.roles_jobs ? 'mt-2 md:mt-0' : 'mt-2 md:mt-2'}
+                `}>
+                  <Paper className="p-6 text-center rounded-xl" square={true} elevation={3}>
+                    {/* <Typography component="div">
+                      <Box textAlign="center" mb={2}>
+                        <Link to="/"
+                          className="focus:outline-none 
+                          font_damion text-4xl sm:text-5xl text-blue-600 font-semibold"
+                        >Cari Gawe</Link>
+                      </Box>
+                    </Typography> */}
+                    <form onSubmit={formik.handleSubmit} noValidate autoComplete="on">
+                      <div className="sm:flex sm:justify-start sm:items-center">
+                          <TextField
+                            id="filled-full-width"
+                            label="Nama Lengkap"
+                            name="name"
+                            className="w-full mt-0 mb-3 sm:mb-0 sm:mr-1 sm:w-1/2 "
+                            placeholder="masukan nama lengkap"
+                            margin="normal"
+                            onChange={formik.handleChange}
+                            value={formik.values.name}
+                            variant="outlined"
+                            error={formik.errors.name ? true : false}
+                            helperText={formik.errors.name ? formik.errors.name : ''}
+                          />
+
+                          <TextField
+                            id="filled-full-width"
+                            label="Nomor telepon"
+                            name="phone"
+                            className="w-full mt-0 mb-3 sm:mb-0 sm:ml-1 sm:w-1/2"
+                            placeholder="masukan nomor telepon"
+                            margin="normal"
+                            onChange={formik.handleChange}
+                            value={formik.values.phone}
+                            variant="outlined"
+                            error={formik.errors.phone ? true : false}
+                            helperText={formik.errors.phone ? formik.errors.phone : ''}
+                          />
+                      </div>
+
+                      <div className="mt-4 mb-2 ml-1 text-left flex justify-start items-center">
+                        <FormControl className="" error={formik.errors.gender ? true : false} component="fieldset">
+                          <FormLabel component="legend">Jenis Kelamin</FormLabel>
+                          <RadioGroup row  aria-label="gender" name="gender">
+                            <FormControlLabel
+                              value="L"
+                              control={<Radio color="primary" />}
+                              label="Laki"
+                              name="gender"
+                              labelPlacement="end"
+                              onChange={formik.handleChange}
+                            />
+                            <FormControlLabel
+                              value="P"
+                              control={<Radio color="primary" />}
+                              label="Perempuan"
+                              name="gender"
+                              labelPlacement="end"
+                              onChange={formik.handleChange}
+                            />
+                          </RadioGroup>
+                          <FormHelperText>{formik.errors.gender ? formik.errors.gender : ''}</FormHelperText>
+                        </FormControl>
+                      </div>
+
+                      <div className="sm:flex sm:justify-start sm:items-center">
+                        <FormControl 
+                          className="w-full mt-0 mb-3 sm:mb-0 sm:mr-1 sm:w-1/2" 
+                          error={formik.errors.email ? true : false} variant="outlined"
+                        >
+                            <InputLabel htmlFor="outlined-adornment-email">Email</InputLabel>
+                            <OutlinedInput
+                              id="outlined-adornment-email"
+                              onChange={formik.handleChange}
+                              value={formik.values.email}
+                              name="email"
+                              labelWidth={70}
+                              label="Email"
+                              className="mb-0"
+                            />
+                            <FormHelperText>{formik.errors.email ? formik.errors.email : ''}</FormHelperText>
+                          </FormControl>
+
+                          <FormControl 
+                            className="w-full mt-0 mb-3 sm:mb-0 sm:ml-1 sm:w-1/2"
+                            error={formik.errors.password ? true : false} variant="outlined"
+                          >
+                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                            <OutlinedInput
+                              id="outlined-adornment-password"
+                              type={showPassword ? 'text' : 'password'}
+                              onChange={formik.handleChange}
+                              value={formik.values.password}
+                              name="password"
+                              endAdornment={
+                                <InputAdornment position="end">
+                                  <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={handleMouseDownPassword}
+                                    edge="end"
+                                  >
+                                    {showPassword ? <ImEye /> : <RiEyeCloseLine />}
+                                  </IconButton>
+                                </InputAdornment>
+                              }
+                              labelWidth={70}
+                              label="Password"
+                              className="mb-0"
+                            />
+                            <FormHelperText>{formik.errors.password ? formik.errors.password : ''}</FormHelperText>
+                          </FormControl>
+                      </div>
+
+                      <div className="mt-4 ml-1 text-left flex justify-start items-center">
+                        <FormControl className="" error={formik.errors.roles_jobs ? true : false} component="fieldset">
+                          <FormLabel component="legend">Daftar Sebagai</FormLabel>
+                          <RadioGroup row aria-label="roles_jobs" name="roles_jobs">
+                            <FormControlLabel
+                              value="recruiter"
+                              control={<Radio color="primary" />}
+                              label="Perekrut"
+                              name="roles_jobs"
+                              labelPlacement="end"
+                              onChange={formik.handleChange}
+                            />
+                            <FormControlLabel
+                              value="job_seeker"
+                              control={<Radio color="primary" />}
+                              label="Pencari Kerja"
+                              name="roles_jobs"
+                              labelPlacement="end"
+                              onChange={formik.handleChange}
+                            />
+                          </RadioGroup>
+                          <FormHelperText>{formik.errors.roles_jobs ? formik.errors.roles_jobs : ''}</FormHelperText>
+                        </FormControl>
+                      </div>
+
+                      <div className="mt-2">
+                        <Button variant="contained" fullWidth
+                          color="primary"
+                          className='focus:outline-none m-2 capitalize'
+                          size="large"
+                          type="submit"
+                          disabled={loadingCircular}
+                        >
+                          Daftar
+                          </Button>
+                        {loadingCircular && <CircularProgress size={24} className={classes.buttonProgress} />}
+                      </div>
+                    </form>
+
+
+                    <Typography component="div">
+                      <Box textAlign="center" m={0}>
+                        Sudah punya akun ?
+                        <Link to="/login"
+                          className="focus:outline-none 
+                          text-blue-500 text-sm"
+                        > Masuk</Link>
+                      </Box>
+                    </Typography>
+
+                  </Paper>
+                </Grid>
+                <Hidden mdDown>
+                  <Grid item lg={2}>
+                  </Grid>
+                </Hidden>
+              </Grid>
+            </Container>
+          </Box>
+        </div>
+      </ ThemeProvider>
+    )
+  }
 }
 
 export default Register;

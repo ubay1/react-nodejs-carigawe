@@ -5,102 +5,89 @@ import { RootState } from '../store/rootReducer'
 
 import { RiHome3Line, RiUserLine, RiAddFill, RiLoginCircleLine } from "react-icons/ri";
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { AppDispatch } from '../store';
 import { setPageActive } from '../store/pageActive';
+import classes from '*.module.css';
+import { BottomNavigation, BottomNavigationAction } from '@material-ui/core';
+import { MdAccountCircle, MdAdd, MdAssignment, MdHome, MdInput, MdPerson } from 'react-icons/md';
+import { Slide, toast } from 'react-toastify';
 
 const Footer = () => {
   const userRedux = useSelector((state: RootState) => state.user)
   const pageActive = useSelector((state: RootState) => state.pageActive)
   
   const dispatch: AppDispatch = useDispatch()
+  const history = useHistory()
   
   const yearNow = Moment(new Date()).format('YYYY');
 
   // <div className="h-full py-8 bg-blue-400 flex items-center justify-center text-center text-sm text-white">
   //   © {yearNow} Cari Gawe
   // </div>
-  
+  const FuncNavigation = (value: any) => {
+    
+  }
+
   return(
-    <div
-      className={`
-      bg-white fixed bottom-0 
-        z-110
-        p-2 px-4 w-full
-        flex justify-between items-center
-        md:hidden
-      `}
-      style={{
-        boxShadow: '0px -2px 4px rgba(0,0,0,.1)'
-      }}
-    >
-      <Link
-        className={`flex flex-col items-center p-1 rounded-md 
-          ${pageActive.ispage === 'beranda' ? 'bg-blue-50 text-blue-500 shadow-inner font-semibold hover:bg-blue-50' : 'bg-transparent'}
-        `}
-        to="/"
-        onClick={() => {
+    <BottomNavigation value={pageActive.ispage} 
+      onChange={(event, value) => {
+        if (value !== 'beranda') {
+          if (userRedux.token !== '') {
+            dispatch(setPageActive({
+              ispage: value
+            }))
+            history.push(`/${value}`)
+          } else {
+            if (value === 'login') {
+              history.push('/login')
+            }
+          }
+        } else {
           dispatch(setPageActive({
             ispage: 'beranda'
           }))
-        }}
-      >
-        <RiHome3Line className="text-xl"/>
-        <span className="text-xs">Beranda</span>
-      </Link>
-
+          history.push('/')
+        }
+      }}
+      className="fixed bottom-0 z-110 w-full md:hidden h-16"
+      style={{
+        boxShadow: '0px -2px 4px rgba(0,0,0,.1)'
+      }}
+      showLabels
+    >
+      <BottomNavigationAction
+        className="py-4 text-sm focus:outline-none" label="Beranda" value="beranda" 
+        icon={<MdHome className="text-2xl"/>} 
+      />
       {
         userRedux.token !== '' && userRedux.profile.recruiter
-        ?
-        <div className="flex flex-col items-center">
-          <Link
-            to="/recruiter/create-job"
-            className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-sm rounded-lg text-white shadow-md py-2 px-4 no-underline"
-            onClick={() => {
-              dispatch(setPageActive({
-                ispage: 'createjobs'
-              }))
-            }}
-          >
-            <RiAddFill className="
-              text-4xl absolute top-2 cursor-pointer
-              bg-gradient-to-bl from-blue-400 to-blue-500 
-              hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400
-              rounded-full text-white shadow-lg
-              "
+          ?
+          <div className="flex flex-col items-center">
+            <BottomNavigationAction
+              className="py-4 text-sm focus:outline-none" label="Buat Loker" value="createjobs"
+              icon={<MdAdd className="text-2xl" />}
             />
-          </Link>
-          {/* <span className="text-sm">Buat Loker</span> */}
-        </div>
-        : userRedux.token !== '' && userRedux.profile.job_seeker
-        ? <div></div> : <div></div>
-      }
 
-      {
-        userRedux.token !== ''
-        ?
-          <Link to="/profil" 
-            className={`flex flex-col items-center p-1 rounded-md
-              ${pageActive.ispage === 'profil' ? 'bg-blue-50 text-blue-500 shadow-inner font-semibold hover:bg-blue-50' : 'bg-transparent'}
-            `}
-            onClick={() => {
-              dispatch(setPageActive({
-                ispage: 'profil'
-              }))
-            }}
-          >
-            <RiUserLine className="text-xl"/>
-            <span className="text-xs">Profil</span>
-          </Link>
-        : 
-          <Link to="/login" 
-            className={`flex flex-col items-center p-1 rounded-md bg-transparent`}
-          >
-            <RiLoginCircleLine className="text-xl"/>
-            <span className="text-xs">Login</span>
-          </Link>
+            <BottomNavigationAction
+              className="py-4 text-sm focus:outline-none" label="Profil" value="profil"
+              icon={<MdAccountCircle className="text-2xl" />}
+            />
+          </div>
+          : 
+            userRedux.token !== '' && userRedux.profile.job_seeker
+            ? 
+            <BottomNavigationAction
+              className="py-4 text-sm focus:outline-none" label="Profil" value="profil"
+              icon={<MdPerson className="text-2xl" />}
+            /> 
+            :
+            <BottomNavigationAction
+              className="py-4 text-sm focus:outline-none" label="Masuk" value="login"
+              icon={<MdInput className="text-2xl" />}
+            />
       }
-    </div>
+    </BottomNavigation>
   )
 }
 

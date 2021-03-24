@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import image_login from '../assets/image_login.png';
 import AnimationAuth from '../../components/AnimationAuth';
@@ -22,6 +22,41 @@ import { setLoadingScreenHome } from '../../store/loadingScreenHome';
 import Lottie from 'lottie-react';
 import LoadingScreen from '../../assets/loading_screen.json';
 import socket from '../../utils/socket'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { Button, TextField, Paper, Grid, Box, Container, Hidden, Typography, FilledInput, FormControl, InputAdornment, InputLabel, OutlinedInput, IconButton, Divider, createMuiTheme, ThemeProvider, CircularProgress, FormHelperText} from '@material-ui/core';
+import { ImEye } from "react-icons/im";
+import { RiEyeCloseLine} from "react-icons/ri";
+// import clsx from 'clsx';
+import { blue, green } from '@material-ui/core/colors';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    buttonProgress: {
+      color: blue[600],
+      position: 'absolute',
+      // top: '50%',
+      left: '50%',
+      marginTop: 10,
+      // marginLeft: '48%',
+    },
+  }),
+);
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      // Purple and green play nicely together.
+      main: '#2563eb',
+    },
+    secondary: {
+      // This is green.A700 as hex.
+      main: '#42b72a',
+    },
+  },
+});
 
 const Login = () => {
   toast.configure()
@@ -29,6 +64,11 @@ const Login = () => {
   const loadingScreenHomeRedux = useSelector((state: RootState) => state.loadingScreenHome)
   const userRedux = useSelector((state: RootState) => state.user)
   const history = useHistory();
+  const classes = useStyles();
+  const [showPassword, setshowPassword] = useState(false)
+  const [loadingCircular, setLoadingCircular] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+  const timer = React.useRef<number>();
 
   useEffect(() => {
     document.title = 'Cari Gawe - Masuk'
@@ -38,25 +78,6 @@ const Login = () => {
       }))
     }, 2000)
   }, [])
-
-  // useEffect(() => {
-  //   if (userRedux.token !== '') {
-  //     setTimeout(() => {
-  //       dispatch(setLoadingScreenHome({
-  //         show: false
-  //       }))
-  //       history.push('/')
-  //     }, 2500)
-  //   } else {
-  //     initialStateUserAuthByAsync(dispatch)
-  //     setTimeout(() => {
-  //       dispatch(setLoadingScreenHome({
-  //         show: false
-  //       }))
-  //       history.push('/')
-  //     }, 2500)
-  //   }
-  // }, [dispatch, history, userRedux.token])
 
   const formik = useFormik({
     initialValues: {
@@ -70,25 +91,27 @@ const Login = () => {
     validationSchema: Yup.object({
       email: Yup.string()
         .email("format email tidak sesuai")
-        .required("Wajib diisi"),
+        .required("email wajib diisi"),
       password: Yup.string()
-        .required("Wajib diisi"),
+        .required("password wajib diisi"),
     })
   });
 
   const httpLoginUser = async (params: any) => {
     try {
+      dispatch(setLoading({
+        show: true,
+        timeout: 300000
+      }))
+      setSuccess(false);
+      setLoadingCircular(true);
+      
       const responseLoginUser = await HTTPLoginUser({
         email: params.email,
         password: params.password,
       })
 
       if (responseLoginUser.status === 200) {
-
-        dispatch(setLoading({
-          show: true,
-          timeout: 300000
-        }))
 
         const responseGetUser = await HTTPGetUser({
           token: responseLoginUser.data.accessToken
@@ -97,7 +120,7 @@ const Login = () => {
         dispatch(setAuthStatus({
           token: responseLoginUser.data.accessToken
         }))
-        
+
         dispatch(setReduxUsersProfile({
           id: responseGetUser.data.data.id,
           email: responseGetUser.data.data.email,
@@ -116,6 +139,8 @@ const Login = () => {
             show: false,
             timeout: 0
           }))
+          setSuccess(true);
+          setLoadingCircular(false);
           toast(responseLoginUser.data.message, {
             position: "bottom-right",
             autoClose: 5000,
@@ -131,7 +156,7 @@ const Login = () => {
         // Join chatroom
         const username = responseGetUser.data.data.name
         const room = 'room_beranda'
-        socket.emit('joinRoom', { username, room});
+        socket.emit('joinRoom', { username, room });
         // socket.on('roomUsers', ({ room, users }: any) => {
         //   console.log(users)
         // });
@@ -140,21 +165,33 @@ const Login = () => {
 
 
     } catch (error) {
-      // toast(error.data.errors, {
-      //   position: "bottom-right",
-      //   autoClose: 5000,
-      //   type: 'error',
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   transition: Slide
-      // })
-      // dispatch(setLoading({
-      //   show: false,
-      //   timeout: 0,
-      // }))
+      setTimeout(() => {
+        toast(error.data.errors, {
+          position: "bottom-right",
+          autoClose: 5000,
+          type: 'error',
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          transition: Slide
+        })
+        dispatch(setLoading({
+          show: false,
+          timeout: 0
+        }))
+        setSuccess(true);
+        setLoadingCircular(false);
+      }, 2000);
     }
   }
+
+  const handleClickShowPassword = () => {
+    setshowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
 
   if (loadingScreenHomeRedux.show === true) {
     return (
@@ -166,84 +203,129 @@ const Login = () => {
     )
   } else {
     return (
-      <div className="lg:flex">
-        <div className="lg:w-1/2 xl:max-w-screen-sm">
-          <div className="
-            px-10
-            h-screen 
-            flex flex-col justify-center
-            bg-white
-            sm:px-24 
-            md:px-48 
-            lg:px-12 lg:mt-0 lg:h-screen lg:flex lg:shadow-lg  
-            xl:px-12 xl:max-w-2xl
-            "
-          >
-            <div className="">
-              <div className="py-6 flex justify-center">
-                <div className="cursor-pointer flex items-center">
-                  <div className="text-5xl text-blue-600 tracking-wide ml-2 font-semibold font_damion">
-                    <Link to="/" className="focus:outline-none">Cari Gawe</Link>
-                  </div>
-                </div>
-              </div>
-              <form onSubmit={formik.handleSubmit}>
-                <div className="mt-6">
-                  <div className="text-sm font-bold text-gray-700 tracking-wide">Email</div>
-                  <input
-                    autoComplete="true"
-                    name="email"
-                    className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
-                    type="" placeholder="jhon@mail.com"
-                    onChange={formik.handleChange}
-                    value={formik.values.email}
-                  />
-                  {formik.errors.email && formik.touched.email && (
-                    <p className="text-red-400">{formik.errors.email}</p>
-                  )}
-                </div>
-                <div className="mt-8">
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm font-bold text-gray-700 tracking-wide">
-                      Password
-                    </div>
-                    <div>
-                      <a className="text-xs font-display font-semibold text-blue-600 hover:text-blue-800 cursor-pointer">
-                        Lupa Password?
-                      </a>
-                    </div>
-                  </div>
-                  <input
-                    name="password"
-                    className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
-                    type="password"
-                    placeholder="Enter your password"
-                    onChange={formik.handleChange}
-                    value={formik.values.password}
-                  />
-                  {formik.errors.password && formik.touched.password && (
-                    <p className="text-red-400">{formik.errors.password}</p>
-                  )}
-                </div>
-                <div className="mt-10">
-                  <button className="bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 text-gray-100 p-4 w-full rounded-full tracking-wide
-                  font-semibold font-display focus:outline-none focus:shadow-outline
-                  shadow-lg"
-                    type="submit"
-                  >
-                    Masuk
-                  </button>
-                </div>
-              </form>
-              <div className="my-6 text-sm font-display font-semibold text-gray-700 text-center">
-                Belum punya akun ? <Link to="/register" className="cursor-pointer text-blue-600 hover:text-blue-800">Daftar</Link>
-              </div>
-            </div>
-            <AnimationAuth />
-          </div>
-        </div>
+      <ThemeProvider theme={theme}>
+        <div className={classes.root}>
+          <Box height="100vh" display="flex" flexDirection="column" justifyContent="center">
+            <Container>
+              <Grid container spacing={2}
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <Hidden xsDown only="sm">
+                  <Grid item xs={12} sm={6} md={6} lg={6}>
+                    {/* <Paper className={classes.paper}> */}
+                    <AnimationAuth />
+                    {/* </Paper> */}
+                  </Grid>
+                </Hidden>
+                <Grid item xs={12} sm={12} md={6} lg={4}>
+                  <Paper className="p-6 text-center rounded-xl" square={true} elevation={3}>
+                    <Typography component="div">
+                      <Box textAlign="center" mb={2}>
+                        <Link to="/" 
+                          className="focus:outline-none 
+                          font_damion text-5xl text-blue-600 font-semibold"
+                        >Cari Gawe</Link>
+                      </Box>
+                    </Typography>
+                    <form onSubmit={formik.handleSubmit} noValidate autoComplete="on">
+                      <FormControl className="mb-3 mt-2" error={formik.errors.email ? true : false} variant="outlined" fullWidth>
+                        <InputLabel htmlFor="outlined-adornment-email">Email</InputLabel>
+                        <OutlinedInput
+                          id="outlined-adornment-email"
+                          onChange={formik.handleChange}
+                          value={formik.values.email}
+                          name="email"
+                          labelWidth={70}
+                          label="Email"
+                          className="mb-3"
+                        />
+                        <FormHelperText>{formik.errors.email ? formik.errors.email : ''}</FormHelperText>
+                      </FormControl>
+                      
+                      <FormControl className="mb-3" error={formik.errors.password ? true : false} variant="outlined" fullWidth>
+                        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                        <OutlinedInput
+                          id="outlined-adornment-password"
+                          type={showPassword ? 'text' : 'password'}
+                          onChange={formik.handleChange}
+                          value={formik.values.password}
+                          name="password"
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                edge="end"
+                              >
+                                {showPassword ? <ImEye /> : <RiEyeCloseLine />}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                          labelWidth={70}
+                          label="Password"
+                        />
+                        <FormHelperText>{formik.errors.password ? formik.errors.password : ''}</FormHelperText>
+                      </FormControl>
+                
+                      <div className="mt-2 relative">
+                          <Button variant="contained" fullWidth
+                            color="primary"
+                            className='focus:outline-none  capitalize'
+                            size="large"
+                            type="submit"
+                            disabled={loadingCircular}
+                            // onClick={handleButtonClick}
+                          >
+                            Masuk
+                          </Button>
+                        { loadingCircular &&
+                          <CircularProgress 
+                            size={24}
+                            className={classes.buttonProgress}
+                          />
+                        }
+                      </div>
+                    </form>
 
-      </div>
+
+                    <Typography component="div">
+                      <Box textAlign="center" m={1}>
+                        <Link to="/"
+                          className="focus:outline-none 
+                          text-blue-500 text-sm"
+                        >Lupa Kata Sandi ?</Link>
+                      </Box>
+                    </Typography>
+                    <Divider />
+                    <div className="mt-2">
+                      <Link to="/register">
+                        <Button variant="contained" color="secondary"
+                          className='focus:outline-none m-2 capitalize'
+                          style={{
+                            color: '#fff'
+                          }}
+                          size="large"
+                          type="submit"
+                        >
+                          Buat Akun
+                        </Button>
+                      </Link>
+                    </div>
+
+                  </Paper>
+                </Grid>
+                <Hidden mdDown>
+                  <Grid item lg={2}>
+                  </Grid>
+                </Hidden>
+              </Grid>
+            </Container>
+          </Box>
+        </div>
+      </ ThemeProvider>
     )
   }
 }

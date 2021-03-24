@@ -556,7 +556,7 @@ const Profil = () => {
 
   useEffect(() => {
     // get new data job
-    socket.on('getNewDataJob', (data: any) => {
+    socket.on('getNewDataJobUser', (data: any) => {
       console.log('ada yang like postingan kamu nih')
       setallPostJob(data)
     })
@@ -565,7 +565,7 @@ const Profil = () => {
       console.log(users)
     });
     return () => {
-      socket.off('getNewDataJob')
+      socket.off('getNewDataJobUser')
       socket.off('roomUsers')
     }
   }, [socket])

@@ -8,7 +8,7 @@
     flex-direction: column;
     background-color: white;
     border-radius: 0px;
-    border-width: 1px !important;
+    border-width: 2px !important;
     max-height: 150px !important;
     padding-left: 10px;
     padding-right: 10px;
@@ -24,17 +24,34 @@
     padding: 0;
     margin-bottom: 0.5rem;
     font-size: 1rem;
-    border-bottom-width: 1px !important;
     line-height: 1.25rem;
     border-radius: 0 !important;
     /* --tw-shadow: unset; */
     box-shadow: unset !important;
     --tw-border-opacity: 1 !important;
-    border-color: rgba(209, 213, 219, var(--tw-border-opacity)) !important;
+    border-color: rgba(0,0,0, var(--tw-border-opacity)) !important;
+    border-bottom-width: 2px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.42) !important;
 }
 .rbt-input-main:focus {
     --tw-border-opacity: 1 !important;
     border-color: rgba(59, 130, 246, var(--tw-border-opacity)) !important;
     outline: 2px solid transparent;
+    border-bottom-width: 1.5px !important;
     outline-offset: 2px;
 }
+
+.rbt-input-main:hover {
+    border-color: rgba(0,0,0 var(--tw-border-opacity)) !important;
+    border-bottom-width: 2px !important;
+    /* transition: .4s; */
+    /* border-bottom: 1px solid rgba(0, 0, 0, 0.42) !important; */
+}
+
+.MuiBottomNavigationAction-root.Mui-selected {
+ color: #2563eb !important;
+}
+
+/* .MuiDrawer-paper-64 {
+    width: 200px !important;
+} */

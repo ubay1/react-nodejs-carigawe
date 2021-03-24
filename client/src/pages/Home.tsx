@@ -6,7 +6,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useContext, useEffect, useMemo, useReducer, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import '../styles/pulse.css';
 import Moment from 'moment'
 import LoadingGif from '../assets/loading.gif';
@@ -26,7 +26,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { AiOutlineSearch, AiFillHeart,AiFillLike, } from "react-icons/ai";
 import { RiQuestionAnswerFill, RiMapPin2Line, RiHeartLine, RiHeartFill } from "react-icons/ri";
-import { HTTPGetAllJob, HTTPGetAllJobSocket, HTTPLikeJob, HTTPUnlikeJob } from '../utils/http';
+import { HTTPGetAllJob, HTTPGetAllJobSocket, HTTPGetAllJobSocketUser, HTTPLikeJob, HTTPUnlikeJob } from '../utils/http';
 import parse from 'html-react-parser';
 import EmptyData from '../components/EmptyData'
 import './home.css'
@@ -42,8 +42,39 @@ import socket from '../utils/socket'
 import { Slide, toast } from 'react-toastify';
 import { DevUrl } from '../utils/helper';
 import { CobaContext } from '../components/CobaContext';
-import { initState, reducer } from '../components/CobaReducer';
+import classes from '*.module.css';
+import { Avatar, Badge, Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, CircularProgress, createMuiTheme, createStyles, Divider, Fab, IconButton, InputAdornment, makeStyles, TextField, Theme, ThemeProvider, Tooltip, Typography, Zoom } from '@material-ui/core';
+import AvatarGroup from '@material-ui/lab/AvatarGroup';
+// import { initState, reducer } from '../components/CobaReducer';
+import { MdForum, MdLaptopMac, MdThumbUp } from "react-icons/md";
+import { GrUserWorker } from "react-icons/gr";
+import { blue } from '@material-ui/core/colors';
+import { MdMoreVert, MdFavoriteBorder, MdFavorite } from "react-icons/md";
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    buttonProgress: {
+      color: blue[600],
+      position: 'absolute',
+      // top: '50%',
+      left: '50%',
+      marginTop: 10,
+      // marginLeft: '48%',
+    },
+  }),
+);
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      // Purple and green play nicely together.
+      main: '#2563eb',
+    }
+  },
+});
 
 const Recruiter = ({dataJob, isLoading}: any): any => {
   return(
@@ -231,17 +262,33 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
 
 const JobSeeker = ({dataJob, isLoading, token, profile}: any) => {
   const {totalLike, setTotalLike}= useContext(CobaContext)
-  const [count, dispatch]= useReducer(reducer, initState)
+  // const [count, dispatch]= useReducer(reducer, initState)
+  const [loadingCircular, setLoadingCircular] = React.useState(false);
+  const classes = useStyles();
+  const history = useHistory();
 
-  const httpLikeJob = async (job_id: any) => {
+  const httpLikeJob = async (job_id: any, user_id?: any) => {
     try {
       const responseLikeJob = await HTTPLikeJob({
         token: token,
         job_id: job_id
       })
       const responseGetAllJobSocket = await HTTPGetAllJobSocket()
+      const responseGetAllJobSocketUser = await HTTPGetAllJobSocketUser({
+        token: token
+      })
     } catch (error) {
-      console.log(error)
+      toast('Silahkan login terlebih dahulu', {
+        position: "bottom-right",
+        autoClose: 5000,
+        type: 'error',
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        transition: Slide
+      })
+      history.push('/login')
+      // console.log(error)
     }
   }
 
@@ -252,13 +299,16 @@ const JobSeeker = ({dataJob, isLoading, token, profile}: any) => {
         like_id: like_id
       })
       const responseGetAllJobSocket = await HTTPGetAllJobSocket()
+      const responseGetAllJobSocketUser = await HTTPGetAllJobSocketUser({
+        token: token
+      })
     } catch (error) {
       console.log(error)
     }
   }
 
   return( 
-    <div className="relative top-16">
+    <div className="relative top-12">
       {
         isLoading === true
         ? 
@@ -285,43 +335,62 @@ const JobSeeker = ({dataJob, isLoading, token, profile}: any) => {
         :
         <div className="md:flex md:justify-between md:items-start">
           {/* search job */}
-          <div className="md:w-3/12 md:block hidden" id="searchJobId">
-            <div className="relative h-auto bg-white shadow-md rounded-lg p-2 my-8 ml-2">
-              <div className="bg-blue-100 text-blue-500 font-bold rounded text-center p-2 shadow-inner">
-                Cari loker
-              </div>
-              <input className="
-                mt-4
-                w-full h-12 py-2 bg-transparent
-                border-b border-gray-300 focus:outline-none focus:border-blue-500" 
-                type="" placeholder="Posisi pekerjaan.." 
-              />
+          <div className="md:w-3/12 md:block hidden fixed" id="searchJobId">
+            <Box height="100vh" className="bg-white">
+              <Card className="mt-4 h-full" square={true}>
+                <CardContent>
+                  <Typography className="bg-blue-100 text-blue-500 font-bold rounded text-center p-2 shadow-inner" gutterBottom>
+                    Cari Loker
+                  </Typography>
 
-              {/* <div className=" text-xs text-gray-500 mb-1">Kota</div> */}
+                  <TextField
+                    color="primary"
+                    variant="standard"
+                    fullWidth
+                    className="my-2"
+                    id="input-with-icon-textfield"
+                    label="Posisi Pekerjaan"
+                    size="small"
+                    placeholder="programmer .."
+                  />
 
-              <div className="z-10 relative mt-4">
-                <Typeahead
-                  id="domisili"
-                  placeholder="Kota.."
-                  onChange={(selected) => {
-                    console.log(selected)
-                    // setvalueKota(selected[0].label.toLowerCase())
-                  }}
-                  options={dataKota}
-                  // defaultInputValue={valueKota}
-                />
-              </div>
+                  <div className="z-10 relative mt-4">
+                    <Typeahead
+                      id="domisili"
+                      placeholder="Kota.."
+                      onChange={(selected) => {
+                        console.log(selected)
+                        // setvalueKota(selected[0].label.toLowerCase())
+                      }}
+                      options={dataKota}
+                    // defaultInputValue={valueKota}
+                    />
+                  </div>
 
-              <button className=" bg-gradient-to-bl from-blue-400 to-blue-500 hover:bg-gradient-to-bl hover:from-blue-500 hover:to-blue-400 relative z-0 text-sm 
-              rounded-lg text-white shadow-blue mt-4 w-full py-2 px-4 mb-2 no-underline focus:outline-none">
-                <AiOutlineSearch className="absolute left-8 text-lg" />   Cari
-              </button>
-            </div>
+                  <div className="mt-2 relative">
+                    <Button variant="contained" fullWidth
+                      color="primary"
+                      className='focus:outline-none  capitalize'
+                      size="large"
+                      type="submit"
+                      disabled={loadingCircular}
+                    // onClick={handleButtonClick}
+                    >
+                      Cari
+                      </Button>
+                    {loadingCircular &&
+                      <CircularProgress
+                        size={24}
+                        className={classes.buttonProgress}
+                      />
+                    }
+                  </div>
+                </CardContent>
+              </Card>
+            </Box>
           </div>
           
           {/* list job */}
-          {/* border-gray-100  bg-gray-100 
-          border-l-2 border-r-2  */}
           <div className={`
             md:w-3/6
             md:py-8
@@ -331,137 +400,108 @@ const JobSeeker = ({dataJob, isLoading, token, profile}: any) => {
             pt-8
             pb-20
             h-full
+            m-auto
           `}>
             {
               dataJob.map((item: any, index: number) => {
-              const isExpired = moment().isAfter(item.expiredAt)
+                const isExpired = moment().isAfter(item.expiredAt)
                 return (
-                  <div
-                    key={`indexPostJobSeeker-${index}`}
-                    className="
-                    mb-6 
-                    bg-white 
-                    shadow-md 
-                    rounded-lg 
-                    w-full h-auto
-                    "
-                  >
-                    {/* image content */}
-                    <div className="h-40 relative bg-black rounded-t-lg">
-                      {
-                        item.image_content !== ''
-                        ? 
-                        <img 
-                          src={`${DevUrl}/jobs/${item.image_content}`} 
-                          alt=""
-                          className="h-full w-full object-cover rounded-t-lg opacity-60"
+                  <Card className="mb-4" key={index}>
+                    <CardHeader
+                      avatar={
+                        item.photo !== ''
+                        ?
+                        <Avatar aria-label="recipe" src={`${DevUrl}/profile/${item.user.photo}`} />
+                        :
+                        <Avatar aria-label="recipe" className="bg-red-500">
+                          {
+                            item.user.name.slice(0,1)
+                          }
+                        </Avatar>
+                      }
+
+                      action={
+                        isExpired === true
+                        ?
+                        <div className="text-white text-xs bg-red-500 p-2 mt-3 rounded-sm shadow">
+                          sudah tutup
+                        </div>
+                        :
+                        <div className="text-white text-xs bg-green-500 p-2 mt-3 rounded-sm shadow">
+                          masih buka
+                        </div>
+                      }
+                      
+                      title={item.user.name.charAt(0).toUpperCase() + item.user.name.slice(1)}
+                      subheader={moment(item.createdAt).format('MMM DD, YYYY')}
+                    />
+                    {
+                      item.image_content !== ''
+                        ?
+                        <CardMedia
+                          className="h-52"
+                          image={`${DevUrl}/jobs/${item.image_content}`}
+                          title={`Loker ${item.title}`}
                         />
-                        : 
+                        :
                         <div className="text-white bg-gradient-to-b from-blue-400 
                         to-blue-500  rounded-t-lg flex items-center justify-center h-full">
-                        <div className="font_damion text-4xl opacity-40 ">
-                          Cari Gawe
+                          <div className="font_damion text-4xl opacity-40 ">
+                            Cari Gawe
+                          </div>
                         </div>
-                      </div>
-                      }
-                    
-                      {/* nama user dan tgl postingan */}
-                      <div className="absolute bottom-0 w-full">
-                          <div className=" m-2 h-full flex flex-row items-center 
-                          justify-start mb-2">    
-                            {
-                              item.user.photo === ''
-                              ? 
-                                item.user.gender === 'L'
-                                ?
-                                  <img 
-                                    src={profilAccountDefault} 
-                                    alt="foto-profil" 
-                                    className="h-12 w-12 mr-1 rounded-full shadow-md"
-                                  />
-                                :
-                                  <img 
-                                    src={profilAccountDefault2} 
-                                    alt="foto-profil" 
-                                    className="h-12 w-12 mr-1 rounded-full shadow-md"
-                                  />
-                              :
-                                <img 
-                                  src={`${DevUrl}/profile/${item.user.photo}`} 
-                                  alt="foto-profil" 
-                                  className="h-12 w-12 mr-1 rounded-full shadow-md object-cover"
-                                />
-                            }
-                            <div className="ml-2 mt-0.5">
-                              <span className="block font-medium text-base leading-snug text-white dark:text-gray-100">{item.user.name}</span>
-                              <span className="block text-sm text-white font-light leading-snug">{moment(item.createdAt).format('DD MMM YYYY HH:mm:ss')}</span>
-                            </div>
-                          </div>
-                      </div>
-                    
-                      {/* aktif / tidak */}
-                      {
-                        isExpired === true 
-                        ? 
-                          <div className="absolute top-0 right-0 p-1 text-white text-sm
-                          bg-red-500 rounded-tr-lg">
-                            sudah tutup
-                          </div>
-                        : 
-                          <div className="absolute top-0 right-0 p-1 text-white text-sm
-                          bg-green-500 rounded-tr-lg">
-                            masih buka 
-                          </div> 
-                      }
-                    </div>
-
-                    <div className="mt-0 ">
-                      <div className="flex flex-col justify-start p-2">
-                        <div className="text-md uppercase font-bold flex justify-between items-center">
-                          <div>{item.title}</div>
-                          {
+                    }
+                    <CardContent>
+                      <Typography color="textPrimary" component="div" className="flex items-center justify-between">
+                        <div className="flex items-center justify-start line-clamp-1">
+                          <div className="text-xl font-semibold">{item.title}</div> 
+                        </div>
+                        {
+                          token !== '' ?
                             item.likes.length !== 0 ?
                               item.likes.map((itemLike: any, index: number) => {
+                                // console.log(profile)
                                 if (itemLike.user.name === profile.name) {
-                                  return(
-                                    <button key={index} onClick={()=>{
-                                      httpUnlikeJob(itemLike.like_id)
-                                    }}>
-                                      <RiHeartFill color="red"/>
-                                    </button>
-                                  )
-                                } else {
-                                  return(
-                                    <button onClick={() => {httpLikeJob(item.id)}}>
-                                      <RiHeartLine/>
-                                    </button>
+                                  return (
+                                    <Fab size="small" className="focus:outline-none bg-transparent shadow-none hover:bg-gray-100"
+                                      key={index}
+                                      onClick={()=>{
+                                        httpUnlikeJob(itemLike.like_id)
+                                      }}
+                                    >
+                                      <MdFavorite size={24} color="red" />
+                                    </Fab>
                                   )
                                 }
-                              }) :
-                            <button onClick={() => {httpLikeJob(item.id)}}>
-                              <RiHeartLine/>
-                            </button>
-                          }
-                        </div> 
-                        <div className="text-sm flex flex-row items-center mb-2">
-                          <RiMapPin2Line /> {item.city}
-                        </div>
-                        <hr/>
+                              })
+                              :
+                              <Fab size="small" className="focus:outline-none bg-transparent shadow-none hover:bg-gray-100"
+                                onClick={() => {
+                                  httpLikeJob(item.id)
+                                }}
+                              >
+                                <MdFavorite size={24} color="grey" />
+                              </Fab>
+                            :
+                            <Fab size="small" className="focus:outline-none bg-transparent shadow-none hover:bg-gray-100"
+                              onClick={() => {
+                                httpLikeJob(item.id)
+                              }}
+                            >
+                              <MdFavorite size={24} color="grey" />
+                            </Fab>
+                        }
+                      </Typography>
+                      <div className="flex items-center justify-start text-sm rounded-sm mb-1">
+                        <RiMapPin2Line /> {item.city}
                       </div>
-                    
-                      {/* isi postingan */}
-                      <div className="overflow-hidden w-full px-2">
-                        <div id={`text-loker-${index}`} 
-                        className="text-sm line-clamp-3
-                        ">
-                          {
-                            parse(item.content)
-                          }
-                        </div>
-                      </div>
-                      
-                      {/* button read more*/}
-                      <div className="px-2">
+                      <Divider className="mb-2" />
+                      <Typography variant="body2" color="textSecondary" component="div" className="line-clamp-3">
+                        {
+                          parse(item.content)
+                        }
+                      </Typography>
+                      <div className="">
                         <button id={`btn-readmore-${index}`} className="
                           text-xs p-1 rounded
                           text-blue-500 
@@ -471,42 +511,64 @@ const JobSeeker = ({dataJob, isLoading, token, profile}: any) => {
                           "
                           onClick={() => {
                           }}
-                          >
-                            Lihat selengkapnya
-                        </button>
-                      </div>
-
-                      {/* button like & comment*/}
-                      <div className="grid grid-cols-2 border-t border-gray-200 mt-6 bg-transparent">
-                        <div className="flex flex-row justify-center items-center py-2 focus:outline-none rounded-bl-lg"
                         >
-                          <AiFillLike className="text-blue-500 text-md" />
-                          <div className="ml-1 text-sm text-gray-500  font-semibold">
-                            {item.likes.length} suka
-                          </div>
-                        </div>
-                        <div className="flex flex-row justify-center items-center py-2 focus:outline-none rounded-br-lg"
-                        >
-                          <RiQuestionAnswerFill className="text-blue-500 text-md"/>
-                          <div className="ml-1 text-sm text-gray-500 font-semibold ">
-                            {item.likes.length} komentar
-                          </div>
-                        </div>
+                          Lihat selengkapnya
+                          </button>
                       </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                    <CardActions>
+                      <div className="bg-gradient-to-bl from-blue-400 to-blue-500 p-1 ml-2 rounded-full">
+                        <MdThumbUp className=" text-white text-xs "/>
+                      </div>
+                      {
+                        token !== '' ?
+                          item.likes.length === 0 ?
+                            <p className="text-xs">0 orang menyukai</p>
+                          :
+                          item.likes.length === 1 ?
+                            item.likes.map((itemLike: any, index: number) => {
+                              if (itemLike.user.name === profile.name) {
+                                return(
+                                  <p key={index} className="text-xs">Anda menyukai</p>
+                                )
+                              } else {
+                                return(
+                                  <p className="text-xs">1 orang menyukai</p>
+                                )
+                              }
+                            })
+                          : item.likes.map((itemLike: any, index: number) => {
+                              if (itemLike.user.name === profile.name) {
+                                return (
+                                  <p key={index} className="text-xs">Anda dan {item.likes.length - 1} menyukai</p>
+                                )
+                              } else {
+                                return (
+                                  <p className="text-xs">{item.likes.length} orang menyukai</p>
+                                )
+                              }
+                            })
+                        : 
+                        <p className="text-xs">{item.likes.length} orang menyukai</p>
+                      }
+                    </CardActions>
+                  </Card>
                 )
               })
-            } 
+            }
           </div>
 
           {/* job terpopuler */}
-          <div className="md:w-3/12 md:block hidden" id="searchJobId">
-            <div className="relative h-auto bg-white shadow-md rounded-lg p-2 my-8 mr-2">
-              <div className="bg-blue-100 text-blue-500 font-bold rounded text-center p-2 shadow-inner line-clamp-1">
-                Lowongan terpopuler
-              </div>
-            </div>
+          <div className="md:w-3/12 md:block hidden fixed right-0" id="searchJobId">
+            <Box height="100vh" className="bg-white">
+              <Card className="mt-4 h-full" square={true}>
+                <CardContent>
+                  <Typography className="bg-blue-100 text-blue-500 font-bold rounded text-center p-2 shadow-inner" gutterBottom>
+                    Lowongan terpopuler
+                  </Typography>  
+                </CardContent>
+              </Card>
+            </Box>
           </div>
         </div>
       }
@@ -602,7 +664,7 @@ const Home = (props: any) => {
     )
   } else {
     return (
-      <>
+      <ThemeProvider theme={theme}>
         <Header sudahDiPage="home" actionSearchJob={eventSearchJob}/>
 
         {/* <button onClick={props.handleLogin}>Log In</button> */}
@@ -613,7 +675,7 @@ const Home = (props: any) => {
         }
 
         <Footer />
-      </>
+      </ThemeProvider>
     )
   }
 }

@@ -168,6 +168,20 @@ export async function HTTPGetAllJobSocket(): Promise<any> {
   })
 }
 
+export async function HTTPGetAllJobSocketUser(param: {token: string}): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = {
+        token: param.token,
+      }
+      const responseGetAllJobSocketUser = await AxiosNormal(10000).post(`${DevApiUrl}/get_all_post_job_socket_user`, data)
+      return resolve(responseGetAllJobSocketUser)
+    } catch (error) {
+      return reject(error)
+    }
+  })
+}
+
 export async function HTTPGetAllJobUser(param: { token: string }): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
