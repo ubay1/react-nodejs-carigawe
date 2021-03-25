@@ -44,7 +44,7 @@ import { DevUrl } from '../utils/helper';
 import { CobaContext } from '../components/CobaContext';
 import classes from '*.module.css';
 import { Avatar, Badge, Box, Button, Card, CardActions, CardContent, CardHeader, CardMedia, CircularProgress, createMuiTheme, createStyles, Divider, Fab, IconButton, InputAdornment, makeStyles, TextField, Theme, ThemeProvider, Tooltip, Typography, Zoom } from '@material-ui/core';
-import AvatarGroup from '@material-ui/lab/AvatarGroup';
+// import AvatarGroup from '@material-ui/lab/AvatarGroup';
 // import { initState, reducer } from '../components/CobaReducer';
 import { MdForum, MdLaptopMac, MdThumbUp } from "react-icons/md";
 import { GrUserWorker } from "react-icons/gr";
