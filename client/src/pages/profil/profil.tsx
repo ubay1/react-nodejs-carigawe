@@ -39,6 +39,7 @@ import DropZone, { useDropzone } from 'react-dropzone';
 import { type } from 'os'
 import { CobaContext } from '../../components/CobaContext'
 import socket from '../../utils/socket'
+import { Avatar, Card, CardContent, CardHeader, CardMedia, Divider, Typography } from '@material-ui/core'
 
 
 interface IPreviews {
@@ -295,191 +296,136 @@ const AllPost = ({ dataJob, isLoading, fotoProfil }: any): any => {
     <div>
       {
         isLoading === true
-          ?
+        ? 
           <div className="flex items-center justify-center mb-14">
             <Loader
               type="Rings"
               color="#00BFFF"
               height={100}
               width={100}
-            // timeout={3000} //3 secs
+              // timeout={3000} //3 secs
             />
           </div>
-          :
-          dataJob.length === 0
-            ?
-            <div
-              className="
-              mb-20
-            "
-            >
-              <EmptyData />
-            </div>
-            :
-            <div className=" 
-              lg:grid-cols-lg-4cols-content
-              md:grid-cols-md-3cols-content md:my-4 md:mb-10
-              sm:mt-4
-              sm:grid 
-              gap-y-4
-              mb-24 mt-6
-            ">
-              {
-                dataJob.map((item: any, index: number) => {
-                  const isExpired = moment().isAfter(item.expiredAt)
-                  return (
-                    <div
-                      key={`indexPost-${index}`}
-                      className="
-                        md:grid-rows-md-3rows-list-job
-                        md:my-0
-                        sm:my-0 
-                        grid-rows-sm-3rows-list-job
-                        grid
-                        mx-2 mb-4 
-                        bg-white 
-                        shadow-md 
-                        rounded-lg
-                        "
-                      >
+        :
+        dataJob.length === 0
+        ? 
+        <div
+          className="
+            h-screen-8
+            flex flex-col items-center justify-center
+          "
+        >
+          <EmptyData />
+        </div>
+        :
+        <div className=" 
+          lg:grid-cols-lg-3cols-content
+          md:grid-cols-lg-2cols-content md:my-6 md:mb-24
+          sm:grid-cols-1
+          xs:grid-cols-1
+          xs:grid
+          sm:mt-6
+          gap-y-4
+          mb-40 mt-6
+          h-full
+        ">
+          {
+            dataJob.map((item: any, index: number) => {
+              const isExpired = moment().isAfter(item.expiredAt)
+              return(
+                <Card className="mb-2 mx-2" key={index}>
+                  <CardHeader
+                    avatar={
+                      item.photo !== ''
+                        ?
+                        <Avatar aria-label="recipe" src={`${DevUrl}/profile/${item.user.photo}`} />
+                        :
+                        <Avatar aria-label="recipe" className="bg-red-500">
+                          {
+                            item.user.name.slice(0, 1)
+                          }
+                        </Avatar>
+                    }
 
-                      {/* image content */}
-                      <div className="h-full relative rounded-t-lg">
-                        {
-                          item.image_content !== ''
-                            ?
-                            <div className="bg-black h-full w-full rounded-t-lg">
-                              <img
-                                src={`${DevUrl}/jobs/${item.image_content}`}
-                                alt=""
-                                className="h-full w-full object-cover rounded-t-lg opacity-60"
-                              />
-                            </div>
-                            :
-                            <div className="text-white bg-gradient-to-b from-blue-400 to-blue-500 
-                      rounded-t-lg flex items-center justify-center h-full">
-                              <div className="font_damion text-4xl opacity-40 ">
-                                Cari Gawe
+                    action={
+                      isExpired === true
+                        ?
+                        <div className="text-white text-xs bg-red-500 p-2 mt-3 rounded-sm shadow">
+                          sudah tutup
                         </div>
-                            </div>
-                        }
+                        :
+                        <div className="text-white text-xs bg-green-500 p-2 mt-3 rounded-sm shadow">
+                          masih buka
+                        </div>
+                    }
 
-                        {/* nama user dan tgl postingan */}
-                        <div className="absolute bottom-0">
-                          <div
-                            className="
-                        m-2
-                        h-full
-                        flex flex-row items-center justify-start
-                        mb-2
-                      ">
-                            {
-                              foto === ''
-                                ?
-                                gender === 'L'
-                                  ?
-                                  <img
-                                    src={profilAccountDefault}
-                                    alt="foto-profil"
-                                    className="h-10 w-10 mr-1 rounded-full shadow-md"
-                                  />
-                                  :
-                                  <img
-                                    src={profilAccountDefault2}
-                                    alt="foto-profil"
-                                    className="h-10 w-10 mr-1 rounded-full shadow-md"
-                                  />
-                                :
-                                <img
-                                  src={`${DevUrl}/profile/${foto}`}
-                                  alt="foto-profil"
-                                  className="h-10 w-10 mr-1 rounded-full shadow-md object-cover"
-                                />
-                            }
-                            <div className="ml-2 mt-0.5">
-                              <span className="block font-medium text-base leading-snug text-white dark:text-gray-100">{item.user.name}</span>
-                              <span className="block text-xs text-white font-light leading-snug">{moment(item.createdAt).format('DD MMM YYYY HH:mm:ss')}</span>
-                            </div>
+                    title={item.user.name.charAt(0).toUpperCase() + item.user.name.slice(1)}
+                    subheader={moment(item.createdAt).format('MMM DD, YYYY')}
+                  />
+
+                  {
+                    item.image_content !== ''
+                      ?
+                      <CardMedia
+                        className="h-36"
+                        image={`${DevUrl}/jobs/${item.image_content}`}
+                        title={`Loker ${item.title}`}
+                      />
+                      :
+                      <div className="text-white bg-gradient-to-b from-blue-400 
+                        to-blue-500  rounded-t-lg flex items-center justify-center h-full">
+                        <div className="font_damion text-4xl opacity-40 ">
+                          Cari Gawe
                           </div>
-                        </div>
-
-                        {/* aktif / tidak */}
-                        {
-                          isExpired === true
-                            ?
-                            <div className="absolute top-0 right-0 p-1 text-white text-sm
-                         bg-red-500 rounded-tr-lg">
-                              sudah tutup
-                        </div>
-                            :
-                            <div className="absolute top-0 right-0 p-1 text-white text-sm
-                        bg-green-500 rounded-tr-lg">
-                              masih buka
-                        </div>
-                        }
                       </div>
+                  }
 
-                      {/* grid grid-rows-lg-7rows-home-list-job */}
-                      <div className="mt-0 h-full">
-                        <div className="flex flex-col justify-start p-2">
-                          <div className="text-md uppercase font-bold line-clamp-1">
-                            {item.title}
-                          </div>
-                          <div className="text-sm flex flex-row items-center mb-2">
-                            <RiMapPin2Line /> {item.city}
-                          </div>
-                          <hr />
-                        </div>
 
-                        {/* isi postingan */}
-                        <div className="overflow-hidden w-full px-2">
-                          <div id={`text-loker-${index}`}
-                            className="text-sm line-clamp-3
-                        ">
-                            {
-                              parse(item.content)
-                            }
-                          </div>
-                        </div>
-
-                        {/* button read more*/}
-                        <div className="px-2">
-                          <button id={`btn-readmore-${index}`} className="
+                  {/* grid grid-rows-lg-7rows-home-list-job */}
+                  <CardContent>
+                    <Typography color="textPrimary" component="div" className="flex items-center justify-between">
+                      <div className="flex items-center justify-start line-clamp-1">
+                        <div className="text-xl font-semibold">{item.title}</div>
+                      </div>
+                    </Typography>
+                    <div className="flex items-center justify-start text-sm rounded-sm mb-1">
+                      <RiMapPin2Line /> {item.city}
+                    </div>
+                    <Divider className="mb-2" />
+                    <Typography variant="body2" color="textSecondary" component="div" className="line-clamp-3">
+                      {
+                        parse(item.content)
+                      }
+                    </Typography>
+                    <div className="">
+                      <button id={`btn-readmore-${index}`} className="
                           text-xs p-1 rounded
                           text-blue-500 
                           bg-blue-100
                           focus:outline-none
                           hover:shadow-inner
                           "
-                            onClick={() => {
-                            }}
-                          >
-                            Lihat selengkapnya
-                        </button>
-                        </div>
-                      </div>
-
-                      {/* button like & comment*/}
-                      <div className="flex flex-row justify-between h-full border-t border-gray-200 bg-transparent">
-                          <div className="flex flex-row justify-center items-center py-2 focus:outline-none rounded-bl-lg w-full">
-                            <AiFillLike className="text-blue-500 text-md" />
-                            <div className="ml-1 text-sm text-gray-500  font-semibold">
-                              {item.likes.length} suka
-                          </div>
-                          </div>
-                          <div className="flex flex-row justify-center items-center py-2 focus:outline-none rounded-br-lg w-full">
-                            <RiQuestionAnswerFill className="text-blue-500 text-md" />
-                            <div className="ml-1 text-sm text-gray-500 font-semibold ">
-                              20 komentar
-                          </div>
-                          </div>
-                        </div>
-                      
+                        onClick={() => {
+                        }}
+                      >
+                        Lihat selengkapnya
+                          </button>
                     </div>
-                  )
-                })
-              }
-            </div>
+                  </CardContent>
+
+                  <Divider />
+                    <Typography variant="body2" gutterBottom className="">
+                      <div className="flex flex-row justify-center items-center py-2 focus:outline-none rounded-bl-lg w-full">
+                        <AiFillLike className="text-blue-500 text-md mr-1" size={17}/>
+                        {item.likes.length} suka
+                      </div>
+                    </Typography>
+
+                </Card>
+              )
+            })
+          }
+        </div>
       }
     </div>
   )

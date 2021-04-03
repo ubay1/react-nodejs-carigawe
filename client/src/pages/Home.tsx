@@ -104,10 +104,11 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
         </div>
         :
         <div className=" 
-          lg:grid-cols-lg-4cols-content
-          md:grid-cols-md-3cols-content md:my-6 md:mb-24
-          xs:grid-cols-2
-          xs:grid sm:grid-cols-2
+          lg:grid-cols-lg-3cols-content
+          md:grid-cols-lg-2cols-content md:my-6 md:mb-24
+          sm:grid-cols-1
+          xs:grid-cols-1
+          xs:grid
           sm:mt-6
           gap-y-4
           mb-40 mt-6
@@ -117,140 +118,87 @@ const Recruiter = ({dataJob, isLoading}: any): any => {
             dataJob.map((item: any, index: number) => {
               const isExpired = moment().isAfter(item.expiredAt)
               return(
-                <div
-                  key={`indexPost-${index}`}
-                  className="
-                  md:my-0
-                  sm:my-0 
-                  mx-2 
-                  mb-4 
-                  bg-white 
-                  shadow-md 
-                  rounded-lg
-                  h-full
-                  "
-                >
-
-                  {/* gambar content */}
-                  <div className="h-32 relative rounded-t-lg">
-                    {
-                      item.image_content !== ''
-                      ? 
-                      <div className="bg-black h-full w-full rounded-t-lg">
-                        <img 
-                          src={`${DevUrl}/jobs/${item.image_content}`} 
-                          alt=""
-                          className="h-full w-full object-cover rounded-t-lg opacity-60"
-                        />
-                      </div>
-                      : 
-                      <div className="text-white bg-gradient-to-b from-blue-400 to-blue-500 
-                      rounded-t-lg flex items-center justify-center h-full">
-                        <div className="font_damion text-4xl opacity-40 ">
-                          Cari Gawe
-                        </div>
-                      </div>
+                <Card className="mb-2 mx-2" key={index}>
+                  <CardHeader
+                    avatar={
+                      item.photo !== ''
+                        ?
+                        <Avatar aria-label="recipe" src={`${DevUrl}/profile/${item.user.photo}`} />
+                        :
+                        <Avatar aria-label="recipe" className="bg-red-500">
+                          {
+                            item.user.name.slice(0, 1)
+                          }
+                        </Avatar>
                     }
-                  
-                    {/* nama user dan tgl postingan */}
-                    <div className="absolute bottom-0">
-                      <div 
-                        className="
-                        m-2
-                        h-full
-                        flex flex-row items-center justify-start
-                        mb-2
-                      ">    
-                        {
-                          item.user.photo === ''
-                          ? 
-                            item.user.gender === 'L'
-                            ?
-                              <img 
-                                src={profilAccountDefault} 
-                                alt="foto-profil" 
-                                className="h-10 w-10 mr-1 rounded-full shadow-md"
-                              />
-                            :
-                              <img 
-                                src={profilAccountDefault2} 
-                                alt="foto-profil" 
-                                className="h-10 w-10 mr-1 rounded-full shadow-md"
-                              />
-                          :
-                            <img 
-                              src={`${DevUrl}/profile/${item.user.photo}`} 
-                              alt="foto-profil" 
-                              className="h-10 w-10 mr-1 rounded-full shadow-md object-cover"
-                            />
-                        }
-                        <div className="ml-2 mt-0.5">
-                          <span className="block font-medium text-base leading-snug text-white dark:text-gray-100">{item.user.name}</span>
-                          <span className="block text-xs text-white font-light leading-snug">{moment(item.createdAt).format('DD MMM YYYY HH:mm:ss')}</span>
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* aktif / tidak */}
-                    {
-                      isExpired === true 
-                      ? 
-                        <div className="absolute top-0 right-0 p-1 text-white text-sm
-                         bg-red-500 rounded-tr-lg">
+                    action={
+                      isExpired === true
+                        ?
+                        <div className="text-white text-xs bg-red-500 p-2 mt-3 rounded-sm shadow">
                           sudah tutup
                         </div>
-                      : 
-                        <div className="absolute top-0 right-0 p-1 text-white text-sm
-                        bg-green-500 rounded-tr-lg">
-                          masih buka 
-                        </div> 
+                        :
+                        <div className="text-white text-xs bg-green-500 p-2 mt-3 rounded-sm shadow">
+                          masih buka
+                        </div>
                     }
-                  </div>
+
+                    title={item.user.name.charAt(0).toUpperCase() + item.user.name.slice(1)}
+                    subheader={moment(item.createdAt).format('MMM DD, YYYY')}
+                  />
+
+                  {
+                    item.image_content !== ''
+                      ?
+                      <CardMedia
+                        className="h-36"
+                        image={`${DevUrl}/jobs/${item.image_content}`}
+                        title={`Loker ${item.title}`}
+                      />
+                      :
+                      <div className="text-white bg-gradient-to-b from-blue-400 
+                        to-blue-500  rounded-t-lg flex items-center justify-center h-full">
+                        <div className="font_damion text-4xl opacity-40 ">
+                          Cari Gawe
+                          </div>
+                      </div>
+                  }
 
 
                   {/* grid grid-rows-lg-7rows-home-list-job */}
-                  <div className="mt-0 p-2">
-                    <div className="flex flex-col justify-start mb-2">
-                      <div className="text-md uppercase font-bold line-clamp-1">
-                        {item.title}
-                      </div> 
-                      <div className="text-sm flex flex-row items-center">
-                        <RiMapPin2Line /> {item.city}
+                  <CardContent>
+                    <Typography color="textPrimary" component="div" className="flex items-center justify-between">
+                      <div className="flex items-center justify-start line-clamp-1">
+                        <div className="text-xl font-semibold">{item.title}</div>
                       </div>
+                    </Typography>
+                    <div className="flex items-center justify-start text-sm rounded-sm mb-1">
+                      <RiMapPin2Line /> {item.city}
                     </div>
-                    <hr/>
-                    
-                    {/* isi postingan */}
-                    <div className="mt-2 overflow-hidden w-full">
-                      <div id={`text-loker-${index}`} 
-                      className="text-sm line-clamp-3
-                      ">
-                        {
-                          parse(item.content)
-                        }
-                      </div>
-                    </div>
-                    
-                    {/* button read more*/}
+                    <Divider className="mb-2" />
+                    <Typography variant="body2" color="textSecondary" component="div" className="line-clamp-3">
+                      {
+                        parse(item.content)
+                      }
+                    </Typography>
                     <div className="">
                       <button id={`btn-readmore-${index}`} className="
-                        text-xs p-1 rounded
-                        text-blue-500 
-                        bg-blue-100
-                        focus:outline-none
-                        hover:shadow-inner
-                        "
+                          text-xs p-1 rounded
+                          text-blue-500 
+                          bg-blue-100
+                          focus:outline-none
+                          hover:shadow-inner
+                          "
                         onClick={() => {
                         }}
-                        >
-                          Lihat selengkapnya
-                      </button>
+                      >
+                        Lihat selengkapnya
+                          </button>
                     </div>
+                  </CardContent>
 
-                    {/* button like & comment*/}
-                  </div>
-
-                </div>
+                </Card>
               )
             })
           }

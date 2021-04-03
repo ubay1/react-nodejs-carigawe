@@ -15,12 +15,10 @@ module.exports = {
         "screen-9": "90vh",
       }),
       gridTemplateColumns: {
-        'lg-2cols-content': '20% 80%',
-        'lg-2cols-content-menu': '40% 60%',
-        'lg-3cols-content': '20% 60% 20%',
+        'lg-2cols-content': '50% 50%',
+        'lg-3cols-content': '33.333333% 33.333333% 33.333333%',
         'lg-4cols-content': '25% 25% 25% 25%',
         'lg-5cols-content': '20% 20% 20% 20% 20%',
-        'md-3cols-content': '33.333333% 33.333333% 33.333333%',
       },
       gridTemplateRows: {
         'lg-2rows-home-list-job': '80% 20%',

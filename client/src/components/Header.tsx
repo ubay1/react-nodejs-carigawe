@@ -233,7 +233,7 @@ const Header = (props: ITypeHeader) => {
               ?
                 <IconButton
                   edge="start"
-                  className="focus:outline-none mr-2 md:hidden"
+                  className="focus:outline-none mr-2"
                   color="inherit"
                   aria-label="open drawer"
                   onClick={() => { setopenDrawer(true); }}
@@ -248,27 +248,31 @@ const Header = (props: ITypeHeader) => {
                   <Button
                     className="w-full focus:outline-none flex justify-start"
                     onClick={async () => {
-                      toast('Anda telah keluar', {
-                        position: "bottom-right",
-                        autoClose: 5000,
-                        type: 'info',
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        transition: Slide
-                      })
-                      await Cookies.remove('token')
+                      const r = window.confirm("Apakah anda ingin keluar ?");
 
-                      await window.location.replace('/login')
+                      if (r === true) {
+                        toast('Anda telah keluar', {
+                          position: "bottom-right",
+                          autoClose: 5000,
+                          type: 'info',
+                          hideProgressBar: false,
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          transition: Slide
+                        })
+                        await Cookies.remove('token')
 
-                      setTimeout(() => {
-                        // expiredToken(dispatch)
-                      }, 2000)
+                        await window.location.replace('/login')
+
+                        setTimeout(() => {
+                          // expiredToken(dispatch)
+                        }, 2000)
+                      } else {
+                        console.log('anda gajadai')
+                      }
                     }}
                   >
-                    <div
-                      className="bg-red-500 rounded-full shadow focus:outline-none mr-1 p-1"  
-                    >
+                    <div className="bg-red-500 rounded-full shadow focus:outline-none mr-1 p-1">
                       <VscSignOut color="white" size={20}/>
                     </div>
                     <div>Keluar</div>
@@ -281,6 +285,7 @@ const Header = (props: ITypeHeader) => {
                 </List>
               </div>
             </Drawer>
+
             <Typography variant="h6" component="b"  className={`${classes.title}, text-white`} noWrap>
               <Link to="/" className="focus:outline-none" onClick={() => {
                 dispatch(setPageActive({
@@ -297,8 +302,8 @@ const Header = (props: ITypeHeader) => {
                 ?
                   userRedux.profile.recruiter
                   ?
-                    props.sudahDiPage === 'createjob' ? <div></div>
-                    :
+                    // props.sudahDiPage === 'createjob' ? <div></div>
+                    // :
                       <>
                         <Link
                           to="/recruiter/create-job"
@@ -355,33 +360,6 @@ const Header = (props: ITypeHeader) => {
                           </Tooltip>
                         </Link>
                         
-                        <Tooltip title="Keluar">
-                        <IconButton
-                          className="text-white focus:outline-none"
-                          // size="small"
-
-                          onClick={async () => {
-                            toast('Anda telah keluar', {
-                              position: "bottom-right",
-                              autoClose: 5000,
-                              type: 'info',
-                              hideProgressBar: false,
-                              closeOnClick: true,
-                              pauseOnHover: true,
-                              transition: Slide
-                            })
-                            await Cookies.remove('token')
-
-                            await window.location.replace('/login')
-                            
-                            setTimeout(() => {
-                              // expiredToken(dispatch)
-                            }, 2000)
-                          }}
-                        >
-                          <VscSignOut/>
-                        </IconButton>
-                      </Tooltip>
                     </div>
                   </>
                   : 

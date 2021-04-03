@@ -32,6 +32,7 @@ import { dataKota } from '../../utils/interface';
 // RichTextEditor.Inject(HtmlEditor, Image, Link, Toolbar);
 import TitleForm from './TitleForm'
 import socket from '../../utils/socket';
+import { TextField } from '@material-ui/core';
 
 
 
@@ -271,7 +272,7 @@ const CreateJobs = () => {
       <div className="md:mx-32 relative mt-24">
         {/* <TitleForm title="Jabatan" /> */}
         <div className="mx-4 mt-5">
-          <input 
+          {/* <input 
             type="text" 
             name="judul"
             className="w-full h-12 py-2 
@@ -281,6 +282,12 @@ const CreateJobs = () => {
             }}
             value={judulContent}
             placeholder="Masukan jabatan"
+          /> */}
+          <TextField required fullWidth   label="Masukan Jabatan" 
+            onChange={(e: any) => {
+              setjudulContent(e.target.value)
+            }}
+            value={judulContent} 
           />
         </div>
 
