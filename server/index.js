@@ -1,20 +1,12 @@
 /* eslint-disable no-unused-vars */
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
-const { randomInt } = require('crypto');
-const request = require('request');
-const cheerio = require('cheerio');
-const axios = require("axios");
-const fs = require('fs')
 const formatMessage = require('./utils/message');
 const {
   userJoin,
-  getCurrentUser,
   userLeave,
   getRoomUsers
 } = require('./utils/user');
-const models = require('./models');
 const rootDir = process.cwd();
 const app = express();
 
@@ -60,7 +52,7 @@ io.on("connection", socket => {
 
 
   // Runs when client disconnects
-  socket.on('disconnect', (id) => {
+  socket.on('disconnect', () => {
     const user = userLeave(socket.id);
     
     console.log('telah keluar dari room_beranda')
